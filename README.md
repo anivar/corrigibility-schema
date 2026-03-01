@@ -1,8 +1,11 @@
 # Corrigibility Schema Protocol
 
-Machine-readable standards for evaluating whether public digital infrastructure can be corrected, contested, and controlled by the communities it serves.
-
 [![Release](https://img.shields.io/github/v/release/anivar/corrigibility-schema)](https://github.com/anivar/corrigibility-schema/releases/latest)
+[![Protocol](https://img.shields.io/badge/Protocol-2.0-blue.svg)](PROTOCOL.md)
+[![License: CC0](https://img.shields.io/badge/License-CC0_1.0-lightgrey.svg)](https://creativecommons.org/publicdomain/zero/1.0/)
+[![ORCID](https://img.shields.io/badge/ORCID-0009--0009--8995--0005-green.svg)](https://orcid.org/0009-0009-8995-0005)
+
+Machine-readable standards for evaluating whether public digital infrastructure can be corrected, contested, and controlled by the communities it serves.
 
 ## Downloads
 
