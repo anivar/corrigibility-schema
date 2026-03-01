@@ -2,6 +2,18 @@
 
 Machine-readable standards for evaluating whether public digital infrastructure can be corrected, contested, and controlled by the communities it serves.
 
+[![Release](https://img.shields.io/github/v/release/anivar/corrigibility-schema)](https://github.com/anivar/corrigibility-schema/releases/latest)
+
+## Downloads
+
+| Asset | Description |
+|-------|-------------|
+| [dpi-infrastructure.json](https://github.com/anivar/corrigibility-schema/releases/latest/download/dpi-infrastructure.json) | DPI operator manifest |
+| [dpi-audit.json](https://github.com/anivar/corrigibility-schema/releases/latest/download/dpi-audit.json) | DPI assessment |
+| [epi-infrastructure.json](https://github.com/anivar/corrigibility-schema/releases/latest/download/epi-infrastructure.json) | EPI LWD-R manifest |
+| [epi-audit.json](https://github.com/anivar/corrigibility-schema/releases/latest/download/epi-audit.json) | EPI assessment |
+| [skills-assess-v2.0.zip](https://github.com/anivar/corrigibility-schema/releases/latest/download/skills-assess-v2.0.zip) | Assessment skills |
+
 ## Overview
 
 This protocol defines schemas for:
@@ -46,56 +58,27 @@ Failure of ANY test = **Structurally Incorrigible**
 
 See [docs/llm-instructions.md](docs/llm-instructions.md) for machine reasoning protocol.
 
-## Directory Structure
+## Assessment Skills
 
-```
-corrigibility-schema/
-├── schema/
-│   ├── dpi/
-│   │   ├── infrastructure.json
-│   │   └── audit.json
-│   └── epi/
-│       ├── infrastructure.json
-│       └── audit.json
-├── skills/
-│   └── assess/                     # Assessment skill
-│       ├── SKILL.md                # Main skill definition
-│       └── rules/                  # Test-specific rules
-│           ├── test-exit.md
-│           ├── test-code.md
-│           ├── test-audit.md
-│           ├── test-govern.md
-│           ├── test-fork.md
-│           ├── layer-decomposition.md
-│           ├── variety-drift.md
-│           └── action-boundary.md
-├── archive/
-│   └── v1/                         # Historical schemas
-├── examples/
-│   ├── dpi/
-│   └── epi/
-├── tools/
-│   ├── canonicalize.py
-│   ├── hash.py
-│   └── validate.py
-├── docs/
-│   └── llm-instructions.md
-├── PROTOCOL.md
-├── CHANGELOG.md
-└── LICENSE
-```
+Skills for LLM-based evaluation following the [Agentic Skills](https://agenticskills.io) specification.
 
-## Skills
+| Skill | Purpose |
+|-------|---------|
+| [assess/SKILL.md](skills/assess/SKILL.md) | Evaluate infrastructure against five tests |
+| [assess/rules/](skills/assess/rules/) | Test definitions: EXIT, CODE, AUDIT, GOVERN, FORK |
 
-Assessment skills for LLM-based evaluation following the [Agentic Skills](https://agenticskills.io) specification:
+### Rules
 
-### assess/
-Evaluate infrastructure against the five corrigibility tests. Includes:
-- **Test rules**: EXIT, CODE, AUDIT, GOVERN, FORK
-- **Analysis rules**: Layer decomposition, variety drift, action boundaries
-- **Output**: `audit.json` following Protocol 2.0
-
-Usage: Load `skills/assess/SKILL.md` into your LLM agent.
+| Rule | Description |
+|------|-------------|
+| `test-exit.md` | Reversibility of participation |
+| `test-code.md` | Transmission clarity (LWD-R for EPI) |
+| `test-audit.md` | Independent verification |
+| `test-govern.md` | Constitutive constraint |
+| `test-fork.md` | Independent reproduction |
+| `layer-decomposition.md` | Multi-layer test application |
+| `variety-drift.md` | Persistence condition monitoring |
+| `action-boundary.md` | Deterministic envelope for agentic systems |
 
 ## Tiered Adoption (EPI)
 
@@ -118,26 +101,23 @@ python tools/hash.py path/to/infrastructure.json
 python tools/canonicalize.py path/to/infrastructure.json
 ```
 
-Requires: `pip install jsonschema`
-
 ## Protocol Version
 
 Current: **2.0**
 
-See [PROTOCOL.md](PROTOCOL.md) for versioning rules and governance.
+See [PROTOCOL.md](PROTOCOL.md) for versioning rules and [CHANGELOG.md](CHANGELOG.md) for history.
 
-## References
+## Related
 
-Aravind, A. (2025). *Corrigibility Framework for Digital Public Infrastructure*.
-https://github.com/anivar/corrigibility-framework
-
-Aravind, A. (2025). *Epistemic Public Infrastructure*.
-https://github.com/anivar/corrigibility-framework
+| Resource | Link |
+|----------|------|
+| Papers | [corrigibility-framework v2.0](https://github.com/anivar/corrigibility-framework/releases/tag/v2.0) |
+| Website | [anivar.net/corrigibility](https://anivar.net/corrigibility) |
 
 ## License
 
-- **Schemas**: CC0 (public domain)
-- **Documentation**: CC BY-SA 4.0
-- **Tools**: MIT
+[CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/) (Public Domain)
 
-See [LICENSE](LICENSE) for details.
+## Author
+
+**Anivar A Aravind** · [ORCID: 0009-0009-8995-0005](https://orcid.org/0009-0009-8995-0005)
