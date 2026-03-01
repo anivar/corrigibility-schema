@@ -1,0 +1,108 @@
+{
+  "protocol_version": "2.0",
+  "system_id": "example-ai-assistant",
+  "manifest_version": "1.0.0",
+  "previous_manifest_hash": null,
+  "timestamp": "2025-02-01T00:00:00Z",
+  "operator": {
+    "entity": "Example AI Ministry",
+    "jurisdiction": "XX",
+    "public_key": "-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhki...\n-----END PUBLIC KEY-----"
+  },
+  "current_audit_hash": null,
+  "tier": "decision_support",
+  "layers": [
+    {
+      "layer_id": "orchestration",
+      "layer_type": "orchestration",
+      "introduced_at": "2025-01-01",
+      "deprecated": false
+    },
+    {
+      "layer_id": "inference",
+      "layer_type": "inference",
+      "introduced_at": "2025-01-01",
+      "deprecated": false
+    },
+    {
+      "layer_id": "retrieval",
+      "layer_type": "retrieval",
+      "introduced_at": "2025-01-01",
+      "deprecated": false
+    }
+  ],
+  "lwd_r": {
+    "logic": {
+      "inspectable": true,
+      "deterministic_envelope": true,
+      "orchestration_url": "https://github.com/example/orchestration"
+    },
+    "weights": {
+      "open": true,
+      "model_id": "meta-llama/Llama-3-70B-Instruct",
+      "weights_url": "https://huggingface.co/meta-llama/Llama-3-70B-Instruct",
+      "license": "Llama-3"
+    },
+    "data": {
+      "provenance_documented": true,
+      "local_storage": true,
+      "provenance_url": "https://example.gov/data-provenance",
+      "rag_filtering": true
+    },
+    "representation": {
+      "bias_assessed": true,
+      "communities_consulted": ["linguistic minorities", "disability groups"],
+      "assessment_url": "https://example.gov/bias-assessment"
+    }
+  },
+  "action_boundaries": {
+    "enforced": true,
+    "mechanism": "policy_engine",
+    "permitted_actions": ["search", "summarize", "translate", "draft_response"],
+    "prohibited_actions": ["execute_transaction", "modify_record", "delete_data"],
+    "human_required_for": ["final_decision", "appeal_resolution"],
+    "boundary_spec_url": "https://example.gov/action-boundaries"
+  },
+  "compute": {
+    "inference_accessible": true,
+    "training_accessible": false,
+    "estimated_inference_cost_usd": 5000,
+    "swap_time_minutes": 45,
+    "alternative_vendors": ["mistralai/Mixtral-8x22B", "Qwen/Qwen2-72B"]
+  },
+  "exit": {
+    "rag_opt_out": true,
+    "inference_blocking": true,
+    "deletion_procedure_url": "https://example.gov/ai-opt-out",
+    "deletion_sla_days": 7
+  },
+  "governance": {
+    "grievance_channel": true,
+    "binding_mechanism": true,
+    "representation_body": "AI Ethics Board",
+    "governance_charter_url": "https://example.gov/ai-governance"
+  },
+  "escalation": {
+    "oversight_body": "AI Ombudsman",
+    "oversight_url": "https://ombudsman.example.gov",
+    "triggers": [
+      {
+        "condition": "drift_score > 0.3",
+        "action": "mandatory_review"
+      },
+      {
+        "condition": "high_stakes_decision",
+        "action": "citizen_jury"
+      }
+    ],
+    "liability_url": "https://example.gov/ai-liability"
+  },
+  "corrigibility_claim": {
+    "EXIT": true,
+    "CODE": true,
+    "AUDIT": true,
+    "GOVERN": true,
+    "FORK": false
+  },
+  "operator_signature": "base64-encoded-signature..."
+}

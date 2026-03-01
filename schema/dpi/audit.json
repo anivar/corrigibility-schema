@@ -1,0 +1,157 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:corrigibility:dpi/audit.json",
+  "title": "Corrigibility DPI Audit",
+  "description": "Independent auditor assessment of infrastructure manifest",
+  "type": "object",
+  "required": [
+    "protocol_version",
+    "system_id",
+    "audit_id",
+    "timestamp",
+    "valid_until",
+    "audited_manifest_version",
+    "audited_manifest_hash",
+    "results",
+    "auditor",
+    "auditor_signature"
+  ],
+  "properties": {
+    "protocol_version": {
+      "type": "string",
+      "pattern": "^2\\.[0-9]+$"
+    },
+    "system_id": { "type": "string" },
+    "audit_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "valid_until": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Audit expiration (max 12 months from timestamp)"
+    },
+    "audited_manifest_version": { "type": "string" },
+    "audited_manifest_hash": {
+      "type": "string",
+      "pattern": "^sha256:[a-f0-9]{64}$"
+    },
+    "verification_tier": {
+      "type": "string",
+      "enum": ["presence", "behavior", "proof"],
+      "description": "Depth of verification: presence (docs exist), behavior (tested), proof (formal)"
+    },
+    "results": {
+      "type": "object",
+      "required": ["EXIT", "CODE", "AUDIT", "GOVERN", "FORK"],
+      "properties": {
+        "EXIT": { "type": "boolean" },
+        "CODE": { "type": "boolean" },
+        "AUDIT": { "type": "boolean" },
+        "GOVERN": { "type": "boolean" },
+        "FORK": { "type": "boolean" }
+      },
+      "additionalProperties": false
+    },
+    "layer_verification": {
+      "type": "object",
+      "description": "Per-layer verification of spec vs implementation gap",
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "spec_verified": { "type": "boolean" },
+          "implementation_verified": { "type": "boolean" },
+          "gap_identified": { "type": "boolean" },
+          "gap_description": { "type": "string" }
+        }
+      }
+    },
+    "governance_verification": {
+      "type": "object",
+      "description": "Distinguishes grievance channel from binding governance",
+      "properties": {
+        "grievance_exists": { "type": "boolean" },
+        "grievance_functional": { "type": "boolean" },
+        "binding_mechanism_exists": { "type": "boolean" },
+        "binding_mechanism_tested": { "type": "boolean" },
+        "community_represented": { "type": "boolean" }
+      },
+      "additionalProperties": false
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["test", "finding", "severity"],
+        "properties": {
+          "test": {
+            "type": "string",
+            "enum": ["EXIT", "CODE", "AUDIT", "GOVERN", "FORK", "LAYER", "GOVERNANCE"]
+          },
+          "finding": { "type": "string" },
+          "severity": {
+            "type": "string",
+            "enum": ["critical", "major", "minor", "observation"]
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "delegated_verification": {
+      "type": "object",
+      "description": "For components verified by observatory body",
+      "properties": {
+        "observatory": { "type": "string" },
+        "component_id": { "type": "string" },
+        "certified_profile_hash": {
+          "type": "string",
+          "pattern": "^sha256:[a-f0-9]{64}$"
+        },
+        "certification_date": { "type": "string", "format": "date" },
+        "certification_url": { "type": "string", "format": "uri" }
+      },
+      "additionalProperties": false
+    },
+    "contestation": {
+      "type": "object",
+      "description": "Status if operator disputes findings",
+      "properties": {
+        "contested": { "type": "boolean", "default": false },
+        "filed_at": { "type": "string", "format": "date-time" },
+        "status": {
+          "type": "string",
+          "enum": ["pending", "upheld", "overturned", "withdrawn"]
+        },
+        "resolution_date": { "type": ["string", "null"], "format": "date-time" },
+        "resolution_summary": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "revocation": {
+      "type": "object",
+      "description": "If auditor revokes this audit",
+      "properties": {
+        "revoked": { "type": "boolean", "default": false },
+        "revoked_at": { "type": "string", "format": "date-time" },
+        "reason": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "auditor": {
+      "type": "object",
+      "required": ["entity", "public_key"],
+      "properties": {
+        "entity": { "type": "string" },
+        "accreditation": { "type": "string" },
+        "public_key": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "auditor_signature": { "type": "string" }
+  },
+  "additionalProperties": false
+}

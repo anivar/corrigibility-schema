@@ -1,0 +1,143 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:corrigibility:dpi/infrastructure.json",
+  "title": "Corrigibility DPI Infrastructure Manifest",
+  "description": "Operator declaration for Digital Public Infrastructure",
+  "type": "object",
+  "required": [
+    "protocol_version",
+    "system_id",
+    "manifest_version",
+    "timestamp",
+    "operator",
+    "layers",
+    "corrigibility_claim",
+    "operator_signature"
+  ],
+  "properties": {
+    "protocol_version": {
+      "type": "string",
+      "pattern": "^2\\.[0-9]+$"
+    },
+    "system_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "manifest_version": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+    },
+    "previous_manifest_hash": {
+      "type": ["string", "null"],
+      "pattern": "^sha256:[a-f0-9]{64}$"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "operator": {
+      "type": "object",
+      "required": ["entity", "jurisdiction", "public_key"],
+      "properties": {
+        "entity": { "type": "string" },
+        "jurisdiction": { "type": "string" },
+        "public_key": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "current_audit_hash": {
+      "type": ["string", "null"],
+      "pattern": "^sha256:[a-f0-9]{64}$"
+    },
+    "layers": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["layer_id", "layer_type", "introduced_at"],
+        "properties": {
+          "layer_id": { "type": "string" },
+          "layer_type": {
+            "type": "string",
+            "enum": ["identity", "payments", "data", "consent", "credentials"]
+          },
+          "introduced_at": { "type": "string", "format": "date" },
+          "spec_open": { "type": "boolean" },
+          "implementation_open": { "type": "boolean" },
+          "deprecated": { "type": "boolean", "default": false },
+          "deprecated_at": { "type": ["string", "null"], "format": "date" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "exit": {
+      "type": "object",
+      "description": "EXIT test details - can users leave without penalty",
+      "properties": {
+        "data_portability": { "type": "boolean" },
+        "deletion_available": { "type": "boolean" },
+        "alternative_exists": { "type": "boolean" },
+        "penalty_free": { "type": "boolean" },
+        "exit_procedure_url": { "type": "string", "format": "uri" }
+      },
+      "additionalProperties": false
+    },
+    "governance": {
+      "type": "object",
+      "description": "GOVERN test details - grievance vs binding governance",
+      "properties": {
+        "grievance_channel": {
+          "type": "boolean",
+          "description": "Complaint mechanism exists (necessary but not sufficient)"
+        },
+        "binding_mechanism": {
+          "type": "boolean",
+          "description": "Community input has binding effect"
+        },
+        "representation_body": { "type": "string" },
+        "governance_charter_url": { "type": "string", "format": "uri" }
+      },
+      "additionalProperties": false
+    },
+    "escalation": {
+      "type": "object",
+      "description": "Human oversight linkage",
+      "properties": {
+        "oversight_body": { "type": "string" },
+        "oversight_url": { "type": "string", "format": "uri" },
+        "triggers": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["condition", "action"],
+            "properties": {
+              "condition": { "type": "string" },
+              "action": {
+                "type": "string",
+                "enum": ["notify", "mandatory_review", "citizen_jury", "judicial_review", "suspension"]
+              }
+            }
+          }
+        },
+        "liability_url": { "type": "string", "format": "uri" }
+      },
+      "additionalProperties": false
+    },
+    "corrigibility_claim": {
+      "type": "object",
+      "required": ["EXIT", "CODE", "AUDIT", "GOVERN", "FORK"],
+      "properties": {
+        "EXIT": { "type": "boolean" },
+        "CODE": { "type": "boolean" },
+        "AUDIT": { "type": "boolean" },
+        "GOVERN": { "type": "boolean" },
+        "FORK": { "type": "boolean" }
+      },
+      "additionalProperties": false
+    },
+    "operator_signature": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": false
+}

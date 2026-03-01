@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:corrigibility:v1/audit.json",
+  "title": "Corrigibility Audit v1",
+  "type": "object",
+  "required": [
+    "protocol_version",
+    "system_id",
+    "audit_id",
+    "timestamp",
+    "results",
+    "auditor"
+  ],
+  "properties": {
+    "protocol_version": {
+      "type": "string",
+      "const": "1.0"
+    },
+    "system_id": { "type": "string" },
+    "audit_id": { "type": "string" },
+    "timestamp": { "type": "string", "format": "date-time" },
+    "results": {
+      "type": "object",
+      "required": ["EXIT", "CODE", "AUDIT", "GOVERN", "FORK"],
+      "properties": {
+        "EXIT": { "type": "boolean" },
+        "CODE": { "type": "boolean" },
+        "AUDIT": { "type": "boolean" },
+        "GOVERN": { "type": "boolean" },
+        "FORK": { "type": "boolean" }
+      }
+    },
+    "auditor": {
+      "type": "object",
+      "required": ["entity"],
+      "properties": {
+        "entity": { "type": "string" }
+      }
+    }
+  }
+}

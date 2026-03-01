@@ -1,0 +1,58 @@
+# Licenses
+
+This repository contains multiple components with different licenses:
+
+## Schemas (schema/*.json)
+
+CC0 1.0 Universal (Public Domain Dedication)
+
+The schema definitions are released into the public domain to maximize
+adoption and interoperability. No permission required to use, modify,
+or redistribute.
+
+https://creativecommons.org/publicdomain/zero/1.0/
+
+## Documentation (*.md, docs/*)
+
+Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)
+
+You are free to share and adapt the documentation, provided you give
+appropriate credit and distribute contributions under the same license.
+
+https://creativecommons.org/licenses/by-sa/4.0/
+
+## Tools (tools/*)
+
+MIT License
+
+Copyright (c) 2025
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+---
+
+## Citation
+
+If using these schemas in academic work, please cite:
+
+Aravind, A. (2025). Corrigibility Framework for Digital Public Infrastructure.
+https://anivar.net/corrigibility/
+
+Aravind, A. (2025). Epistemic Public Infrastructure: Corrigibility in AI Systems.
+https://anivar.net/corrigibility/

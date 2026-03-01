@@ -1,0 +1,88 @@
+{
+  "protocol_version": "2.0",
+  "system_id": "example-ai-assistant",
+  "audit_id": "660e8400-e29b-41d4-a716-446655440001",
+  "timestamp": "2025-02-20T14:00:00Z",
+  "valid_until": "2026-02-20T14:00:00Z",
+  "audited_manifest_version": "1.0.0",
+  "audited_manifest_hash": "sha256:b2c3d4e5f67890123456789012345678901234567890123456789012345bcd",
+  "verification_tier": "behavior",
+  "results": {
+    "EXIT": true,
+    "CODE": true,
+    "AUDIT": true,
+    "GOVERN": true,
+    "FORK": false
+  },
+  "lwd_r_verification": {
+    "logic_verified": true,
+    "weights_verified": true,
+    "data_verified": true,
+    "representation_verified": true,
+    "lwd_r_complete": true
+  },
+  "action_boundary_verification": {
+    "enforced": true,
+    "mechanism_verified": "policy_engine",
+    "escapes_found": 0,
+    "escapes_documented": true
+  },
+  "drift_assessment": {
+    "measured": true,
+    "methodology": "KL divergence on output distribution",
+    "baseline_date": "2025-01-15",
+    "current_drift_score": 0.12,
+    "retraining_trigger": 0.3,
+    "trend": "stable"
+  },
+  "compute_verification": {
+    "inference_accessible": true,
+    "training_accessible": false,
+    "swap_tested": true,
+    "swap_time_actual_minutes": 52
+  },
+  "governance_verification": {
+    "grievance_exists": true,
+    "grievance_functional": true,
+    "binding_mechanism_exists": true,
+    "binding_mechanism_tested": true,
+    "community_represented": true
+  },
+  "findings": [
+    {
+      "test": "FORK",
+      "finding": "Retraining requires compute beyond local capacity. Swapability verified but compute parity not achieved.",
+      "severity": "major"
+    },
+    {
+      "test": "DRIFT",
+      "finding": "Drift monitoring active with appropriate thresholds.",
+      "severity": "observation"
+    },
+    {
+      "test": "TIER",
+      "finding": "System appropriately classified as decision_support tier.",
+      "severity": "observation"
+    }
+  ],
+  "tier_appropriate": true,
+  "delegated_verification": {
+    "observatory": "DPG Alliance AI Observatory",
+    "component_id": "meta-llama/Llama-3-70B-Instruct",
+    "certified_profile_hash": "sha256:c3d4e5f678901234567890123456789012345678901234567890123456cde",
+    "certification_date": "2025-01-10",
+    "certification_url": "https://dpg.observatory/certifications/llama3-70b"
+  },
+  "contestation": {
+    "contested": false
+  },
+  "revocation": {
+    "revoked": false
+  },
+  "auditor": {
+    "entity": "AI Safety Auditors International",
+    "accreditation": "EPI-AUDITOR-001",
+    "public_key": "-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhki...\n-----END PUBLIC KEY-----"
+  },
+  "auditor_signature": "base64-encoded-signature..."
+}

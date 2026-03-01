@@ -1,0 +1,248 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:corrigibility:epi/infrastructure.json",
+  "title": "Corrigibility EPI Infrastructure Manifest",
+  "description": "Operator declaration for Epistemic Public Infrastructure",
+  "type": "object",
+  "required": [
+    "protocol_version",
+    "system_id",
+    "manifest_version",
+    "timestamp",
+    "operator",
+    "tier",
+    "layers",
+    "lwd_r",
+    "corrigibility_claim",
+    "operator_signature"
+  ],
+  "properties": {
+    "protocol_version": {
+      "type": "string",
+      "pattern": "^2\\.[0-9]+$"
+    },
+    "system_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "manifest_version": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+    },
+    "previous_manifest_hash": {
+      "type": ["string", "null"],
+      "pattern": "^sha256:[a-f0-9]{64}$"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "operator": {
+      "type": "object",
+      "required": ["entity", "jurisdiction", "public_key"],
+      "properties": {
+        "entity": { "type": "string" },
+        "jurisdiction": { "type": "string" },
+        "public_key": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "current_audit_hash": {
+      "type": ["string", "null"],
+      "pattern": "^sha256:[a-f0-9]{64}$"
+    },
+    "tier": {
+      "type": "string",
+      "enum": ["trivial", "decision_support", "high_stakes"],
+      "description": "Risk classification determining compliance requirements"
+    },
+    "layers": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["layer_id", "layer_type", "introduced_at"],
+        "properties": {
+          "layer_id": { "type": "string" },
+          "layer_type": {
+            "type": "string",
+            "enum": ["inference", "orchestration", "retrieval", "training", "evaluation", "action"]
+          },
+          "introduced_at": { "type": "string", "format": "date" },
+          "deprecated": { "type": "boolean", "default": false },
+          "deprecated_at": { "type": ["string", "null"], "format": "date" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "lwd_r": {
+      "type": "object",
+      "description": "Logic-Weights-Data-Representation transparency",
+      "required": ["logic", "weights", "data", "representation"],
+      "properties": {
+        "logic": {
+          "type": "object",
+          "required": ["inspectable", "deterministic_envelope"],
+          "properties": {
+            "inspectable": { "type": "boolean" },
+            "deterministic_envelope": { "type": "boolean" },
+            "orchestration_url": { "type": "string", "format": "uri" }
+          },
+          "additionalProperties": false
+        },
+        "weights": {
+          "type": "object",
+          "required": ["open", "model_id"],
+          "properties": {
+            "open": { "type": "boolean" },
+            "model_id": { "type": "string" },
+            "weights_url": { "type": "string", "format": "uri" },
+            "license": { "type": "string" }
+          },
+          "additionalProperties": false
+        },
+        "data": {
+          "type": "object",
+          "required": ["provenance_documented", "local_storage"],
+          "properties": {
+            "provenance_documented": { "type": "boolean" },
+            "local_storage": { "type": "boolean" },
+            "provenance_url": { "type": "string", "format": "uri" },
+            "rag_filtering": {
+              "type": "boolean",
+              "description": "EXIT via workflow filtering at RAG layer"
+            }
+          },
+          "additionalProperties": false
+        },
+        "representation": {
+          "type": "object",
+          "required": ["bias_assessed"],
+          "properties": {
+            "bias_assessed": { "type": "boolean" },
+            "communities_consulted": {
+              "type": "array",
+              "items": { "type": "string" }
+            },
+            "assessment_url": { "type": "string", "format": "uri" }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "action_boundaries": {
+      "type": "object",
+      "description": "Deterministic constraints on AI actions",
+      "properties": {
+        "enforced": { "type": "boolean" },
+        "mechanism": {
+          "type": "string",
+          "enum": ["hard_coded", "policy_engine", "human_approval", "hybrid"]
+        },
+        "permitted_actions": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Whitelist of permitted action types"
+        },
+        "prohibited_actions": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Blacklist of prohibited actions"
+        },
+        "human_required_for": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Actions requiring human approval"
+        },
+        "boundary_spec_url": { "type": "string", "format": "uri" }
+      },
+      "additionalProperties": false
+    },
+    "compute": {
+      "type": "object",
+      "description": "Compute accessibility for FORK test",
+      "properties": {
+        "inference_accessible": { "type": "boolean" },
+        "training_accessible": { "type": "boolean" },
+        "estimated_inference_cost_usd": { "type": "number" },
+        "swap_time_minutes": {
+          "type": "integer",
+          "description": "Zero-cost swapability metric"
+        },
+        "alternative_vendors": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Compatible alternative model providers"
+        }
+      },
+      "additionalProperties": false
+    },
+    "exit": {
+      "type": "object",
+      "description": "EXIT mechanisms - workflow filtering approach",
+      "properties": {
+        "rag_opt_out": {
+          "type": "boolean",
+          "description": "Citizens can remove data from retrieval layer"
+        },
+        "inference_blocking": {
+          "type": "boolean",
+          "description": "Citizens can block inference on their data"
+        },
+        "deletion_procedure_url": { "type": "string", "format": "uri" },
+        "deletion_sla_days": { "type": "integer" }
+      },
+      "additionalProperties": false
+    },
+    "governance": {
+      "type": "object",
+      "description": "GOVERN test - grievance vs binding governance",
+      "properties": {
+        "grievance_channel": { "type": "boolean" },
+        "binding_mechanism": { "type": "boolean" },
+        "representation_body": { "type": "string" },
+        "governance_charter_url": { "type": "string", "format": "uri" }
+      },
+      "additionalProperties": false
+    },
+    "escalation": {
+      "type": "object",
+      "description": "Human oversight linkage",
+      "properties": {
+        "oversight_body": { "type": "string" },
+        "oversight_url": { "type": "string", "format": "uri" },
+        "triggers": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["condition", "action"],
+            "properties": {
+              "condition": { "type": "string" },
+              "action": {
+                "type": "string",
+                "enum": ["notify", "mandatory_review", "citizen_jury", "judicial_review", "suspension"]
+              }
+            }
+          }
+        },
+        "liability_url": { "type": "string", "format": "uri" }
+      },
+      "additionalProperties": false
+    },
+    "corrigibility_claim": {
+      "type": "object",
+      "required": ["EXIT", "CODE", "AUDIT", "GOVERN", "FORK"],
+      "properties": {
+        "EXIT": { "type": "boolean" },
+        "CODE": { "type": "boolean" },
+        "AUDIT": { "type": "boolean" },
+        "GOVERN": { "type": "boolean" },
+        "FORK": { "type": "boolean" }
+      },
+      "additionalProperties": false
+    },
+    "operator_signature": { "type": "string" }
+  },
+  "additionalProperties": false
+}

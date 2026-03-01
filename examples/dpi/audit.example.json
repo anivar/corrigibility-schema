@@ -1,0 +1,76 @@
+{
+  "protocol_version": "2.0",
+  "system_id": "example-identity-system",
+  "audit_id": "550e8400-e29b-41d4-a716-446655440000",
+  "timestamp": "2025-02-15T10:30:00Z",
+  "valid_until": "2026-02-15T10:30:00Z",
+  "audited_manifest_version": "1.0.0",
+  "audited_manifest_hash": "sha256:a1b2c3d4e5f6789012345678901234567890123456789012345678901234abcd",
+  "verification_tier": "behavior",
+  "results": {
+    "EXIT": false,
+    "CODE": false,
+    "AUDIT": true,
+    "GOVERN": false,
+    "FORK": false
+  },
+  "layer_verification": {
+    "identity-core": {
+      "spec_verified": true,
+      "implementation_verified": false,
+      "gap_identified": true,
+      "gap_description": "Spec is open but implementation is proprietary"
+    },
+    "consent-manager": {
+      "spec_verified": true,
+      "implementation_verified": true,
+      "gap_identified": false
+    }
+  },
+  "governance_verification": {
+    "grievance_exists": true,
+    "grievance_functional": true,
+    "binding_mechanism_exists": false,
+    "binding_mechanism_tested": false,
+    "community_represented": false
+  },
+  "findings": [
+    {
+      "test": "EXIT",
+      "finding": "No deletion mechanism exists. Users cannot remove their data.",
+      "severity": "critical"
+    },
+    {
+      "test": "EXIT",
+      "finding": "No alternative system available for essential services.",
+      "severity": "critical"
+    },
+    {
+      "test": "CODE",
+      "finding": "Core identity layer uses proprietary implementation despite open spec.",
+      "severity": "major"
+    },
+    {
+      "test": "GOVERN",
+      "finding": "Advisory committee has no binding authority over system changes.",
+      "severity": "major"
+    },
+    {
+      "test": "FORK",
+      "finding": "Proprietary components prevent independent replication.",
+      "severity": "major"
+    }
+  ],
+  "contestation": {
+    "contested": false
+  },
+  "revocation": {
+    "revoked": false
+  },
+  "auditor": {
+    "entity": "Independent Digital Rights Auditors",
+    "accreditation": "ISO-27001-LEAD",
+    "public_key": "-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhki...\n-----END PUBLIC KEY-----"
+  },
+  "auditor_signature": "base64-encoded-signature..."
+}

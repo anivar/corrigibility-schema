@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:corrigibility:v1/infrastructure.json",
+  "title": "Corrigibility Infrastructure Manifest v1",
+  "type": "object",
+  "required": [
+    "protocol_version",
+    "system_id",
+    "timestamp",
+    "operator",
+    "corrigibility_claim"
+  ],
+  "properties": {
+    "protocol_version": {
+      "type": "string",
+      "const": "1.0"
+    },
+    "system_id": {
+      "type": "string"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "operator": {
+      "type": "object",
+      "required": ["entity"],
+      "properties": {
+        "entity": { "type": "string" },
+        "jurisdiction": { "type": "string" }
+      }
+    },
+    "corrigibility_claim": {
+      "type": "object",
+      "required": ["EXIT", "CODE", "AUDIT", "GOVERN", "FORK"],
+      "properties": {
+        "EXIT": { "type": "boolean" },
+        "CODE": { "type": "boolean" },
+        "AUDIT": { "type": "boolean" },
+        "GOVERN": { "type": "boolean" },
+        "FORK": { "type": "boolean" }
+      }
+    }
+  }
+}
