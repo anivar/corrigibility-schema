@@ -297,7 +297,106 @@ Protocol maintained by:
 
 ---
 
-## 14. License
+## 14. Periodic Enhancement Workflow
+
+### Why Periodic Enhancement
+
+DPI and EPI systems evolve. The corrigibility framework must evolve with them:
+
+1. **Variety Drift**: Environmental variety changes over time
+2. **New Architectures**: AI architectures evolve faster than governance
+3. **Regulatory Changes**: Legal requirements shift
+4. **Community Feedback**: Deployment experience informs improvements
+
+### Enhancement Cycle
+
+```
+Research Papers → Schema Updates → Skill Updates → Validation
+      ↑                                              │
+      └──────────── Community Feedback ←─────────────┘
+```
+
+### Paper-Schema-Skill Alignment
+
+| Layer | Purpose | Update Trigger |
+|-------|---------|----------------|
+| Research Papers | Theoretical foundation | New threats, architectures |
+| Schemas | Structural contracts | Paper concepts need encoding |
+| Skills | Assessment rules | Schema changes need rules |
+| Validation | Verification tools | Schema/skill changes |
+
+### Enhancement Process
+
+1. **Paper Update**: New concepts introduced in research papers
+2. **Schema Proposal**: Issue opened proposing schema additions
+3. **Skill Update**: Rules created for new schema fields
+4. **Validation**: Tools updated to verify new fields
+5. **Release**: Coordinated release of schema + skill
+
+### Backward Compatibility
+
+| Change Type | Compatibility |
+|-------------|---------------|
+| New optional field | Backward compatible |
+| New enum value | Backward compatible |
+| New required field | Breaking (MAJOR bump) |
+| Field removal | Breaking (MAJOR bump) |
+
+### Audit Revalidation Triggers
+
+Periodic assessment required when:
+
+| Trigger | Timeframe | Action |
+|---------|-----------|--------|
+| Time-based | 12 months max | Full re-audit |
+| Drift threshold | When Δ(t) > τ | Drift-focused audit |
+| Manifest change | Immediate | Delta audit |
+| Paper update | Schema MAJOR bump | Gap assessment |
+
+---
+
+## 15. Paper-Schema Compliance
+
+### Authoritative Sources
+
+| Paper | Scope | Citation |
+|-------|-------|----------|
+| DPI Corrigibility Framework | Digital infrastructure | Aravind (2025) |
+| Epistemic Public Infrastructure | AI/learned systems | Aravind (2025) |
+
+### Compliance Requirements
+
+Schemas MUST encode all paper concepts:
+
+| Paper Concept | Schema Location | Verification |
+|---------------|-----------------|--------------|
+| Five tests | `results.*` | Boolean fields |
+| Layer decomposition | `layers[]` | Array structure |
+| LWD-R | `lwd_r.*` | Required for EPI |
+| Verification tiers | `verification_tier` | Enum |
+| Variety drift | `drift_assessment` | EPI audit |
+| Action boundaries | `action_boundaries` | EPI infrastructure |
+| Compute capture | `compute.*` | EPI infrastructure |
+| Tiered adoption | `tier` | EPI infrastructure |
+
+### Skills MUST Cover
+
+Each paper concept requires corresponding skill rule:
+
+| Rule File | Paper Section |
+|-----------|---------------|
+| test-exit.md | EXIT test |
+| test-code.md | CODE test, LWD-R |
+| test-audit.md | AUDIT test |
+| test-govern.md | GOVERN test |
+| test-fork.md | FORK test, compute capture |
+| layer-decomposition.md | Layer analysis |
+| variety-drift.md | Temporal drift |
+| action-boundary.md | Agentic systems |
+
+---
+
+## 16. License
 
 - Schemas: CC0 (public domain)
 - Documentation: CC-BY-SA 4.0

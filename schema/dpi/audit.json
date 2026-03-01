@@ -82,6 +82,25 @@
       },
       "additionalProperties": false
     },
+    "fork_verification": {
+      "type": "object",
+      "description": "FORK test verification - constructed vs natural barriers",
+      "properties": {
+        "legally_permitted": { "type": "boolean" },
+        "artifacts_verified": { "type": "boolean" },
+        "data_portability_tested": { "type": "boolean" },
+        "constructed_barriers_identified": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "reproduction_attempted": {
+          "type": "boolean",
+          "description": "Third party attempted reproduction"
+        },
+        "reproduction_successful": { "type": "boolean" }
+      },
+      "additionalProperties": false
+    },
     "findings": {
       "type": "array",
       "items": {

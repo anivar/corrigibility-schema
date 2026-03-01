@@ -164,7 +164,14 @@
       "description": "Compute accessibility for FORK test",
       "properties": {
         "inference_accessible": { "type": "boolean" },
-        "training_accessible": { "type": "boolean" },
+        "training_accessible": {
+          "type": "boolean",
+          "description": "Community can retrain (training forkability)"
+        },
+        "estimated_training_cost_usd": {
+          "type": "number",
+          "description": "Training cost for compute capture analysis"
+        },
         "estimated_inference_cost_usd": { "type": "number" },
         "swap_time_minutes": {
           "type": "integer",
@@ -174,6 +181,40 @@
           "type": "array",
           "items": { "type": "string" },
           "description": "Compatible alternative model providers"
+        },
+        "training_code_available": {
+          "type": "boolean",
+          "description": "Full training code published (required for FORK)"
+        },
+        "data_manifest_available": {
+          "type": "boolean",
+          "description": "Training data manifest published (required for FORK)"
+        }
+      },
+      "additionalProperties": false
+    },
+    "revalidation": {
+      "type": "object",
+      "description": "Variety drift monitoring and revalidation",
+      "properties": {
+        "monitoring_enabled": { "type": "boolean" },
+        "monitoring_frequency": {
+          "type": "string",
+          "enum": ["daily", "weekly", "monthly", "quarterly"]
+        },
+        "drift_threshold": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Threshold τ for revalidation trigger"
+        },
+        "last_revalidation": {
+          "type": "string",
+          "format": "date"
+        },
+        "next_revalidation_due": {
+          "type": "string",
+          "format": "date"
         }
       },
       "additionalProperties": false
@@ -227,6 +268,30 @@
           }
         },
         "liability_url": { "type": "string", "format": "uri" }
+      },
+      "additionalProperties": false
+    },
+    "fork": {
+      "type": "object",
+      "description": "FORK test - inference vs training forkability",
+      "properties": {
+        "inference_forkable": {
+          "type": "boolean",
+          "description": "Can run the model (necessary but not sufficient)"
+        },
+        "training_forkable": {
+          "type": "boolean",
+          "description": "Can reproduce the model (sufficient for FORK)"
+        },
+        "constructed_barriers": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "compute_capture_status": {
+          "type": "string",
+          "enum": ["none", "moderate", "captured"],
+          "description": "C_train > κ × C_accessible assessment"
+        }
       },
       "additionalProperties": false
     },

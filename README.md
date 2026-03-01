@@ -57,6 +57,18 @@ corrigibility-schema/
 │   └── epi/
 │       ├── infrastructure.json
 │       └── audit.json
+├── skills/
+│   └── assess/                     # Assessment skill
+│       ├── SKILL.md                # Main skill definition
+│       └── rules/                  # Test-specific rules
+│           ├── test-exit.md
+│           ├── test-code.md
+│           ├── test-audit.md
+│           ├── test-govern.md
+│           ├── test-fork.md
+│           ├── layer-decomposition.md
+│           ├── variety-drift.md
+│           └── action-boundary.md
 ├── archive/
 │   └── v1/                         # Historical schemas
 ├── examples/
@@ -72,6 +84,18 @@ corrigibility-schema/
 ├── CHANGELOG.md
 └── LICENSE
 ```
+
+## Skills
+
+Assessment skills for LLM-based evaluation following the [Agentic Skills](https://agenticskills.io) specification:
+
+### assess/
+Evaluate infrastructure against the five corrigibility tests. Includes:
+- **Test rules**: EXIT, CODE, AUDIT, GOVERN, FORK
+- **Analysis rules**: Layer decomposition, variety drift, action boundaries
+- **Output**: `audit.json` following Protocol 2.0
+
+Usage: Load `skills/assess/SKILL.md` into your LLM agent.
 
 ## Tiered Adoption (EPI)
 
@@ -105,10 +129,10 @@ See [PROTOCOL.md](PROTOCOL.md) for versioning rules and governance.
 ## References
 
 Aravind, A. (2025). *Corrigibility Framework for Digital Public Infrastructure*.
-https://anivar.net/corrigibility/
+https://github.com/anivar/corrigibility-framework
 
 Aravind, A. (2025). *Epistemic Public Infrastructure*.
-https://anivar.net/corrigibility/
+https://github.com/anivar/corrigibility-framework
 
 ## License
 

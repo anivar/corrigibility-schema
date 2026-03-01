@@ -123,6 +123,35 @@
       },
       "additionalProperties": false
     },
+    "fork": {
+      "type": "object",
+      "description": "FORK test details - can system be reproduced",
+      "properties": {
+        "legally_permitted": {
+          "type": "boolean",
+          "description": "No constructed legal barriers to reproduction"
+        },
+        "artifacts_available": {
+          "type": "boolean",
+          "description": "Technical artifacts available for reproduction"
+        },
+        "data_portable": {
+          "type": "boolean",
+          "description": "User data can be exported"
+        },
+        "constructed_barriers": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "List of constructed barriers (patents, exclusive licenses)"
+        },
+        "natural_barriers": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Natural barriers (network effects, capital) - informational only"
+        }
+      },
+      "additionalProperties": false
+    },
     "corrigibility_claim": {
       "type": "object",
       "required": ["EXIT", "CODE", "AUDIT", "GOVERN", "FORK"],
