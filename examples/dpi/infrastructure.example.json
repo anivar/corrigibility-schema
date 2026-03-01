@@ -58,6 +58,13 @@
     ],
     "liability_url": "https://example.gov/liability"
   },
+  "fork": {
+    "legally_permitted": false,
+    "artifacts_available": false,
+    "data_portable": true,
+    "constructed_barriers": ["exclusive_government_license", "regulatory_monopoly"],
+    "natural_barriers": ["network_effects"]
+  },
   "corrigibility_claim": {
     "EXIT": false,
     "CODE": false,

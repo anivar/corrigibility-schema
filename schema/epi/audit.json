@@ -111,7 +111,30 @@
         "inference_accessible": { "type": "boolean" },
         "training_accessible": { "type": "boolean" },
         "swap_tested": { "type": "boolean" },
-        "swap_time_actual_minutes": { "type": "integer" }
+        "swap_time_actual_minutes": { "type": "integer" },
+        "compute_capture_assessed": {
+          "type": "boolean",
+          "description": "C_train vs κ × C_accessible evaluated"
+        },
+        "compute_capture_result": {
+          "type": "string",
+          "enum": ["none", "moderate", "captured"]
+        }
+      },
+      "additionalProperties": false
+    },
+    "fork_verification": {
+      "type": "object",
+      "description": "FORK test - inference vs training forkability",
+      "properties": {
+        "inference_forkable": { "type": "boolean" },
+        "training_forkable": { "type": "boolean" },
+        "training_code_verified": { "type": "boolean" },
+        "data_manifest_verified": { "type": "boolean" },
+        "reproduction_attempted": { "type": "boolean" },
+        "reproduction_successful": { "type": "boolean" },
+        "swapability_tested": { "type": "boolean" },
+        "swapability_passed": { "type": "boolean" }
       },
       "additionalProperties": false
     },

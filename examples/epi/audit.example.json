@@ -39,7 +39,19 @@
     "inference_accessible": true,
     "training_accessible": false,
     "swap_tested": true,
-    "swap_time_actual_minutes": 52
+    "swap_time_actual_minutes": 52,
+    "compute_capture_assessed": true,
+    "compute_capture_result": "captured"
+  },
+  "fork_verification": {
+    "inference_forkable": true,
+    "training_forkable": false,
+    "training_code_verified": false,
+    "data_manifest_verified": false,
+    "reproduction_attempted": false,
+    "reproduction_successful": false,
+    "swapability_tested": true,
+    "swapability_passed": true
   },
   "governance_verification": {
     "grievance_exists": true,

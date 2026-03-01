@@ -66,9 +66,25 @@
   "compute": {
     "inference_accessible": true,
     "training_accessible": false,
+    "estimated_training_cost_usd": 50000000,
     "estimated_inference_cost_usd": 5000,
     "swap_time_minutes": 45,
-    "alternative_vendors": ["mistralai/Mixtral-8x22B", "Qwen/Qwen2-72B"]
+    "alternative_vendors": ["mistralai/Mixtral-8x22B", "Qwen/Qwen2-72B"],
+    "training_code_available": false,
+    "data_manifest_available": false
+  },
+  "revalidation": {
+    "monitoring_enabled": true,
+    "monitoring_frequency": "monthly",
+    "drift_threshold": 0.3,
+    "last_revalidation": "2025-01-15",
+    "next_revalidation_due": "2026-01-15"
+  },
+  "fork": {
+    "inference_forkable": true,
+    "training_forkable": false,
+    "constructed_barriers": [],
+    "compute_capture_status": "captured"
   },
   "exit": {
     "rag_opt_out": true,

@@ -34,6 +34,14 @@
     "binding_mechanism_tested": false,
     "community_represented": false
   },
+  "fork_verification": {
+    "legally_permitted": false,
+    "artifacts_verified": false,
+    "data_portability_tested": true,
+    "constructed_barriers_identified": ["exclusive_government_license", "regulatory_monopoly"],
+    "reproduction_attempted": false,
+    "reproduction_successful": false
+  },
   "findings": [
     {
       "test": "EXIT",

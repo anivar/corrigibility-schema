@@ -2,6 +2,27 @@
 
 All notable changes to the Corrigibility Schema Protocol.
 
+## [2.0.1] - 2025-03
+
+### Added
+
+- **Fork verification fields** — legally_permitted, artifacts_available, constructed_barriers for DPI
+- **Training forkability** — inference_forkable vs training_forkable distinction for EPI
+- **Compute capture assessment** — C_train > κ × C_accessible verification fields
+- **Revalidation structure** — monitoring_frequency, drift_threshold, next_revalidation_due
+- **Fork verification in audit** — reproduction_attempted, reproduction_successful
+
+### Skill Rules Added
+
+- `layer-decomposition.md` — propagation rule, weakest-layer principle
+- `variety-drift.md` — temporal drift, revalidation thresholds
+- `action-boundary.md` — GDoS, deterministic envelope, agentic systems
+
+### Protocol Updates
+
+- Section 14: Periodic Enhancement Workflow
+- Section 15: Paper-Schema Compliance requirements
+
 ## [2.0] - 2025-02
 
 ### Added
