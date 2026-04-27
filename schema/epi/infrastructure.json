@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "urn:corrigibility:epi/infrastructure.json",
   "title": "Corrigibility EPI Infrastructure Manifest",
-  "description": "Operator declaration for Epistemic Public Infrastructure",
+  "description": "Operator's Affidavit for Epistemic Public Infrastructure (companion paper §A.1). Extends the DPI manifest with LWD-R transparency, Action Boundary Protocol, Compute Capture, Variety Drift, and tiered risk classification.",
   "type": "object",
   "required": [
     "protocol_version",
@@ -11,50 +11,54 @@
     "timestamp",
     "operator",
     "tier",
+    "topology",
     "layers",
     "lwd_r",
+    "code",
+    "exit",
+    "governance",
+    "compute",
+    "fork",
     "corrigibility_claim",
     "operator_signature"
   ],
   "properties": {
-    "protocol_version": {
-      "type": "string",
-      "pattern": "^2\\.[0-9]+$"
-    },
-    "system_id": {
-      "type": "string",
-      "minLength": 1
-    },
-    "manifest_version": {
-      "type": "string",
-      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
-    },
+    "protocol_version": { "type": "string", "pattern": "^3\\.[0-9]+$" },
+    "system_id": { "type": "string", "minLength": 1 },
+    "manifest_version": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" },
     "previous_manifest_hash": {
       "type": ["string", "null"],
       "pattern": "^sha256:[a-f0-9]{64}$"
-    },
-    "timestamp": {
-      "type": "string",
-      "format": "date-time"
-    },
-    "operator": {
-      "type": "object",
-      "required": ["entity", "jurisdiction", "public_key"],
-      "properties": {
-        "entity": { "type": "string" },
-        "jurisdiction": { "type": "string" },
-        "public_key": { "type": "string" }
-      },
-      "additionalProperties": false
     },
     "current_audit_hash": {
       "type": ["string", "null"],
       "pattern": "^sha256:[a-f0-9]{64}$"
     },
+    "timestamp": { "type": "string", "format": "date-time" },
+    "operator": {
+      "type": "object",
+      "required": ["entity", "jurisdiction", "identity_tier", "verification_method"],
+      "additionalProperties": false,
+      "properties": {
+        "entity": { "type": "string", "minLength": 1 },
+        "jurisdiction": { "type": "string" },
+        "identity_tier": {
+          "type": "integer",
+          "enum": [1, 2, 3],
+          "description": "Paper §E.2 Tiered Assurance Model."
+        },
+        "verification_method": { "$ref": "urn:corrigibility:dpi/infrastructure.json#/$defs/verification_method" },
+        "contact_url": { "type": "string", "format": "uri" }
+      }
+    },
     "tier": {
       "type": "string",
       "enum": ["trivial", "decision_support", "high_stakes"],
-      "description": "Risk classification determining compliance requirements"
+      "description": "Risk classification (companion paper EPI tiers). high_stakes systems mediate welfare/judicial/policing decisions and require full LWD-R + enforced action boundaries."
+    },
+    "topology": {
+      "type": "string",
+      "enum": ["centralized_sovereign", "federated_protocol", "market_platform", "open_commons"]
     },
     "layers": {
       "type": "array",
@@ -62,194 +66,215 @@
       "items": {
         "type": "object",
         "required": ["layer_id", "layer_type", "introduced_at"],
+        "additionalProperties": false,
         "properties": {
-          "layer_id": { "type": "string" },
+          "layer_id": { "type": "string", "minLength": 1 },
           "layer_type": {
             "type": "string",
-            "enum": ["inference", "orchestration", "retrieval", "training", "evaluation", "action"]
+            "enum": ["inference", "orchestration", "retrieval", "training", "evaluation", "action", "presentation"],
+            "description": "EPI vertical strata (companion paper)."
           },
           "introduced_at": { "type": "string", "format": "date" },
+          "spec_open": { "type": "boolean" },
+          "implementation_open": { "type": "boolean" },
           "deprecated": { "type": "boolean", "default": false },
           "deprecated_at": { "type": ["string", "null"], "format": "date" }
-        },
-        "additionalProperties": false
+        }
       }
     },
     "lwd_r": {
       "type": "object",
-      "description": "Logic-Weights-Data-Representation transparency",
+      "description": "Logic-Weights-Data-Representation transparency (companion paper four-layer LWD-R framework).",
       "required": ["logic", "weights", "data", "representation"],
+      "additionalProperties": false,
       "properties": {
         "logic": {
           "type": "object",
           "required": ["inspectable", "deterministic_envelope"],
+          "additionalProperties": false,
           "properties": {
             "inspectable": { "type": "boolean" },
-            "deterministic_envelope": { "type": "boolean" },
+            "deterministic_envelope": {
+              "type": "boolean",
+              "description": "Logic layer wraps stochastic inference inside a deterministic Action Boundary (companion paper §6.7.3)."
+            },
             "orchestration_url": { "type": "string", "format": "uri" }
-          },
-          "additionalProperties": false
+          }
         },
         "weights": {
           "type": "object",
           "required": ["open", "model_id"],
+          "additionalProperties": false,
           "properties": {
             "open": { "type": "boolean" },
-            "model_id": { "type": "string" },
+            "model_id": { "type": "string", "minLength": 1 },
             "weights_url": { "type": "string", "format": "uri" },
-            "license": { "type": "string" }
-          },
-          "additionalProperties": false
+            "license": { "type": "string", "description": "SPDX or model-specific license id." }
+          }
         },
         "data": {
           "type": "object",
           "required": ["provenance_documented", "local_storage"],
+          "additionalProperties": false,
           "properties": {
             "provenance_documented": { "type": "boolean" },
             "local_storage": { "type": "boolean" },
             "provenance_url": { "type": "string", "format": "uri" },
             "rag_filtering": {
               "type": "boolean",
-              "description": "EXIT via workflow filtering at RAG layer"
-            }
-          },
-          "additionalProperties": false
+              "description": "EXIT via workflow filtering at the retrieval layer (companion paper)."
+            },
+            "datasheet_url": { "type": "string", "format": "uri", "description": "Gebru et al. Datasheets-for-Datasets reference." }
+          }
         },
         "representation": {
           "type": "object",
           "required": ["bias_assessed"],
+          "additionalProperties": false,
           "properties": {
             "bias_assessed": { "type": "boolean" },
-            "communities_consulted": {
-              "type": "array",
-              "items": { "type": "string" }
-            },
-            "assessment_url": { "type": "string", "format": "uri" }
-          },
-          "additionalProperties": false
+            "communities_consulted": { "type": "array", "items": { "type": "string" } },
+            "assessment_url": { "type": "string", "format": "uri" },
+            "model_card_url": { "type": "string", "format": "uri", "description": "Mitchell et al. Model-Card reference." }
+          }
         }
-      },
-      "additionalProperties": false
+      }
+    },
+    "code": {
+      "type": "object",
+      "description": "CODE test (paper §4 Test 2 + Tables 8/9). Applies to orchestration logic; LWD-R weights/data are scored separately under lwd_r.",
+      "required": ["source_available", "license_open", "build_reproducible"],
+      "additionalProperties": false,
+      "properties": {
+        "source_available": { "type": "boolean" },
+        "source_repository_url": { "type": "string", "format": "uri" },
+        "license_open": { "type": "boolean" },
+        "license_id": { "type": "string" },
+        "build_reproducible": { "type": "boolean" },
+        "build_proof_url": { "type": "string", "format": "uri" },
+        "public_loc_pct": { "type": "number", "minimum": 0, "maximum": 1 }
+      }
     },
     "action_boundaries": {
       "type": "object",
-      "description": "Deterministic constraints on AI actions",
+      "description": "Action Boundary Protocol (companion paper §6.7.3 + skills/assess/rules/action-boundary.md). Deterministic envelope wrapping stochastic inference. REQUIRED when tier ∈ {decision_support, high_stakes}; tier=trivial may omit.",
+      "required": ["enforced", "mechanism"],
+      "additionalProperties": false,
       "properties": {
         "enforced": { "type": "boolean" },
         "mechanism": {
           "type": "string",
           "enum": ["hard_coded", "policy_engine", "human_approval", "hybrid"]
         },
-        "permitted_actions": {
-          "type": "array",
-          "items": { "type": "string" },
-          "description": "Whitelist of permitted action types"
+        "executed_outside_llm_context": {
+          "type": "boolean",
+          "description": "Boundary enforced in execution environment, not via system prompt. Companion paper: prompt-injectable boundaries are not boundaries."
         },
-        "prohibited_actions": {
-          "type": "array",
-          "items": { "type": "string" },
-          "description": "Blacklist of prohibited actions"
+        "termination_criteria_explicit": {
+          "type": "boolean",
+          "description": "Prevents Governance Denial of Service (GDoS) — companion paper."
         },
-        "human_required_for": {
-          "type": "array",
-          "items": { "type": "string" },
-          "description": "Actions requiring human approval"
-        },
+        "permitted_actions": { "type": "array", "items": { "type": "string" } },
+        "prohibited_actions": { "type": "array", "items": { "type": "string" } },
+        "human_required_for": { "type": "array", "items": { "type": "string" } },
         "boundary_spec_url": { "type": "string", "format": "uri" }
-      },
-      "additionalProperties": false
+      }
     },
     "compute": {
       "type": "object",
-      "description": "Compute accessibility for FORK test",
+      "description": "Compute accessibility for FORK (companion paper Compute Capture: C_train > κ · C_accessible breaks FORK).",
+      "required": ["inference_accessible", "training_accessible"],
+      "additionalProperties": false,
       "properties": {
         "inference_accessible": { "type": "boolean" },
-        "training_accessible": {
-          "type": "boolean",
-          "description": "Community can retrain (training forkability)"
-        },
-        "estimated_training_cost_usd": {
+        "training_accessible": { "type": "boolean" },
+        "estimated_training_cost_usd": { "type": "number", "minimum": 0 },
+        "estimated_inference_cost_usd": { "type": "number", "minimum": 0 },
+        "community_compute_estimate_usd": {
           "type": "number",
-          "description": "Training cost for compute capture analysis"
+          "minimum": 0,
+          "description": "C_accessible: estimated compute budget of the community (companion paper)."
         },
-        "estimated_inference_cost_usd": { "type": "number" },
+        "kappa": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Policy constant for Compute Capture (companion paper). Capture iff training_cost > κ × community_compute."
+        },
         "swap_time_minutes": {
           "type": "integer",
-          "description": "Zero-cost swapability metric"
+          "minimum": 0,
+          "description": "Time to swap to an alternative compatible model with equivalent task performance."
         },
-        "alternative_vendors": {
-          "type": "array",
-          "items": { "type": "string" },
-          "description": "Compatible alternative model providers"
-        },
-        "training_code_available": {
-          "type": "boolean",
-          "description": "Full training code published (required for FORK)"
-        },
-        "data_manifest_available": {
-          "type": "boolean",
-          "description": "Training data manifest published (required for FORK)"
-        }
-      },
-      "additionalProperties": false
+        "alternative_vendors": { "type": "array", "items": { "type": "string" } },
+        "training_code_available": { "type": "boolean" },
+        "data_manifest_available": { "type": "boolean" }
+      }
     },
     "revalidation": {
       "type": "object",
-      "description": "Variety drift monitoring and revalidation",
+      "description": "Variety Drift monitoring (companion paper §Variety Drift; skills/assess/rules/variety-drift.md). Δ(t) = V_world(t) − V_model(θ); revalidation triggered when Δ > τ.",
+      "additionalProperties": false,
       "properties": {
         "monitoring_enabled": { "type": "boolean" },
         "monitoring_frequency": {
           "type": "string",
           "enum": ["daily", "weekly", "monthly", "quarterly"]
         },
-        "drift_threshold": {
-          "type": "number",
-          "minimum": 0,
-          "maximum": 1,
-          "description": "Threshold τ for revalidation trigger"
-        },
-        "last_revalidation": {
-          "type": "string",
-          "format": "date"
-        },
-        "next_revalidation_due": {
-          "type": "string",
-          "format": "date"
-        }
-      },
-      "additionalProperties": false
+        "drift_threshold": { "type": "number", "minimum": 0, "maximum": 1, "description": "τ" },
+        "last_revalidation": { "type": "string", "format": "date" },
+        "next_revalidation_due": { "type": "string", "format": "date" }
+      }
     },
     "exit": {
       "type": "object",
-      "description": "EXIT mechanisms - workflow filtering approach",
+      "description": "EXIT for EPI: workflow filtering at retrieval/inference layers (companion paper). For essential systems, augment with FEE per paper §6.7.2.",
+      "additionalProperties": false,
       "properties": {
         "rag_opt_out": {
           "type": "boolean",
-          "description": "Citizens can remove data from retrieval layer"
+          "description": "Subjects can remove their data from the retrieval layer."
         },
         "inference_blocking": {
           "type": "boolean",
-          "description": "Citizens can block inference on their data"
+          "description": "Subjects can block inference on their data."
         },
         "deletion_procedure_url": { "type": "string", "format": "uri" },
-        "deletion_sla_days": { "type": "integer" }
-      },
-      "additionalProperties": false
+        "deletion_sla_days": { "type": "integer", "minimum": 0 },
+        "fee": { "$ref": "urn:corrigibility:dpi/infrastructure.json#/properties/exit/properties/fee" }
+      }
     },
     "governance": {
       "type": "object",
-      "description": "GOVERN test - grievance vs binding governance",
+      "description": "GOVERN test under EPI. Same Rule A.9 conditions as DPI.",
+      "required": ["grievance_channel", "binding_mechanism"],
+      "additionalProperties": false,
       "properties": {
         "grievance_channel": { "type": "boolean" },
         "binding_mechanism": { "type": "boolean" },
+        "binding_proof_url": { "type": "string", "format": "uri" },
+        "binding_proof_hash": { "type": "string", "pattern": "^sha256:[a-f0-9]{64}$" },
+        "binding_proof_type": {
+          "type": "string",
+          "enum": ["statute", "constitution", "charter", "treaty", "regulation", "judicial_precedent"]
+        },
+        "enforcement_history_url": { "type": "string", "format": "uri" },
         "representation_body": { "type": "string" },
-        "governance_charter_url": { "type": "string", "format": "uri" }
+        "representation_charter_url": { "type": "string", "format": "uri" },
+        "throughput_per_10k_per_day": { "type": "number", "minimum": 0 },
+        "override_rate": { "type": "number", "minimum": 0, "maximum": 1 }
       },
-      "additionalProperties": false
+      "allOf": [
+        {
+          "if": { "properties": { "binding_mechanism": { "const": true } }, "required": ["binding_mechanism"] },
+          "then": {
+            "required": ["binding_proof_url", "binding_proof_hash", "binding_proof_type", "enforcement_history_url"]
+          }
+        }
+      ]
     },
     "escalation": {
       "type": "object",
-      "description": "Human oversight linkage",
+      "additionalProperties": false,
       "properties": {
         "oversight_body": { "type": "string" },
         "oversight_url": { "type": "string", "format": "uri" },
@@ -258,56 +283,77 @@
           "items": {
             "type": "object",
             "required": ["condition", "action"],
+            "additionalProperties": false,
             "properties": {
               "condition": { "type": "string" },
               "action": {
                 "type": "string",
-                "enum": ["notify", "mandatory_review", "citizen_jury", "judicial_review", "suspension"]
+                "enum": ["notify", "mandatory_review", "citizen_jury", "judicial_review", "suspension", "freeze", "rollback", "compensation"]
               }
             }
           }
         },
         "liability_url": { "type": "string", "format": "uri" }
-      },
-      "additionalProperties": false
+      }
     },
     "fork": {
       "type": "object",
-      "description": "FORK test - inference vs training forkability",
+      "description": "FORK for EPI distinguishes inference forkability (run an existing model) from training forkability (reproduce the model). Only training forkability satisfies FORK in the paper sense (companion paper).",
+      "required": ["inference_forkable", "training_forkable", "license_permissive"],
+      "additionalProperties": false,
       "properties": {
-        "inference_forkable": {
-          "type": "boolean",
-          "description": "Can run the model (necessary but not sufficient)"
-        },
-        "training_forkable": {
-          "type": "boolean",
-          "description": "Can reproduce the model (sufficient for FORK)"
-        },
-        "constructed_barriers": {
-          "type": "array",
-          "items": { "type": "string" }
-        },
+        "inference_forkable": { "type": "boolean" },
+        "training_forkable": { "type": "boolean" },
+        "license_permissive": { "type": "boolean" },
+        "constructed_barriers": { "type": "array", "items": { "type": "string" } },
         "compute_capture_status": {
           "type": "string",
           "enum": ["none", "moderate", "captured"],
-          "description": "C_train > κ × C_accessible assessment"
-        }
-      },
-      "additionalProperties": false
+          "description": "Derived from compute.* fields and κ."
+        },
+        "successful_forks": { "type": "array", "items": { "type": "string" } }
+      }
     },
     "corrigibility_claim": {
       "type": "object",
       "required": ["EXIT", "CODE", "AUDIT", "GOVERN", "FORK"],
+      "additionalProperties": false,
       "properties": {
         "EXIT": { "type": "boolean" },
         "CODE": { "type": "boolean" },
         "AUDIT": { "type": "boolean" },
         "GOVERN": { "type": "boolean" },
         "FORK": { "type": "boolean" }
-      },
-      "additionalProperties": false
+      }
     },
-    "operator_signature": { "type": "string" }
+    "revocation": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "withdrawn": { "type": "boolean", "default": false },
+        "withdrawn_at": { "type": "string", "format": "date-time" },
+        "reason": { "type": "string" }
+      }
+    },
+    "operator_signature": { "$ref": "urn:corrigibility:dpi/infrastructure.json#/$defs/signature" }
   },
-  "additionalProperties": false
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "if": {
+        "properties": { "tier": { "enum": ["decision_support", "high_stakes"] } },
+        "required": ["tier"]
+      },
+      "then": {
+        "required": ["action_boundaries"],
+        "properties": {
+          "action_boundaries": {
+            "properties": { "enforced": { "const": true } },
+            "required": ["enforced"]
+          }
+        },
+        "description": "Companion paper: non-trivial EPI tiers MUST enforce an Action Boundary."
+      }
+    }
+  ]
 }

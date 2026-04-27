@@ -1,41 +1,35 @@
 {
-  "protocol_version": "2.0",
-  "system_id": "example-ai-assistant",
+  "protocol_version": "3.0",
+  "system_id": "example-welfare-ai-assistant",
   "manifest_version": "1.0.0",
   "previous_manifest_hash": null,
-  "timestamp": "2025-02-01T00:00:00Z",
-  "operator": {
-    "entity": "Example AI Ministry",
-    "jurisdiction": "XX",
-    "public_key": "-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhki...\n-----END PUBLIC KEY-----"
-  },
   "current_audit_hash": null,
-  "tier": "decision_support",
+  "timestamp": "2026-02-01T00:00:00Z",
+  "operator": {
+    "entity": "Example Public AI Service",
+    "jurisdiction": "XX",
+    "identity_tier": 3,
+    "verification_method": {
+      "type": "Ed25519VerificationKey2020",
+      "controller": "did:web:ai.example.gov",
+      "key_id": "#manifest-signer",
+      "public_key_multibase": "z6MkfXAhmNRBPkN1nsanhiJWPmF1PUkF7YT4kqTbHr6LgnG3"
+    },
+    "contact_url": "https://ai.example.gov/contact"
+  },
+  "tier": "high_stakes",
+  "topology": "federated_protocol",
   "layers": [
-    {
-      "layer_id": "orchestration",
-      "layer_type": "orchestration",
-      "introduced_at": "2025-01-01",
-      "deprecated": false
-    },
-    {
-      "layer_id": "inference",
-      "layer_type": "inference",
-      "introduced_at": "2025-01-01",
-      "deprecated": false
-    },
-    {
-      "layer_id": "retrieval",
-      "layer_type": "retrieval",
-      "introduced_at": "2025-01-01",
-      "deprecated": false
-    }
+    { "layer_id": "orchestrator", "layer_type": "orchestration", "introduced_at": "2026-01-01", "spec_open": true, "implementation_open": true, "deprecated": false },
+    { "layer_id": "inference", "layer_type": "inference", "introduced_at": "2026-01-01", "spec_open": true, "implementation_open": true, "deprecated": false },
+    { "layer_id": "retrieval", "layer_type": "retrieval", "introduced_at": "2026-01-01", "spec_open": true, "implementation_open": true, "deprecated": false },
+    { "layer_id": "action-validator", "layer_type": "action", "introduced_at": "2026-01-01", "spec_open": true, "implementation_open": true, "deprecated": false }
   ],
   "lwd_r": {
     "logic": {
       "inspectable": true,
       "deterministic_envelope": true,
-      "orchestration_url": "https://github.com/example/orchestration"
+      "orchestration_url": "https://github.com/example-gov/welfare-orchestrator"
     },
     "weights": {
       "open": true,
@@ -46,79 +40,114 @@
     "data": {
       "provenance_documented": true,
       "local_storage": true,
-      "provenance_url": "https://example.gov/data-provenance",
-      "rag_filtering": true
+      "provenance_url": "https://ai.example.gov/data-provenance",
+      "rag_filtering": true,
+      "datasheet_url": "https://ai.example.gov/datasheet.pdf"
     },
     "representation": {
       "bias_assessed": true,
-      "communities_consulted": ["linguistic minorities", "disability groups"],
-      "assessment_url": "https://example.gov/bias-assessment"
+      "communities_consulted": [
+        "linguistic minorities",
+        "disability rights groups",
+        "low-income welfare recipients"
+      ],
+      "assessment_url": "https://ai.example.gov/bias-assessment",
+      "model_card_url": "https://ai.example.gov/model-card.pdf"
     }
+  },
+  "code": {
+    "source_available": true,
+    "source_repository_url": "https://github.com/example-gov/welfare-ai",
+    "license_open": true,
+    "license_id": "AGPL-3.0",
+    "build_reproducible": true,
+    "build_proof_url": "https://reproducible-builds.example.gov/welfare-ai",
+    "public_loc_pct": 0.99
   },
   "action_boundaries": {
     "enforced": true,
     "mechanism": "policy_engine",
+    "executed_outside_llm_context": true,
+    "termination_criteria_explicit": true,
     "permitted_actions": ["search", "summarize", "translate", "draft_response"],
-    "prohibited_actions": ["execute_transaction", "modify_record", "delete_data"],
-    "human_required_for": ["final_decision", "appeal_resolution"],
-    "boundary_spec_url": "https://example.gov/action-boundaries"
+    "prohibited_actions": ["execute_transaction", "modify_record", "delete_data", "issue_benefit_decision"],
+    "human_required_for": ["benefit_determination", "appeal_resolution", "sanctioning"],
+    "boundary_spec_url": "https://ai.example.gov/action-boundaries"
   },
   "compute": {
     "inference_accessible": true,
-    "training_accessible": false,
-    "estimated_training_cost_usd": 50000000,
+    "training_accessible": true,
+    "estimated_training_cost_usd": 5000000,
     "estimated_inference_cost_usd": 5000,
-    "swap_time_minutes": 45,
+    "community_compute_estimate_usd": 100000000,
+    "kappa": 0.05,
+    "swap_time_minutes": 30,
     "alternative_vendors": ["mistralai/Mixtral-8x22B", "Qwen/Qwen2-72B"],
-    "training_code_available": false,
-    "data_manifest_available": false
+    "training_code_available": true,
+    "data_manifest_available": true
   },
   "revalidation": {
     "monitoring_enabled": true,
-    "monitoring_frequency": "monthly",
-    "drift_threshold": 0.3,
-    "last_revalidation": "2025-01-15",
-    "next_revalidation_due": "2026-01-15"
-  },
-  "fork": {
-    "inference_forkable": true,
-    "training_forkable": false,
-    "constructed_barriers": [],
-    "compute_capture_status": "captured"
+    "monitoring_frequency": "weekly",
+    "drift_threshold": 0.2,
+    "last_revalidation": "2026-01-15",
+    "next_revalidation_due": "2026-04-15"
   },
   "exit": {
     "rag_opt_out": true,
     "inference_blocking": true,
-    "deletion_procedure_url": "https://example.gov/ai-opt-out",
-    "deletion_sla_days": 7
+    "deletion_procedure_url": "https://ai.example.gov/ai-opt-out",
+    "deletion_sla_days": 7,
+    "fee": {
+      "applies": true,
+      "theta_E": 0.95,
+      "baseline_signal_strength": 1.0,
+      "alt_signal_strength": 0.97,
+      "mechanisms": ["protected_alternatives", "funded_fallback_operations"]
+    }
   },
   "governance": {
     "grievance_channel": true,
     "binding_mechanism": true,
-    "representation_body": "AI Ethics Board",
-    "governance_charter_url": "https://example.gov/ai-governance"
+    "binding_proof_url": "https://laws.example.gov/public-ai-act-2026",
+    "binding_proof_hash": "sha256:9b71d224bd62f3785d96d46ad3ea3d73319bfbc2890caadae2dff72519673ca7",
+    "binding_proof_type": "statute",
+    "enforcement_history_url": "https://ai.example.gov/enforcement-log",
+    "representation_body": "Public AI Ethics Board",
+    "representation_charter_url": "https://ai.example.gov/ethics-charter",
+    "throughput_per_10k_per_day": 2.1,
+    "override_rate": 0.0
   },
   "escalation": {
-    "oversight_body": "AI Ombudsman",
+    "oversight_body": "AI Rights Ombudsman",
     "oversight_url": "https://ombudsman.example.gov",
     "triggers": [
-      {
-        "condition": "drift_score > 0.3",
-        "action": "mandatory_review"
-      },
-      {
-        "condition": "high_stakes_decision",
-        "action": "citizen_jury"
-      }
+      { "condition": "drift_score > 0.2", "action": "mandatory_review" },
+      { "condition": "high_stakes_decision", "action": "citizen_jury" },
+      { "condition": "any_test_false", "action": "freeze" }
     ],
-    "liability_url": "https://example.gov/ai-liability"
+    "liability_url": "https://ai.example.gov/ai-liability"
+  },
+  "fork": {
+    "inference_forkable": true,
+    "training_forkable": true,
+    "license_permissive": true,
+    "constructed_barriers": [],
+    "compute_capture_status": "none",
+    "successful_forks": []
   },
   "corrigibility_claim": {
     "EXIT": true,
     "CODE": true,
     "AUDIT": true,
     "GOVERN": true,
-    "FORK": false
+    "FORK": true
   },
-  "operator_signature": "base64-encoded-signature..."
+  "operator_signature": {
+    "algorithm": "Ed25519",
+    "canonicalization": "RFC8785",
+    "value": "MEUCIQDxAvyEXAMPLE_EPI_OP_SIG_PLACEHOLDER_DO_NOT_DEPLOY_AS_ISmoCIBaseRcExampleNotARealSignaturejustForSchemaVal==",
+    "signed_at": "2026-02-01T00:00:00Z",
+    "key_id": "did:web:ai.example.gov#manifest-signer"
+  }
 }

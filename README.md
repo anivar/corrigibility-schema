@@ -1,7 +1,7 @@
 # Corrigibility Schema Protocol
 
 [![Release](https://img.shields.io/github/v/release/anivar/corrigibility-schema)](https://github.com/anivar/corrigibility-schema/releases/latest)
-[![Protocol](https://img.shields.io/badge/Protocol-2.0-blue.svg)](PROTOCOL.md)
+[![Protocol](https://img.shields.io/badge/Protocol-3.0-blue.svg)](PROTOCOL.md)
 [![License: CC0](https://img.shields.io/badge/License-CC0_1.0-lightgrey.svg)](https://creativecommons.org/publicdomain/zero/1.0/)
 [![ORCID](https://img.shields.io/badge/ORCID-0009--0009--8995--0005-green.svg)](https://orcid.org/0009-0009-8995-0005)
 
@@ -15,7 +15,7 @@ Machine-readable standards for evaluating whether public digital infrastructure 
 | [dpi-audit.json](https://github.com/anivar/corrigibility-schema/releases/latest/download/dpi-audit.json) | DPI assessment |
 | [epi-infrastructure.json](https://github.com/anivar/corrigibility-schema/releases/latest/download/epi-infrastructure.json) | EPI LWD-R manifest |
 | [epi-audit.json](https://github.com/anivar/corrigibility-schema/releases/latest/download/epi-audit.json) | EPI assessment |
-| [skills-assess-v2.0.zip](https://github.com/anivar/corrigibility-schema/releases/latest/download/skills-assess-v2.0.zip) | Assessment skills |
+| [skills-assess-v3.0.zip](https://github.com/anivar/corrigibility-schema/releases/latest/download/skills-assess-v3.0.zip) | Assessment skills |
 
 ## Overview
 
@@ -94,21 +94,29 @@ Skills for LLM-based evaluation following the [Agentic Skills](https://agenticsk
 ## Tools
 
 ```bash
-# Validate a manifest
+# Install runtime deps
+pip install 'jsonschema[format]>=4.18' referencing jcs
+
+# Validate a manifest (auto-detects DPI/EPI × infrastructure/audit)
 python tools/validate.py path/to/infrastructure.json
 
-# Generate hash for audit
+# RFC 8785 SHA-256 hash for chaining/anchoring
 python tools/hash.py path/to/infrastructure.json
 
-# Canonicalize for signing
+# RFC 8785 canonical bytes for signing
 python tools/canonicalize.py path/to/infrastructure.json
 ```
 
 ## Protocol Version
 
-Current: **2.0**
+Current: **3.0** (paper-faithful rewrite — see [CHANGELOG.md](CHANGELOG.md) for breaking changes and migration steps).
 
-See [PROTOCOL.md](PROTOCOL.md) for versioning rules and [CHANGELOG.md](CHANGELOG.md) for history.
+Schemas anchor every field to a specific paper section. Canonicalisation is
+**RFC 8785 (JCS)**, signatures are **Ed25519** over a W3C DID-resolved key,
+and binding-authority claims (Rule A.9) are enforced structurally via JSON
+Schema conditionals.
+
+See [PROTOCOL.md](PROTOCOL.md) for versioning rules.
 
 ## Related
 

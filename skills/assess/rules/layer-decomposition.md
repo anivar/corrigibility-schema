@@ -40,12 +40,17 @@ Strength at one layer cannot compensate for failure at another.
 
 ## DPI Layer Types
 
+`layer_type` is the vertical stratum (paper Table 6). The substantive purpose
+goes in the separate `domain` field (`identity`, `payments`, `credentials`,
+`consent`, `data`, ...).
+
 | Layer Type | Examples | Common Issues |
 |------------|----------|---------------|
 | protocol | W3C DID, VC Data Model, NPCI specs | Often passes CODE |
 | implementation | Resolver, wallet, switching logic | May fail CODE (proprietary) |
 | operations | Registry, helpdesk, dispute | May fail GOVERN (operator-controlled) |
 | data | User records, transaction logs | May fail EXIT (non-portable) |
+| presentation | Mobile app, web frontend | May fail CODE (closed UI) |
 
 ## EPI Layer Types
 
@@ -101,9 +106,11 @@ DPI/EPI infrastructure.json:
 "layers": [{
   "layer_id": "switching",
   "layer_type": "implementation",
+  "domain": "payments",
   "introduced_at": "2016-04-11",
   "spec_open": true,
-  "implementation_open": false
+  "implementation_open": false,
+  "deprecated": false
 }]
 ```
 

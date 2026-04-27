@@ -1,4 +1,4 @@
-# Corrigibility Schema Protocol 2.0
+# Corrigibility Schema Protocol 3.0
 
 ## LLM Operational Instructions
 
@@ -6,7 +6,7 @@
 
 ## 1. Scope
 
-You are evaluating or generating documents that conform to Corrigibility Schema Protocol 2.0.
+You are evaluating or generating documents that conform to Corrigibility Schema Protocol 3.0.
 
 The protocol defines two independent documents:
 
@@ -38,10 +38,13 @@ These documents are cryptographically linked but independently authored. Do not 
 
 For audit.json to be valid:
 
-1. `audited_manifest_hash` must match SHA-256 of canonicalized infrastructure.json
+1. `audited_manifest_hash` must match SHA-256 of the **RFC 8785 (JCS)**
+   canonicalisation of infrastructure.json (with the signature block stripped)
 2. `audited_manifest_version` must match `manifest_version`
-3. Canonicalization: sort keys lexicographically, remove whitespace, UTF-8 encoding
-4. Hash format: `sha256:[64 hex characters]`
+3. Canonicalisation: RFC 8785 only — `jcs.canonicalize` (Python) or an
+   equivalent tested implementation. Hand-rolled `json.dumps(sort_keys=True)`
+   is NOT conformant.
+4. Hash format: `sha256:[64 lowercase hex characters]`
 
 **Hash mismatch → audit invalid.**
 
@@ -92,15 +95,21 @@ Audit becomes stale when:
 
 ## 6. Evaluation Logic
 
-Corrigibility requires ALL tests to pass:
+Corrigibility requires ALL five tests to pass (paper §A.2). The booleans
+live under `tests`; the verdict is a derived `determination` block.
 
 ```
-EXIT == true  AND
-CODE == true  AND
-AUDIT == true AND
-GOVERN == true AND
-FORK == true
+tests.EXIT   == true AND
+tests.CODE   == true AND
+tests.AUDIT  == true AND
+tests.GOVERN == true AND
+tests.FORK   == true
 ```
+
+`determination.corrigible` MUST be the conjunction of the five `tests.*`
+booleans, with `determination.computed_from = "tests"` (paper §A.2 Claim 2).
+If a document carries a `determination` that disagrees with a recomputation
+from `tests`, treat the document as Invalid.
 
 **If any test is false → System is structurally incorrigible.**
 
@@ -197,13 +206,37 @@ Classification must be explicit.
 
 ## 13. Signature Verification
 
-If `public_key` present:
-- Verify signature over canonical JSON
-- Invalid signature → document invalid
+Signatures are **Ed25519** only. The signing identity is a W3C DID
+(`did:key`, `did:web`, `did:plc`, `did:ion`, `did:tdw`) referenced via the
+`verification_method.controller` and `verification_method.key_id` fields.
+Public keys are multibase-encoded (`z` + base58btc). Identity tier
+(`operator.identity_tier` / `auditor.identity_tier`) maps to assurance
+level per paper §E.2:
 
-If signature missing:
-- Mark as unsigned
-- Status cannot exceed "Unverified"
+| Tier | DID method | Assurance |
+|------|-----------|-----------|
+| 1 | `did:key` | Informational |
+| 2 | `did:web` | Verified |
+| 3 | `did:web` + accreditation | Regulatory Standing |
+
+Verification:
+- Resolve the DID, recover the multibase Ed25519 public key.
+- Strip the signature block, canonicalise (RFC 8785), SHA-256.
+- Verify Ed25519 signature over the digest.
+- Confirm `signed_at` is within the document validity window.
+
+Invalid or missing signature:
+- Invalid signature → document Invalid.
+- Missing signature → document is unsigned; status cannot exceed
+  "Unverified". Identity tier downgraded to 1 regardless of declared tier.
+
+Rule A.9 governance binding (paper §E.1): when
+`governance.binding_mechanism = true`, all of `binding_proof_url`,
+`binding_proof_hash` (SHA-256 of the resolved statute / regulation /
+charter), `binding_proof_type`, and `enforcement_history_url` MUST be
+present, and the audit MUST set `binding_proof_resolved`,
+`binding_proof_hash_matched`, and `enforcement_history_verified` to true
+before GOVERN can pass.
 
 ---
 
@@ -281,5 +314,5 @@ No narrative inference. Only structural conclusions.
 3. Use to generate automated verification reports
 4. Publish as normative operational specification
 
-**Protocol Version:** 2.0
-**Schema Location:** https://indiastack.in/schema/
+**Protocol Version:** 3.0
+**Schema Location:** https://github.com/anivar/corrigibility-schema

@@ -4,7 +4,7 @@ description: Evaluate digital and AI infrastructure against the five corrigibili
 license: CC0
 metadata:
   author: anivar
-  version: "2.0.0"
+  version: "3.0.0"
 ---
 
 # Corrigibility Assessment
@@ -34,7 +34,7 @@ Reference these guidelines when:
 
 - `test-exit` - Penalty severity, FEE (Functional Exit Equivalence), human fallback
 - `test-code` - Source inspection, open license, LWD-R for EPI systems
-- `test-audit` - Verification tiers (presence, behavior, proof), independent access
+- `test-audit` - Verification depth (presence, behavior, proof), independent access
 - `test-govern` - Grievance vs binding mechanisms, post-execution fallacy
 - `test-fork` - Constructed vs natural barriers, swapability
 
@@ -75,17 +75,24 @@ Failure of ANY test = Structurally Incorrigible
 
 ## Output Format
 
-Assessment produces `audit.json` following Protocol 2.0:
+Assessment produces `audit.json` following Protocol 3.0. The five booleans
+live under `tests`; the corrigibility verdict is a derived `determination`
+block (paper §A.2 Claim 2):
 
 ```json
 {
-  "protocol_version": "2.0",
-  "results": {
+  "protocol_version": "3.0",
+  "tests": {
     "EXIT": true,
     "CODE": false,
     "AUDIT": true,
     "GOVERN": false,
     "FORK": false
+  },
+  "determination": {
+    "corrigible": false,
+    "computed_from": "tests",
+    "computed_at": "2026-02-15T10:30:00Z"
   },
   "findings": [
     {

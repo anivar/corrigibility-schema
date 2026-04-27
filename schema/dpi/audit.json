@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "urn:corrigibility:dpi/audit.json",
   "title": "Corrigibility DPI Audit",
-  "description": "Independent auditor assessment of infrastructure manifest",
+  "description": "Auditor's Finding (paper §A.1). Independent assessment of an Operator's Affidavit against the five corrigibility tests. The `tests` object is authoritative; `determination` is a derived convenience field that MUST be mechanically recomputed from `tests` (paper §A.2 Claim 2).",
   "type": "object",
   "required": [
     "protocol_version",
@@ -12,56 +12,89 @@
     "valid_until",
     "audited_manifest_version",
     "audited_manifest_hash",
-    "results",
+    "verification_depth",
+    "tests",
     "auditor",
     "auditor_signature"
   ],
   "properties": {
     "protocol_version": {
       "type": "string",
-      "pattern": "^2\\.[0-9]+$"
+      "pattern": "^3\\.[0-9]+$"
     },
-    "system_id": { "type": "string" },
-    "audit_id": {
-      "type": "string",
-      "format": "uuid"
-    },
-    "timestamp": {
-      "type": "string",
-      "format": "date-time"
-    },
+    "system_id": { "type": "string", "minLength": 1 },
+    "audit_id": { "type": "string", "format": "uuid" },
+    "timestamp": { "type": "string", "format": "date-time" },
     "valid_until": {
       "type": "string",
       "format": "date-time",
-      "description": "Audit expiration (max 12 months from timestamp)"
+      "description": "Audit expiration; max 12 months (PROTOCOL.md §8 + paper Variety Drift)."
+    },
+    "previous_audit_hash": {
+      "type": ["string", "null"],
+      "pattern": "^sha256:[a-f0-9]{64}$",
+      "description": "RFC 8785 SHA-256 of the prior audit, anchoring the audit chain (paper Rule A.10)."
     },
     "audited_manifest_version": { "type": "string" },
     "audited_manifest_hash": {
       "type": "string",
       "pattern": "^sha256:[a-f0-9]{64}$"
     },
-    "verification_tier": {
+    "verification_depth": {
       "type": "string",
       "enum": ["presence", "behavior", "proof"],
-      "description": "Depth of verification: presence (docs exist), behavior (tested), proof (formal)"
+      "description": "Audit depth: presence (docs exist), behavior (tested), proof (formal). Distinct from operator/auditor identity_tier (paper §E.2)."
     },
-    "results": {
+    "tests": {
       "type": "object",
+      "description": "Authoritative per-test booleans (paper §A.2). Failure of ANY test renders the system structurally incorrigible (paper §F v1.4: no maturity models).",
       "required": ["EXIT", "CODE", "AUDIT", "GOVERN", "FORK"],
+      "additionalProperties": false,
       "properties": {
         "EXIT": { "type": "boolean" },
         "CODE": { "type": "boolean" },
         "AUDIT": { "type": "boolean" },
         "GOVERN": { "type": "boolean" },
         "FORK": { "type": "boolean" }
-      },
-      "additionalProperties": false
+      }
+    },
+    "determination": {
+      "type": "object",
+      "description": "Derived convenience field (paper §A.2 Claim 2). NON-AUTHORITATIVE; MUST be mechanically recomputed from `tests` by evaluators or courts. corrigible := EXIT ∧ CODE ∧ AUDIT ∧ GOVERN ∧ FORK.",
+      "required": ["corrigible", "computed_from", "computed_at"],
+      "additionalProperties": false,
+      "properties": {
+        "corrigible": { "type": "boolean" },
+        "computed_from": { "type": "string", "const": "tests" },
+        "computed_at": { "type": "string", "format": "date-time" }
+      }
+    },
+    "continuous_indicators": {
+      "type": "object",
+      "description": "Three-indicator protocol diagnostic inputs (paper §7.1.3, Table 9). Continuous values feed binary determinations; thresholds are policy choices (Table 10).",
+      "additionalProperties": false,
+      "properties": {
+        "exit_penalty_ratio": { "type": "number", "minimum": 0, "description": "p; threshold p ≤ 1.2." },
+        "exit_legal_barrier": { "type": "boolean" },
+        "code_visibility": { "type": "number", "minimum": 0, "maximum": 1, "description": "v = public LOC / critical-path LOC; threshold v ≥ 0.95." },
+        "code_build_repro": { "type": "boolean" },
+        "audit_observability": { "type": "number", "minimum": 0, "maximum": 1, "description": "% verifiable transactions; threshold o ≥ 0.9." },
+        "audit_third_party_access": { "type": "boolean" },
+        "audit_mttd_hours": { "type": "number", "minimum": 0, "description": "Mean time to detect; threshold MTTD ≤ 24." },
+        "govern_override_rate": { "type": "number", "minimum": 0, "maximum": 1, "description": "Operator overrule rate; passes when r=0." },
+        "govern_charter_irrevocable": { "type": "boolean" },
+        "govern_throughput": { "type": "number", "minimum": 0, "description": "Decisions per 10k users/day; threshold τ ≥ 1." },
+        "fork_cost_ratio": { "type": "number", "minimum": 0, "description": "c; threshold c ≤ 0.001." },
+        "fork_rights_permissive": { "type": "boolean" },
+        "fork_resource_feasibility": { "type": "number", "minimum": 0, "description": "r; threshold r ≤ 10⁻³." }
+      }
     },
     "layer_verification": {
       "type": "object",
-      "description": "Per-layer verification of spec vs implementation gap",
+      "description": "Per-layer verification (paper §F v1.7). T_system = AND over T(L_i).",
       "additionalProperties": {
         "type": "object",
+        "additionalProperties": false,
         "properties": {
           "spec_verified": { "type": "boolean" },
           "implementation_verified": { "type": "boolean" },
@@ -70,107 +103,139 @@
         }
       }
     },
+    "code_verification": {
+      "type": "object",
+      "description": "Evidence for CODE test (paper §B.4 evidence requirements).",
+      "additionalProperties": false,
+      "properties": {
+        "source_repo_accessed": { "type": "boolean" },
+        "license_validated": { "type": "boolean" },
+        "build_reproduced": { "type": "boolean" },
+        "build_proof_hash": { "type": "string", "pattern": "^sha256:[a-f0-9]{64}$" },
+        "public_loc_verified_pct": { "type": "number", "minimum": 0, "maximum": 1 }
+      }
+    },
+    "exit_verification": {
+      "type": "object",
+      "description": "Evidence for EXIT test (paper §6.7.2 + B.7 FEE if essential).",
+      "additionalProperties": false,
+      "properties": {
+        "penalty_ratio_measured": { "type": "number", "minimum": 0 },
+        "alternative_tested": { "type": "boolean" },
+        "fee_satisfied": { "type": "boolean", "description": "E_alt(S) ≥ θ_E · E_baseline (paper Eq. 23)." },
+        "switching_cost_sigma": { "type": "number", "minimum": 0 }
+      }
+    },
     "governance_verification": {
       "type": "object",
-      "description": "Distinguishes grievance channel from binding governance",
+      "description": "Evidence for GOVERN (paper Rule A.9: grievance ≠ binding governance).",
+      "additionalProperties": false,
       "properties": {
         "grievance_exists": { "type": "boolean" },
         "grievance_functional": { "type": "boolean" },
         "binding_mechanism_exists": { "type": "boolean" },
         "binding_mechanism_tested": { "type": "boolean" },
+        "binding_proof_resolved": { "type": "boolean", "description": "Rule A.9 (i): URL resolves to claimed instrument." },
+        "binding_proof_hash_matched": { "type": "boolean", "description": "Rule A.9 (ii): SHA-256 matches the instrument retrieved." },
+        "enforcement_history_verified": { "type": "boolean", "description": "Rule A.9 (iii): historical enforcement against operator confirmed." },
         "community_represented": { "type": "boolean" }
-      },
-      "additionalProperties": false
+      }
     },
     "fork_verification": {
       "type": "object",
-      "description": "FORK test verification - constructed vs natural barriers",
+      "description": "Evidence for FORK (paper §B.5 network adoption + §B.8 switching cost).",
+      "additionalProperties": false,
       "properties": {
         "legally_permitted": { "type": "boolean" },
+        "license_permissive": { "type": "boolean" },
         "artifacts_verified": { "type": "boolean" },
         "data_portability_tested": { "type": "boolean" },
-        "constructed_barriers_identified": {
-          "type": "array",
-          "items": { "type": "string" }
-        },
-        "reproduction_attempted": {
-          "type": "boolean",
-          "description": "Third party attempted reproduction"
-        },
-        "reproduction_successful": { "type": "boolean" }
-      },
-      "additionalProperties": false
+        "constructed_barriers_identified": { "type": "array", "items": { "type": "string" } },
+        "reproduction_attempted": { "type": "boolean" },
+        "reproduction_successful": { "type": "boolean" },
+        "alpha_critical_mass": { "type": "number", "minimum": 0, "maximum": 1, "description": "Paper §B.5 + Table 10 α* ∈ 0.3–0.5." }
+      }
+    },
+    "active_deception": {
+      "type": "object",
+      "description": "Sensor-attack pathologies (paper §6.4.2 + §B.4 Active Deception). Open-washing, safety-washing, audit theatre. Set true if detected; this corrupts H(s) → 0 even when other surface-level evidence passes.",
+      "additionalProperties": false,
+      "properties": {
+        "open_washing_detected": { "type": "boolean" },
+        "safety_washing_detected": { "type": "boolean" },
+        "audit_theatre_detected": { "type": "boolean" },
+        "evidence_url": { "type": "string", "format": "uri" }
+      }
     },
     "findings": {
       "type": "array",
       "items": {
         "type": "object",
         "required": ["test", "finding", "severity"],
+        "additionalProperties": false,
         "properties": {
           "test": {
             "type": "string",
-            "enum": ["EXIT", "CODE", "AUDIT", "GOVERN", "FORK", "LAYER", "GOVERNANCE"]
+            "enum": ["EXIT", "CODE", "AUDIT", "GOVERN", "FORK", "LAYER", "GOVERNANCE", "DECEPTION"]
           },
           "finding": { "type": "string" },
           "severity": {
             "type": "string",
             "enum": ["critical", "major", "minor", "observation"]
-          }
-        },
-        "additionalProperties": false
+          },
+          "evidence_url": { "type": "string", "format": "uri" }
+        }
       }
     },
     "delegated_verification": {
       "type": "object",
-      "description": "For components verified by observatory body",
+      "description": "Observatory-delegated component verification (PROTOCOL.md §10).",
+      "additionalProperties": false,
       "properties": {
         "observatory": { "type": "string" },
         "component_id": { "type": "string" },
-        "certified_profile_hash": {
-          "type": "string",
-          "pattern": "^sha256:[a-f0-9]{64}$"
-        },
+        "certified_profile_hash": { "type": "string", "pattern": "^sha256:[a-f0-9]{64}$" },
         "certification_date": { "type": "string", "format": "date" },
         "certification_url": { "type": "string", "format": "uri" }
-      },
-      "additionalProperties": false
+      }
     },
     "contestation": {
       "type": "object",
-      "description": "Status if operator disputes findings",
+      "additionalProperties": false,
       "properties": {
         "contested": { "type": "boolean", "default": false },
         "filed_at": { "type": "string", "format": "date-time" },
-        "status": {
-          "type": "string",
-          "enum": ["pending", "upheld", "overturned", "withdrawn"]
-        },
+        "status": { "type": "string", "enum": ["pending", "upheld", "overturned", "withdrawn"] },
         "resolution_date": { "type": ["string", "null"], "format": "date-time" },
         "resolution_summary": { "type": "string" }
-      },
-      "additionalProperties": false
+      }
     },
     "revocation": {
       "type": "object",
-      "description": "If auditor revokes this audit",
+      "additionalProperties": false,
       "properties": {
         "revoked": { "type": "boolean", "default": false },
         "revoked_at": { "type": "string", "format": "date-time" },
         "reason": { "type": "string" }
-      },
-      "additionalProperties": false
+      }
     },
     "auditor": {
       "type": "object",
-      "required": ["entity", "public_key"],
+      "required": ["entity", "identity_tier", "verification_method"],
+      "additionalProperties": false,
       "properties": {
-        "entity": { "type": "string" },
+        "entity": { "type": "string", "minLength": 1 },
+        "jurisdiction": { "type": "string" },
         "accreditation": { "type": "string" },
-        "public_key": { "type": "string" }
-      },
-      "additionalProperties": false
+        "identity_tier": {
+          "type": "integer",
+          "enum": [1, 2, 3],
+          "description": "Paper §E.2 Tiered Assurance Model."
+        },
+        "verification_method": { "$ref": "urn:corrigibility:dpi/infrastructure.json#/$defs/verification_method" }
+      }
     },
-    "auditor_signature": { "type": "string" }
+    "auditor_signature": { "$ref": "urn:corrigibility:dpi/infrastructure.json#/$defs/signature" }
   },
   "additionalProperties": false
 }

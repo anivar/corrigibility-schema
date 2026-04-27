@@ -31,12 +31,13 @@ AUDIT = "no one can prevent auditing"
 | Is transaction-level verification possible? | Verification mechanisms |
 | Can failure rates be independently measured? | Monitoring access |
 
-## Verification Tiers
+## Verification Depth
 
-Depth of verification that external parties can achieve:
+Depth of verification that external parties can achieve. (The term "tier"
+is reserved for the §E.2 identity-tier model — see PROTOCOL.md §6.)
 
-| Tier | Method | Strength | Example |
-|------|--------|----------|---------|
+| Depth | Method | Strength | Example |
+|-------|--------|----------|---------|
 | presence | Documentation exists | Weak | Audit policy published |
 | behavior | Functionality tested | Medium | Red team exercises conducted |
 | proof | Formal verification | Strong | Cryptographic proofs available |
@@ -77,7 +78,7 @@ Incorrigible systems typically capture the audit function:
 
 DPI audit.json:
 ```json
-"verification_tier": "presence|behavior|proof",
+"verification_depth": "presence|behavior|proof",
 "findings": [{
   "test": "AUDIT",
   "finding": "...",

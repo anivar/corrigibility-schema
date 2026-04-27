@@ -41,12 +41,13 @@ MAJOR.MINOR
 | New optional field | MINOR bump | New optional `findings` array |
 | Documentation only | No bump | README update |
 
-### Current Version: 2.0
+### Current Version: 3.0
 
 ### Version History
 
 | Version | Date | Changes |
 |---------|------|---------|
+| 3.0 | 2026-04 | Paper-faithful rewrite. RFC 8785 canonicalization. Ed25519 + W3C DID. Rule A.9 binding-mechanism enforcement. Tiered Assurance Model (paper §E.2). `tests` (replacing `results`) + derived `determination` field. Continuous indicators. Active Deception detection. FEE block with θ_E. Required action_boundaries for non-trivial EPI tiers. Vertical-strata `layer_type` enum + separate `domain` field. |
 | 2.0 | 2025-02 | Initial public protocol. LWD-R structure. Tiered adoption. |
 | 1.x | Internal | Pre-publication iterations |
 
@@ -99,28 +100,42 @@ MAJOR.MINOR
 
 ## 5. Hash Canonicalization Standard
 
-All hashes computed over canonical JSON:
+All hashes are computed over the **RFC 8785 (JSON Canonicalization Scheme, JCS)**
+canonical form of the document, hashed with SHA-256. This is the algorithm
+mandated by paper Rule A.10.
+
+> **DO NOT** hand-roll canonicalization with `json.dumps(sort_keys=True)`.
+> That recipe is **not** RFC 8785 conformant — it mishandles numeric edge
+> cases (e.g. `1.0` → `"1.0"` where JCS requires `"1"`; `-0.0` stays `-0.0`
+> where JCS requires `"0"`), Unicode normalisation, and integer/float
+> boundary rules. Use a tested implementation.
+
+### Reference Implementation
 
 ```python
-import json
 import hashlib
+import jcs  # https://pypi.org/project/jcs/ — RFC 8785 reference
 
-def canonicalize(obj):
-    return json.dumps(obj, sort_keys=True, separators=(',', ':'))
-
-def hash_manifest(obj):
-    canonical = canonicalize(obj)
-    digest = hashlib.sha256(canonical.encode('utf-8')).hexdigest()
+def hash_manifest(obj) -> str:
+    canonical = jcs.canonicalize(obj)         # bytes
+    digest = hashlib.sha256(canonical).hexdigest()
     return f"sha256:{digest}"
 ```
 
+The `tools/canonicalize.py` and `tools/hash.py` scripts in this repository
+delegate to the `jcs` package and MUST NOT be replaced with hand-rolled
+recipes.
+
 ### Rules
 
-1. Sort keys lexicographically (recursive)
-2. No whitespace between elements
-3. UTF-8 encoding
-4. No trailing newline
-5. Hash algorithm: SHA-256 only (Protocol 2.x)
+1. Canonicalisation algorithm: **RFC 8785 (JCS)**, no exceptions
+2. Hash algorithm: **SHA-256** only
+3. Output format: `sha256:<64 lowercase hex characters>`
+4. UTF-8 encoding
+5. The `operator_signature` / `auditor_signature` block itself MUST be
+   stripped before computing `*_hash` of the document, and re-added after
+   signing
+6. Trailing newlines or BOM marks MUST NOT be present in the canonical bytes
 
 ---
 
@@ -128,18 +143,49 @@ def hash_manifest(obj):
 
 ### Algorithm
 
-- Ed25519 (preferred)
-- RSA-PSS with SHA-256 (acceptable)
+- **Ed25519 only.** RSA-PSS, ECDSA-P256, and other algorithms are NOT
+  permitted (paper Rule A.10).
 
-### Format
+### Identity & Key Format
 
+Signing identity is bound through a **W3C Decentralized Identifier (DID)**.
+The supported DID methods are `did:key`, `did:web`, `did:plc`, `did:ion`,
+and `did:tdw`. The DID method choice maps to the Tiered Assurance Model
+(paper §E.2):
+
+| Tier | DID method | Assurance label |
+|------|-----------|-----------------|
+| 1 | `did:key` | Informational |
+| 2 | `did:web` (HTTPS-resolved) | Verified |
+| 3 | `did:web` + institutional accreditation reference | Regulatory Standing |
+
+Public keys are encoded as **multibase base58btc** (`z` prefix,
+`Ed25519VerificationKey2020` type) in the `verification_method` block.
+PEM-wrapped keys are NOT permitted.
+
+### Signature Format
+
+Signatures are **base64url** (RFC 4648 §5, no padding) over the SHA-256
+digest of the RFC 8785 canonical bytes of the document with the
+`operator_signature` / `auditor_signature` block removed.
+
+```json
+{
+  "algorithm": "Ed25519",
+  "canonicalization": "RFC8785",
+  "value": "<base64url(64 bytes)>",
+  "signed_at": "2026-02-01T00:00:00Z",
+  "key_id": "did:web:authority.example.gov#manifest-signer"
+}
 ```
-base64(sign(canonical_json, private_key))
-```
 
-### Public Key Format
+### Verification
 
-PEM-encoded, stored in `public_key` field.
+1. Resolve `key_id` DID → multibase public key
+2. Strip the signature block from the document
+3. Canonicalise (RFC 8785), hash (SHA-256)
+4. Verify Ed25519 signature over the digest
+5. Confirm `signed_at` is within the document's validity window
 
 ---
 
@@ -370,14 +416,24 @@ Schemas MUST encode all paper concepts:
 
 | Paper Concept | Schema Location | Verification |
 |---------------|-----------------|--------------|
-| Five tests | `results.*` | Boolean fields |
-| Layer decomposition | `layers[]` | Array structure |
-| LWD-R | `lwd_r.*` | Required for EPI |
-| Verification tiers | `verification_tier` | Enum |
-| Variety drift | `drift_assessment` | EPI audit |
-| Action boundaries | `action_boundaries` | EPI infrastructure |
-| Compute capture | `compute.*` | EPI infrastructure |
+| Five tests | `tests.*` (audit) / `corrigibility_claim.*` (manifest) | Boolean fields |
+| Derived determination | `determination` (audit) | `computed_from: "tests"` (paper §A.2) |
+| Layer decomposition | `layers[]` + `layer_verification.*` | Vertical-strata `layer_type` + `domain` |
+| LWD-R | `lwd_r.*` (manifest) / `lwd_r_verification.*` (audit) | Required for EPI |
+| Topology | `topology` enum | `centralized_sovereign` / `federated_protocol` / `market_platform` / `open_commons` |
+| Verification depth | `verification_depth` | `presence` / `behavior` / `proof` |
+| Variety drift Δ(t) > τ | `drift_assessment` | EPI audit |
+| Action boundaries | `action_boundaries` | Required for EPI tiers ≥ decision_support |
+| Compute capture (κ) | `compute.kappa`, `compute.community_compute_estimate_usd` | EPI infrastructure |
 | Tiered adoption | `tier` | EPI infrastructure |
+| Identity tier (paper §E.2) | `operator.identity_tier` / `auditor.identity_tier` | DID method × assurance |
+| FEE θ_E | `exit.fee` | DPI + EPI infrastructure |
+| Switching cost σ | `exit_verification.switching_cost_sigma` | DPI audit |
+| Rule A.9 (binding authority) | `governance.binding_proof_url`, `binding_proof_hash`, `enforcement_history_url` | Required when `binding_mechanism=true` |
+| Active Deception | `active_deception.*` (audit) | Open-washing / safety-washing / audit theatre |
+| Continuous indicators (Tables 8/9) | `continuous_indicators.*` | Audit |
+| RFC 8785 canonicalisation | Signature block `canonicalization: "RFC8785"` | Tools |
+| Ed25519 + W3C DID | `verification_method` ($defs) | Tools |
 
 ### Skills MUST Cover
 

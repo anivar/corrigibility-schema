@@ -1,84 +1,136 @@
 {
-  "protocol_version": "2.0",
-  "system_id": "example-identity-system",
+  "protocol_version": "3.0",
+  "system_id": "example-mandatory-id-system",
   "audit_id": "550e8400-e29b-41d4-a716-446655440000",
-  "timestamp": "2025-02-15T10:30:00Z",
-  "valid_until": "2026-02-15T10:30:00Z",
+  "timestamp": "2026-02-15T10:30:00Z",
+  "valid_until": "2027-02-15T10:30:00Z",
+  "previous_audit_hash": null,
   "audited_manifest_version": "1.0.0",
-  "audited_manifest_hash": "sha256:a1b2c3d4e5f6789012345678901234567890123456789012345678901234abcd",
-  "verification_tier": "behavior",
-  "results": {
+  "audited_manifest_hash": "sha256:a1b2c3d4e5f67890abcdef0123456789abcdef0123456789abcdef0123456789",
+  "verification_depth": "behavior",
+  "tests": {
     "EXIT": false,
     "CODE": false,
     "AUDIT": true,
     "GOVERN": false,
     "FORK": false
   },
+  "determination": {
+    "corrigible": false,
+    "computed_from": "tests",
+    "computed_at": "2026-02-15T10:30:00Z"
+  },
+  "continuous_indicators": {
+    "exit_penalty_ratio": 4.8,
+    "exit_legal_barrier": true,
+    "code_visibility": 0.32,
+    "code_build_repro": false,
+    "audit_observability": 0.95,
+    "audit_third_party_access": true,
+    "audit_mttd_hours": 18,
+    "govern_override_rate": 0.41,
+    "govern_charter_irrevocable": false,
+    "govern_throughput": 0.04,
+    "fork_cost_ratio": 1.2,
+    "fork_rights_permissive": false,
+    "fork_resource_feasibility": 0.92
+  },
   "layer_verification": {
     "identity-core": {
       "spec_verified": true,
       "implementation_verified": false,
       "gap_identified": true,
-      "gap_description": "Spec is open but implementation is proprietary"
-    },
-    "consent-manager": {
-      "spec_verified": true,
-      "implementation_verified": true,
-      "gap_identified": false
+      "gap_description": "Spec is open; implementation matcher is proprietary."
     }
+  },
+  "code_verification": {
+    "source_repo_accessed": false,
+    "license_validated": false,
+    "build_reproduced": false,
+    "public_loc_verified_pct": 0.32
+  },
+  "exit_verification": {
+    "penalty_ratio_measured": 4.8,
+    "alternative_tested": false,
+    "fee_satisfied": false,
+    "switching_cost_sigma": 4.6
   },
   "governance_verification": {
     "grievance_exists": true,
     "grievance_functional": true,
     "binding_mechanism_exists": false,
     "binding_mechanism_tested": false,
+    "binding_proof_resolved": false,
+    "binding_proof_hash_matched": false,
+    "enforcement_history_verified": false,
     "community_represented": false
   },
   "fork_verification": {
     "legally_permitted": false,
+    "license_permissive": false,
     "artifacts_verified": false,
     "data_portability_tested": true,
-    "constructed_barriers_identified": ["exclusive_government_license", "regulatory_monopoly"],
+    "constructed_barriers_identified": [
+      "exclusive_government_license",
+      "regulatory_monopoly"
+    ],
     "reproduction_attempted": false,
-    "reproduction_successful": false
+    "reproduction_successful": false,
+    "alpha_critical_mass": 0.4
+  },
+  "active_deception": {
+    "open_washing_detected": true,
+    "safety_washing_detected": false,
+    "audit_theatre_detected": true,
+    "evidence_url": "https://auditor.example.org/findings/550e8400/deception-evidence"
   },
   "findings": [
     {
       "test": "EXIT",
-      "finding": "No deletion mechanism exists. Users cannot remove their data.",
-      "severity": "critical"
-    },
-    {
-      "test": "EXIT",
-      "finding": "No alternative system available for essential services.",
-      "severity": "critical"
+      "finding": "Refusal blocks access to food rations and banking; penalty ratio 4.8 violates p ≤ 1.2 threshold.",
+      "severity": "critical",
+      "evidence_url": "https://auditor.example.org/findings/550e8400/exit"
     },
     {
       "test": "CODE",
-      "finding": "Core identity layer uses proprietary implementation despite open spec.",
-      "severity": "major"
+      "finding": "Core matcher proprietary; visibility 0.32 below v ≥ 0.95 threshold.",
+      "severity": "critical"
     },
     {
       "test": "GOVERN",
-      "finding": "Advisory committee has no binding authority over system changes.",
-      "severity": "major"
+      "finding": "Operator self-regulates; advisory committee has no binding authority. Rule A.9 (i)(ii)(iii) all unmet.",
+      "severity": "critical"
     },
     {
       "test": "FORK",
-      "finding": "Proprietary components prevent independent replication.",
+      "finding": "Hub-and-spoke architecture and exclusive license preclude reproduction; cost ratio 1.2 vs threshold 0.001.",
+      "severity": "critical"
+    },
+    {
+      "test": "DECEPTION",
+      "finding": "Public 'open standards' messaging contradicts proprietary implementation (open-washing).",
       "severity": "major"
     }
   ],
-  "contestation": {
-    "contested": false
-  },
-  "revocation": {
-    "revoked": false
-  },
+  "contestation": { "contested": false },
+  "revocation": { "revoked": false },
   "auditor": {
     "entity": "Independent Digital Rights Auditors",
+    "jurisdiction": "XX",
     "accreditation": "ISO-27001-LEAD",
-    "public_key": "-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhki...\n-----END PUBLIC KEY-----"
+    "identity_tier": 3,
+    "verification_method": {
+      "type": "Ed25519VerificationKey2020",
+      "controller": "did:web:auditor.example.org",
+      "key_id": "#audit-signer",
+      "public_key_multibase": "z6MkpTHR8VNsBxYAAWHut2Geadd9jSwuBV8xRoAnwWsdvktH"
+    }
   },
-  "auditor_signature": "base64-encoded-signature..."
+  "auditor_signature": {
+    "algorithm": "Ed25519",
+    "canonicalization": "RFC8785",
+    "value": "MEUCIQDxAvyEXAMPLE_AUDIT_SIG_PLACEHOLDER_DO_NOT_DEPLOY_AS_ISmoCIBaseRcExampleNotARealSignaturejustForSchemaValidat==",
+    "signed_at": "2026-02-15T10:30:00Z",
+    "key_id": "did:web:auditor.example.org#audit-signer"
+  }
 }

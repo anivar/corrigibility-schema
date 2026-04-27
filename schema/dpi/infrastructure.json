@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "urn:corrigibility:dpi/infrastructure.json",
   "title": "Corrigibility DPI Infrastructure Manifest",
-  "description": "Operator declaration for Digital Public Infrastructure",
+  "description": "Operator's Affidavit (paper §A.1). Signed declaration by the operator of a Digital Public Infrastructure system asserting properties evaluated by the five corrigibility tests (paper §4: EXIT, CODE, AUDIT, GOVERN, FORK).",
   "type": "object",
   "required": [
     "protocol_version",
@@ -10,26 +10,40 @@
     "manifest_version",
     "timestamp",
     "operator",
+    "topology",
     "layers",
+    "code",
+    "exit",
+    "governance",
+    "fork",
     "corrigibility_claim",
     "operator_signature"
   ],
   "properties": {
     "protocol_version": {
       "type": "string",
-      "pattern": "^2\\.[0-9]+$"
+      "pattern": "^3\\.[0-9]+$",
+      "description": "Schema protocol version (paper §F v1.7). MAJOR.MINOR; current MAJOR is 3."
     },
     "system_id": {
       "type": "string",
-      "minLength": 1
+      "minLength": 1,
+      "description": "Stable identifier for the system being declared."
     },
     "manifest_version": {
       "type": "string",
-      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$",
+      "description": "Semantic version of this manifest instance."
     },
     "previous_manifest_hash": {
       "type": ["string", "null"],
-      "pattern": "^sha256:[a-f0-9]{64}$"
+      "pattern": "^sha256:[a-f0-9]{64}$",
+      "description": "RFC 8785 canonical SHA-256 of the prior manifest, anchoring the manifest chain (paper Rule A.10 chain of custody)."
+    },
+    "current_audit_hash": {
+      "type": ["string", "null"],
+      "pattern": "^sha256:[a-f0-9]{64}$",
+      "description": "RFC 8785 canonical SHA-256 of the active audit.json, if any."
     },
     "timestamp": {
       "type": "string",
@@ -37,71 +51,206 @@
     },
     "operator": {
       "type": "object",
-      "required": ["entity", "jurisdiction", "public_key"],
+      "required": ["entity", "jurisdiction", "identity_tier", "verification_method"],
+      "additionalProperties": false,
+      "description": "System operator identity (paper §A.1 Operator's Affidavit + §E.2 Tiered Assurance Model).",
       "properties": {
-        "entity": { "type": "string" },
-        "jurisdiction": { "type": "string" },
-        "public_key": { "type": "string" }
-      },
-      "additionalProperties": false
+        "entity": { "type": "string", "minLength": 1 },
+        "jurisdiction": {
+          "type": "string",
+          "description": "ISO-3166 country code or recognized supranational jurisdiction string."
+        },
+        "identity_tier": {
+          "type": "integer",
+          "enum": [1, 2, 3],
+          "description": "Paper §E.2 Tiered Assurance Model. 1: Self-Attested via did:key (Informational); 2: Domain-Verified via did:web (Verified); 3: Institution-Verified anchored in transparency logs or institutional registries (Regulatory Standing)."
+        },
+        "verification_method": { "$ref": "#/$defs/verification_method" },
+        "contact_url": { "type": "string", "format": "uri" }
+      }
     },
-    "current_audit_hash": {
-      "type": ["string", "null"],
-      "pattern": "^sha256:[a-f0-9]{64}$"
+    "topology": {
+      "type": "string",
+      "enum": ["centralized_sovereign", "federated_protocol", "market_platform", "open_commons"],
+      "description": "Topology classification (paper §6.6 DPI Trilemma + Table 7). Centralized topology compresses governance variety (Proposition 1); federated/commons topologies preserve it."
     },
     "layers": {
       "type": "array",
       "minItems": 1,
+      "description": "Layered decomposition (paper §F v1.7, Layer Decomposition rule). T_system = AND over T(L_i) prevents DID-washing.",
       "items": {
         "type": "object",
         "required": ["layer_id", "layer_type", "introduced_at"],
+        "additionalProperties": false,
         "properties": {
-          "layer_id": { "type": "string" },
+          "layer_id": { "type": "string", "minLength": 1 },
           "layer_type": {
             "type": "string",
-            "enum": ["identity", "payments", "data", "consent", "credentials"]
+            "enum": ["protocol", "implementation", "operations", "data", "presentation"],
+            "description": "Vertical stratum (paper Table 6 + Layer Decomposition rule). Tests propagate by AND across all layers."
+          },
+          "domain": {
+            "type": "string",
+            "enum": ["identity", "payments", "data_exchange", "consent", "credentials", "registry", "messaging", "other"],
+            "description": "Substantive purpose of the layer. Orthogonal to layer_type."
           },
           "introduced_at": { "type": "string", "format": "date" },
           "spec_open": { "type": "boolean" },
           "implementation_open": { "type": "boolean" },
+          "source_repository_url": { "type": "string", "format": "uri" },
+          "build_reproducible": { "type": "boolean", "description": "Paper Table 9 CODE: deterministic build proof." },
           "deprecated": { "type": "boolean", "default": false },
           "deprecated_at": { "type": ["string", "null"], "format": "date" }
-        },
-        "additionalProperties": false
+        }
+      }
+    },
+    "code": {
+      "type": "object",
+      "description": "CODE test (paper §4 Test 2; Tables 8/9: visibility v ≥ 0.95 AND build_repro=true).",
+      "required": ["source_available", "license_open", "build_reproducible"],
+      "additionalProperties": false,
+      "properties": {
+        "source_available": { "type": "boolean" },
+        "source_repository_url": { "type": "string", "format": "uri" },
+        "license_open": { "type": "boolean" },
+        "license_id": { "type": "string", "description": "SPDX identifier (e.g. MIT, Apache-2.0, AGPL-3.0)." },
+        "build_reproducible": { "type": "boolean", "description": "Deterministic build (paper Table 9 binary)." },
+        "build_proof_url": { "type": "string", "format": "uri" },
+        "public_loc_pct": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Visibility v: public LOC / critical-path LOC (paper Table 9 continuous)."
+        }
       }
     },
     "exit": {
       "type": "object",
-      "description": "EXIT test details - can users leave without penalty",
+      "description": "EXIT test (paper §4 Test 1; Tables 8/9: penalty ratio p ≤ 1.2 AND legal_barrier=false). For essential systems, also satisfied via Functional Exit Equivalence (paper §6.7.2, B.7).",
+      "required": ["legal_barrier", "alternative_exists", "penalty_free"],
+      "additionalProperties": false,
       "properties": {
+        "legal_barrier": {
+          "type": "boolean",
+          "description": "Refusal of participation incurs criminal or coercive legal consequence (paper Table 9 binary)."
+        },
+        "penalty_ratio": {
+          "type": "number",
+          "minimum": 0,
+          "description": "p = cost(non-digital alternative) / cost(digital). Paper Table 8 EXIT proxy; threshold p ≤ 1.2."
+        },
         "data_portability": { "type": "boolean" },
         "deletion_available": { "type": "boolean" },
         "alternative_exists": { "type": "boolean" },
         "penalty_free": { "type": "boolean" },
-        "exit_procedure_url": { "type": "string", "format": "uri" }
-      },
-      "additionalProperties": false
+        "exit_procedure_url": { "type": "string", "format": "uri" },
+        "switching_cost": {
+          "type": "object",
+          "description": "Switching-cost vector σ (paper §B.8). Each component normalized to [0,1].",
+          "additionalProperties": false,
+          "properties": {
+            "data": { "type": "number", "minimum": 0, "maximum": 1 },
+            "downtime": { "type": "number", "minimum": 0, "maximum": 1 },
+            "reprovisioning": { "type": "number", "minimum": 0, "maximum": 1 },
+            "network": { "type": "number", "minimum": 0, "maximum": 1 },
+            "legal": { "type": "number", "minimum": 0, "maximum": 1 },
+            "sigma_total": { "type": "number", "minimum": 0, "description": "Sum of components; EXIT/FORK fail when σ > Σ* (paper Eq. 26)." }
+          }
+        },
+        "fee": {
+          "type": "object",
+          "description": "Functional Exit Equivalence (paper §6.7.2, B.7). For essential infrastructure where literal exit is impossible, FEE recreates the error-signal strength of market exit.",
+          "additionalProperties": false,
+          "properties": {
+            "applies": { "type": "boolean", "description": "Whether the system is essential (Proposition 2 trigger)." },
+            "theta_E": {
+              "type": "number",
+              "minimum": 0.8,
+              "maximum": 1.0,
+              "description": "Policy calibration constant (paper Table 10; recommended 0.8–1.0)."
+            },
+            "baseline_signal_strength": { "type": "number", "minimum": 0 },
+            "alt_signal_strength": { "type": "number", "minimum": 0 },
+            "mechanisms": {
+              "type": "array",
+              "uniqueItems": true,
+              "items": {
+                "type": "string",
+                "enum": [
+                  "protected_alternatives",
+                  "multi_issuer_mandate",
+                  "credential_acceptance_diversity",
+                  "binding_multi_stakeholder_charter",
+                  "funded_fallback_operations",
+                  "federated_implementation"
+                ]
+              },
+              "description": "FEE design responses (paper §6.7.3 items 1–6)."
+            }
+          }
+        }
+      }
     },
     "governance": {
       "type": "object",
-      "description": "GOVERN test details - grievance vs binding governance",
+      "description": "GOVERN test (paper §4 Test 4; Tables 8/9: bindingness=true AND override_rate r=0). Per Rule A.9, any binding claim must be backed by a resolvable instrument with cryptographic hash and historical enforcement evidence; assertions relying on post-execution discretion (ombudsmen, feedback forms) DO NOT satisfy this rule.",
+      "required": ["grievance_channel", "binding_mechanism"],
+      "additionalProperties": false,
       "properties": {
         "grievance_channel": {
           "type": "boolean",
-          "description": "Complaint mechanism exists (necessary but not sufficient)"
+          "description": "Complaint mechanism exists (necessary but not sufficient — paper Rule A.9)."
         },
         "binding_mechanism": {
           "type": "boolean",
-          "description": "Community input has binding effect"
+          "description": "Community input is non-overrideable and structurally enforceable (paper §F v1.6: GOVERN is non-overrideable internal constraint, not advice)."
+        },
+        "binding_proof_url": {
+          "type": "string",
+          "format": "uri",
+          "description": "Resolvable reference to the statute/charter (paper Rule A.9 (i)). Required when binding_mechanism=true."
+        },
+        "binding_proof_hash": {
+          "type": "string",
+          "pattern": "^sha256:[a-f0-9]{64}$",
+          "description": "SHA-256 of the binding instrument to prevent silent amendment (paper Rule A.9 (ii))."
+        },
+        "binding_proof_type": {
+          "type": "string",
+          "enum": ["statute", "constitution", "charter", "treaty", "regulation", "judicial_precedent"]
+        },
+        "enforcement_history_url": {
+          "type": "string",
+          "format": "uri",
+          "description": "Historical evidence of enforcement against the operator (paper Rule A.9 (iii))."
         },
         "representation_body": { "type": "string" },
-        "governance_charter_url": { "type": "string", "format": "uri" }
+        "representation_charter_url": { "type": "string", "format": "uri" },
+        "throughput_per_10k_per_day": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Decisions per 10k users per day (paper Table 8 GOVERN proxy; threshold τ ≥ 1)."
+        },
+        "override_rate": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Operator overrule rate (paper Table 9 GOVERN continuous; passes when r=0)."
+        }
       },
-      "additionalProperties": false
+      "allOf": [
+        {
+          "if": { "properties": { "binding_mechanism": { "const": true } }, "required": ["binding_mechanism"] },
+          "then": {
+            "required": ["binding_proof_url", "binding_proof_hash", "binding_proof_type", "enforcement_history_url"]
+          }
+        }
+      ]
     },
     "escalation": {
       "type": "object",
-      "description": "Human oversight linkage",
+      "description": "Human escalation triggers (paper §A.1 + PROTOCOL.md §11). NOT a substitute for GOVERN — see paper §F v1.6.",
+      "additionalProperties": false,
       "properties": {
         "oversight_body": { "type": "string" },
         "oversight_url": { "type": "string", "format": "uri" },
@@ -110,63 +259,140 @@
           "items": {
             "type": "object",
             "required": ["condition", "action"],
+            "additionalProperties": false,
             "properties": {
               "condition": { "type": "string" },
               "action": {
                 "type": "string",
-                "enum": ["notify", "mandatory_review", "citizen_jury", "judicial_review", "suspension"]
+                "enum": ["notify", "mandatory_review", "citizen_jury", "judicial_review", "suspension", "freeze", "rollback", "compensation"]
               }
             }
           }
         },
         "liability_url": { "type": "string", "format": "uri" }
-      },
-      "additionalProperties": false
+      }
     },
     "fork": {
       "type": "object",
-      "description": "FORK test details - can system be reproduced",
+      "description": "FORK test (paper §4 Test 5; Tables 8/9: cost_ratio c ≤ 0.001 AND license_permissive=true; resource feasibility r ≤ 10⁻³). Distinguishes constructed barriers (legal/economic gates the framework can dismantle) from natural barriers (network effects, capital — informational only). EXIT (market choice) ≠ FORK (reproduction); paper §F v1.6.2.",
+      "required": ["legally_permitted", "license_permissive"],
+      "additionalProperties": false,
       "properties": {
         "legally_permitted": {
           "type": "boolean",
-          "description": "No constructed legal barriers to reproduction"
+          "description": "No constructed legal barriers to reproduction (paper §6.7.4 latent forkability)."
         },
-        "artifacts_available": {
+        "license_permissive": {
           "type": "boolean",
-          "description": "Technical artifacts available for reproduction"
+          "description": "Paper Table 9 FORK binary."
         },
-        "data_portable": {
-          "type": "boolean",
-          "description": "User data can be exported"
+        "artifacts_available": { "type": "boolean" },
+        "data_portable": { "type": "boolean" },
+        "resource_feasibility_ratio": {
+          "type": "number",
+          "minimum": 0,
+          "description": "r = estimated FLOP to retrain/aggregate / community compute (paper Table 8 FORK proxy)."
+        },
+        "cost_ratio": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Fork cost / community resources (paper Table 9 FORK continuous)."
         },
         "constructed_barriers": {
           "type": "array",
           "items": { "type": "string" },
-          "description": "List of constructed barriers (patents, exclusive licenses)"
+          "description": "Patents, exclusive licenses, regulatory monopolies — paper §6.7.4."
         },
         "natural_barriers": {
           "type": "array",
           "items": { "type": "string" },
-          "description": "Natural barriers (network effects, capital) - informational only"
+          "description": "Network effects, capital scale — informational only (paper §B.5 latent forkability)."
+        },
+        "successful_forks": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Existing demonstrated forks (paper Table 5 evidence column)."
         }
-      },
-      "additionalProperties": false
+      }
     },
     "corrigibility_claim": {
       "type": "object",
+      "description": "Operator's self-claim per the five tests (paper §A.1). Each value MUST be the operator's good-faith assertion; the auditor's `tests` object in audit.json is the authoritative finding.",
       "required": ["EXIT", "CODE", "AUDIT", "GOVERN", "FORK"],
+      "additionalProperties": false,
       "properties": {
         "EXIT": { "type": "boolean" },
         "CODE": { "type": "boolean" },
         "AUDIT": { "type": "boolean" },
         "GOVERN": { "type": "boolean" },
         "FORK": { "type": "boolean" }
-      },
-      "additionalProperties": false
+      }
     },
-    "operator_signature": {
-      "type": "string"
-    }
+    "revocation": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "withdrawn": { "type": "boolean", "default": false },
+        "withdrawn_at": { "type": "string", "format": "date-time" },
+        "reason": { "type": "string" }
+      }
+    },
+    "operator_signature": { "$ref": "#/$defs/signature" }
   },
-  "additionalProperties": false
+  "additionalProperties": false,
+  "$defs": {
+    "verification_method": {
+      "type": "object",
+      "description": "W3C DID-anchored verification method (paper Rule A.10).",
+      "required": ["type", "controller", "public_key_multibase"],
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["Ed25519VerificationKey2020"],
+          "description": "Paper Rule A.10 mandates Ed25519."
+        },
+        "controller": {
+          "type": "string",
+          "pattern": "^did:(key|web|plc|ion|tdw):[A-Za-z0-9._:%-]+$",
+          "description": "W3C DID identifying the key controller. Identity tier in operator/auditor governs which DID method is acceptable (paper §E.2)."
+        },
+        "key_id": {
+          "type": "string",
+          "description": "Optional key fragment within the DID document, e.g. '#key-1'."
+        },
+        "public_key_multibase": {
+          "type": "string",
+          "pattern": "^z[1-9A-HJ-NP-Za-km-z]{46,49}$",
+          "description": "Multibase 'z' (base58btc) encoding of the multicodec-prefixed Ed25519 public key (32 raw bytes + 0xed01 prefix)."
+        }
+      }
+    },
+    "signature": {
+      "type": "object",
+      "description": "Detached signature over the RFC 8785 canonical JSON of the manifest with this field removed (paper Rule A.10).",
+      "required": ["algorithm", "canonicalization", "value", "signed_at"],
+      "additionalProperties": false,
+      "properties": {
+        "algorithm": {
+          "type": "string",
+          "enum": ["Ed25519"],
+          "description": "Paper Rule A.10 mandates Ed25519. Other algorithms are schema-invalid."
+        },
+        "canonicalization": {
+          "type": "string",
+          "enum": ["RFC8785"],
+          "description": "JSON Canonicalization Scheme (paper Rule A.10)."
+        },
+        "value": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]+={0,2}$",
+          "minLength": 86,
+          "description": "Base64url-encoded 64-byte Ed25519 signature."
+        },
+        "signed_at": { "type": "string", "format": "date-time" },
+        "key_id": { "type": "string" }
+      }
+    }
+  }
 }

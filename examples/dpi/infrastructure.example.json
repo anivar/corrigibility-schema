@@ -1,76 +1,130 @@
 {
-  "protocol_version": "2.0",
-  "system_id": "example-identity-system",
+  "protocol_version": "3.0",
+  "system_id": "example-federated-identity",
   "manifest_version": "1.0.0",
   "previous_manifest_hash": null,
-  "timestamp": "2025-02-01T00:00:00Z",
+  "current_audit_hash": null,
+  "timestamp": "2026-02-01T00:00:00Z",
   "operator": {
     "entity": "Example Digital Authority",
     "jurisdiction": "XX",
-    "public_key": "-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhki...\n-----END PUBLIC KEY-----"
+    "identity_tier": 2,
+    "verification_method": {
+      "type": "Ed25519VerificationKey2020",
+      "controller": "did:web:authority.example.gov",
+      "key_id": "#manifest-signer",
+      "public_key_multibase": "z6MkhaXgBZDvotDkL5257faiztiGiC2QtKLGpbnnEGta2doK"
+    },
+    "contact_url": "https://authority.example.gov/contact"
   },
-  "current_audit_hash": null,
+  "topology": "federated_protocol",
   "layers": [
     {
-      "layer_id": "identity-core",
-      "layer_type": "identity",
-      "introduced_at": "2020-01-01",
-      "spec_open": true,
-      "implementation_open": false,
-      "deprecated": false,
-      "deprecated_at": null
-    },
-    {
-      "layer_id": "consent-manager",
-      "layer_type": "consent",
-      "introduced_at": "2021-06-15",
+      "layer_id": "did-resolver",
+      "layer_type": "protocol",
+      "domain": "identity",
+      "introduced_at": "2025-01-01",
       "spec_open": true,
       "implementation_open": true,
-      "deprecated": false,
-      "deprecated_at": null
+      "source_repository_url": "https://github.com/example-gov/did-resolver",
+      "build_reproducible": true,
+      "deprecated": false
+    },
+    {
+      "layer_id": "credential-issuer",
+      "layer_type": "implementation",
+      "domain": "credentials",
+      "introduced_at": "2025-03-15",
+      "spec_open": true,
+      "implementation_open": true,
+      "source_repository_url": "https://github.com/example-gov/credential-issuer",
+      "build_reproducible": true,
+      "deprecated": false
+    },
+    {
+      "layer_id": "consent-store",
+      "layer_type": "data",
+      "domain": "consent",
+      "introduced_at": "2025-06-01",
+      "spec_open": true,
+      "implementation_open": true,
+      "deprecated": false
     }
   ],
+  "code": {
+    "source_available": true,
+    "source_repository_url": "https://github.com/example-gov/identity-stack",
+    "license_open": true,
+    "license_id": "Apache-2.0",
+    "build_reproducible": true,
+    "build_proof_url": "https://reproducible-builds.example.gov/identity-stack",
+    "public_loc_pct": 0.97
+  },
   "exit": {
+    "legal_barrier": false,
+    "penalty_ratio": 1.0,
     "data_portability": true,
-    "deletion_available": false,
-    "alternative_exists": false,
-    "penalty_free": false,
-    "exit_procedure_url": "https://example.gov/exit"
+    "deletion_available": true,
+    "alternative_exists": true,
+    "penalty_free": true,
+    "exit_procedure_url": "https://authority.example.gov/exit",
+    "fee": {
+      "applies": true,
+      "theta_E": 0.9,
+      "baseline_signal_strength": 1.0,
+      "alt_signal_strength": 0.92,
+      "mechanisms": [
+        "multi_issuer_mandate",
+        "credential_acceptance_diversity",
+        "protected_alternatives"
+      ]
+    }
   },
   "governance": {
     "grievance_channel": true,
-    "binding_mechanism": false,
-    "representation_body": "Advisory Committee (non-binding)",
-    "governance_charter_url": "https://example.gov/governance"
+    "binding_mechanism": true,
+    "binding_proof_url": "https://laws.example.gov/digital-identity-act-2025",
+    "binding_proof_hash": "sha256:7f83b1657ff1fc53b92dc18148a1d65dfc2d4b1fa3d677284addd200126d9069",
+    "binding_proof_type": "statute",
+    "enforcement_history_url": "https://authority.example.gov/enforcement-log",
+    "representation_body": "Independent Digital Rights Council",
+    "representation_charter_url": "https://drc.example.gov/charter",
+    "throughput_per_10k_per_day": 4.2,
+    "override_rate": 0.0
   },
   "escalation": {
-    "oversight_body": "Digital Rights Commission",
-    "oversight_url": "https://drc.example.gov",
+    "oversight_body": "Digital Rights Ombudsman",
+    "oversight_url": "https://drc.example.gov/ombudsman",
     "triggers": [
-      {
-        "condition": "data_breach",
-        "action": "mandatory_review"
-      },
-      {
-        "condition": "mass_exclusion",
-        "action": "judicial_review"
-      }
+      { "condition": "any_test_false", "action": "mandatory_review" },
+      { "condition": "data_breach", "action": "freeze" },
+      { "condition": "mass_exclusion", "action": "judicial_review" }
     ],
-    "liability_url": "https://example.gov/liability"
+    "liability_url": "https://laws.example.gov/digital-identity-liability"
   },
   "fork": {
-    "legally_permitted": false,
-    "artifacts_available": false,
+    "legally_permitted": true,
+    "license_permissive": true,
+    "artifacts_available": true,
     "data_portable": true,
-    "constructed_barriers": ["exclusive_government_license", "regulatory_monopoly"],
-    "natural_barriers": ["network_effects"]
+    "resource_feasibility_ratio": 0.0005,
+    "cost_ratio": 0.0008,
+    "constructed_barriers": [],
+    "natural_barriers": ["initial credential issuer trust bootstrapping"],
+    "successful_forks": []
   },
   "corrigibility_claim": {
-    "EXIT": false,
-    "CODE": false,
+    "EXIT": true,
+    "CODE": true,
     "AUDIT": true,
-    "GOVERN": false,
-    "FORK": false
+    "GOVERN": true,
+    "FORK": true
   },
-  "operator_signature": "base64-encoded-signature..."
+  "operator_signature": {
+    "algorithm": "Ed25519",
+    "canonicalization": "RFC8785",
+    "value": "MEUCIQDxAvyEXAMPLE_SIG_PLACEHOLDER_DO_NOT_DEPLOY_AS_ISmoCIBaseRcExampleNotARealSignaturejustForSchemaValidation==",
+    "signed_at": "2026-02-01T00:00:00Z",
+    "key_id": "did:web:authority.example.gov#manifest-signer"
+  }
 }
