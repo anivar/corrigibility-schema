@@ -2,6 +2,20 @@
 
 All notable changes to the Corrigibility Schema Protocol.
 
+## [3.1] - 2026-07
+
+### Added
+- `fork_viability` field in `schema/epi/audit.json` (artifact_reproducible /
+  governance_reproducible / not_reproducible), per the EPI paper's
+  governance-reproducible FORK standard; required in practice for
+  high_stakes tier audits.
+
+### Changed
+- Assessment rule files retired to `archive/skills-v3-era/`. Frontier
+  evaluators no longer need hand-written rule prompts; the durable machine
+  interface is the schema pair itself (the operator's affidavit and the
+  auditor's finding). The papers and schemas are the specification.
+
 ## [3.0] - 2026-04
 
 Paper-faithful rewrite. Every schema field is now anchored to a specific

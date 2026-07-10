@@ -67,8 +67,8 @@ Skills for LLM-based evaluation following the [Agentic Skills](https://agenticsk
 
 | Skill | Purpose |
 |-------|---------|
-| [assess/SKILL.md](skills/assess/SKILL.md) | Evaluate infrastructure against five tests |
-| [assess/rules/](skills/assess/rules/) | Test definitions: EXIT, CODE, AUDIT, GOVERN, FORK |
+| [assess/SKILL.md](archive/skills-v3-era/assess/SKILL.md) | Evaluate infrastructure against five tests |
+| [assess/rules/](archive/skills-v3-era/assess/rules/) | Test definitions: EXIT, CODE, AUDIT, GOVERN, FORK |
 
 ### Rules
 

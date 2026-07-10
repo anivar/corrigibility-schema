@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "urn:corrigibility:epi/audit.json",
   "title": "Corrigibility EPI Audit",
-  "description": "Auditor's Finding for Epistemic Public Infrastructure (companion paper §A.1). Adds LWD-R verification, Action Boundary verification, Drift Assessment, and Compute Capture verification on top of the DPI audit shape. `tests` is authoritative; `determination` is derived (paper §A.2).",
+  "description": "Auditor's Finding for Epistemic Public Infrastructure (companion paper \u00a7A.1). Adds LWD-R verification, Action Boundary verification, Drift Assessment, and Compute Capture verification on top of the DPI audit shape. `tests` is authoritative; `determination` is derived (paper \u00a7A.2).",
   "type": "object",
   "required": [
     "protocol_version",
@@ -19,45 +19,97 @@
     "auditor_signature"
   ],
   "properties": {
-    "protocol_version": { "type": "string", "pattern": "^3\\.[0-9]+$" },
-    "system_id": { "type": "string", "minLength": 1 },
-    "audit_id": { "type": "string", "format": "uuid" },
-    "timestamp": { "type": "string", "format": "date-time" },
-    "valid_until": { "type": "string", "format": "date-time" },
+    "protocol_version": {
+      "type": "string",
+      "pattern": "^3\\.[0-9]+$"
+    },
+    "system_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "audit_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "valid_until": {
+      "type": "string",
+      "format": "date-time"
+    },
     "previous_audit_hash": {
-      "type": ["string", "null"],
+      "type": [
+        "string",
+        "null"
+      ],
       "pattern": "^sha256:[a-f0-9]{64}$"
     },
-    "audited_manifest_version": { "type": "string" },
+    "audited_manifest_version": {
+      "type": "string"
+    },
     "audited_manifest_hash": {
       "type": "string",
       "pattern": "^sha256:[a-f0-9]{64}$"
     },
     "verification_depth": {
       "type": "string",
-      "enum": ["presence", "behavior", "proof"]
+      "enum": [
+        "presence",
+        "behavior",
+        "proof"
+      ]
     },
     "tests": {
       "type": "object",
-      "required": ["EXIT", "CODE", "AUDIT", "GOVERN", "FORK"],
+      "required": [
+        "EXIT",
+        "CODE",
+        "AUDIT",
+        "GOVERN",
+        "FORK"
+      ],
       "additionalProperties": false,
       "properties": {
-        "EXIT": { "type": "boolean" },
-        "CODE": { "type": "boolean" },
-        "AUDIT": { "type": "boolean" },
-        "GOVERN": { "type": "boolean" },
-        "FORK": { "type": "boolean" }
+        "EXIT": {
+          "type": "boolean"
+        },
+        "CODE": {
+          "type": "boolean"
+        },
+        "AUDIT": {
+          "type": "boolean"
+        },
+        "GOVERN": {
+          "type": "boolean"
+        },
+        "FORK": {
+          "type": "boolean"
+        }
       }
     },
     "determination": {
       "type": "object",
-      "description": "Derived; paper §A.2 Claim 2.",
-      "required": ["corrigible", "computed_from", "computed_at"],
+      "description": "Derived; paper \u00a7A.2 Claim 2.",
+      "required": [
+        "corrigible",
+        "computed_from",
+        "computed_at"
+      ],
       "additionalProperties": false,
       "properties": {
-        "corrigible": { "type": "boolean" },
-        "computed_from": { "type": "string", "const": "tests" },
-        "computed_at": { "type": "string", "format": "date-time" }
+        "corrigible": {
+          "type": "boolean"
+        },
+        "computed_from": {
+          "type": "string",
+          "const": "tests"
+        },
+        "computed_at": {
+          "type": "string",
+          "format": "date-time"
+        }
       }
     },
     "tier_appropriate": {
@@ -67,30 +119,63 @@
     "lwd_r_verification": {
       "type": "object",
       "description": "Companion paper LWD-R: all four pillars must verify for CODE=true on EPI systems.",
-      "required": ["logic_verified", "weights_verified", "data_verified", "representation_verified"],
+      "required": [
+        "logic_verified",
+        "weights_verified",
+        "data_verified",
+        "representation_verified"
+      ],
       "additionalProperties": false,
       "properties": {
-        "logic_verified": { "type": "boolean" },
-        "weights_verified": { "type": "boolean" },
-        "data_verified": { "type": "boolean" },
-        "representation_verified": { "type": "boolean" },
-        "lwd_r_complete": { "type": "boolean", "description": "Conjunction of all four (companion paper)." }
+        "logic_verified": {
+          "type": "boolean"
+        },
+        "weights_verified": {
+          "type": "boolean"
+        },
+        "data_verified": {
+          "type": "boolean"
+        },
+        "representation_verified": {
+          "type": "boolean"
+        },
+        "lwd_r_complete": {
+          "type": "boolean",
+          "description": "Conjunction of all four (companion paper)."
+        }
       }
     },
     "action_boundary_verification": {
       "type": "object",
-      "description": "Companion paper §6.7.3 + skills/assess/rules/action-boundary.md.",
+      "description": "Companion paper \u00a76.7.3 + skills/assess/rules/action-boundary.md.",
       "additionalProperties": false,
       "properties": {
-        "enforced": { "type": "boolean" },
+        "enforced": {
+          "type": "boolean"
+        },
         "mechanism_verified": {
           "type": "string",
-          "enum": ["hard_coded", "policy_engine", "human_approval", "hybrid", "none"]
+          "enum": [
+            "hard_coded",
+            "policy_engine",
+            "human_approval",
+            "hybrid",
+            "none"
+          ]
         },
-        "executed_outside_llm_context_verified": { "type": "boolean" },
-        "prompt_injection_tested": { "type": "boolean" },
-        "escapes_found": { "type": "integer", "minimum": 0 },
-        "escapes_documented": { "type": "boolean" },
+        "executed_outside_llm_context_verified": {
+          "type": "boolean"
+        },
+        "prompt_injection_tested": {
+          "type": "boolean"
+        },
+        "escapes_found": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "escapes_documented": {
+          "type": "boolean"
+        },
         "gdos_mitigation_verified": {
           "type": "boolean",
           "description": "Rate limiting, queue management, termination criteria verified (companion paper GDoS)."
@@ -99,69 +184,159 @@
     },
     "drift_assessment": {
       "type": "object",
-      "description": "Companion paper Variety Drift. Δ(t) > τ triggers revalidation.",
+      "description": "Companion paper Variety Drift. \u0394(t) > \u03c4 triggers revalidation.",
       "additionalProperties": false,
       "properties": {
-        "measured": { "type": "boolean" },
-        "methodology": { "type": "string" },
-        "baseline_date": { "type": "string", "format": "date" },
-        "current_drift_score": { "type": "number", "minimum": 0, "maximum": 1, "description": "Δ(t)" },
-        "retraining_trigger": { "type": "number", "minimum": 0, "maximum": 1, "description": "τ" },
-        "trend": { "type": "string", "enum": ["stable", "increasing", "decreasing"] }
+        "measured": {
+          "type": "boolean"
+        },
+        "methodology": {
+          "type": "string"
+        },
+        "baseline_date": {
+          "type": "string",
+          "format": "date"
+        },
+        "current_drift_score": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "\u0394(t)"
+        },
+        "retraining_trigger": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "\u03c4"
+        },
+        "trend": {
+          "type": "string",
+          "enum": [
+            "stable",
+            "increasing",
+            "decreasing"
+          ]
+        }
       }
     },
     "compute_verification": {
       "type": "object",
-      "description": "Companion paper Compute Capture: training_cost > κ × community_compute breaks FORK.",
+      "description": "Companion paper Compute Capture: training_cost > \u03ba \u00d7 community_compute breaks FORK.",
       "additionalProperties": false,
       "properties": {
-        "inference_accessible": { "type": "boolean" },
-        "training_accessible": { "type": "boolean" },
-        "swap_tested": { "type": "boolean" },
-        "swap_time_actual_minutes": { "type": "integer", "minimum": 0 },
-        "kappa_used": { "type": "number", "minimum": 0 },
-        "training_cost_to_community_ratio": { "type": "number", "minimum": 0 },
-        "compute_capture_assessed": { "type": "boolean" },
-        "compute_capture_result": { "type": "string", "enum": ["none", "moderate", "captured"] }
+        "inference_accessible": {
+          "type": "boolean"
+        },
+        "training_accessible": {
+          "type": "boolean"
+        },
+        "swap_tested": {
+          "type": "boolean"
+        },
+        "swap_time_actual_minutes": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "kappa_used": {
+          "type": "number",
+          "minimum": 0
+        },
+        "training_cost_to_community_ratio": {
+          "type": "number",
+          "minimum": 0
+        },
+        "compute_capture_assessed": {
+          "type": "boolean"
+        },
+        "compute_capture_result": {
+          "type": "string",
+          "enum": [
+            "none",
+            "moderate",
+            "captured"
+          ]
+        }
       }
     },
     "fork_verification": {
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "inference_forkable": { "type": "boolean" },
-        "training_forkable": { "type": "boolean" },
-        "training_code_verified": { "type": "boolean" },
-        "data_manifest_verified": { "type": "boolean" },
-        "reproduction_attempted": { "type": "boolean" },
-        "reproduction_successful": { "type": "boolean" },
-        "swapability_tested": { "type": "boolean" },
-        "swapability_passed": { "type": "boolean" }
+        "inference_forkable": {
+          "type": "boolean"
+        },
+        "training_forkable": {
+          "type": "boolean"
+        },
+        "training_code_verified": {
+          "type": "boolean"
+        },
+        "data_manifest_verified": {
+          "type": "boolean"
+        },
+        "reproduction_attempted": {
+          "type": "boolean"
+        },
+        "reproduction_successful": {
+          "type": "boolean"
+        },
+        "swapability_tested": {
+          "type": "boolean"
+        },
+        "swapability_passed": {
+          "type": "boolean"
+        }
       }
     },
     "exit_verification": {
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "rag_opt_out_tested": { "type": "boolean" },
-        "rag_opt_out_honored": { "type": "boolean" },
-        "inference_blocking_tested": { "type": "boolean" },
-        "inference_blocking_honored": { "type": "boolean" },
-        "fee_satisfied": { "type": "boolean" }
+        "rag_opt_out_tested": {
+          "type": "boolean"
+        },
+        "rag_opt_out_honored": {
+          "type": "boolean"
+        },
+        "inference_blocking_tested": {
+          "type": "boolean"
+        },
+        "inference_blocking_honored": {
+          "type": "boolean"
+        },
+        "fee_satisfied": {
+          "type": "boolean"
+        }
       }
     },
     "governance_verification": {
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "grievance_exists": { "type": "boolean" },
-        "grievance_functional": { "type": "boolean" },
-        "binding_mechanism_exists": { "type": "boolean" },
-        "binding_mechanism_tested": { "type": "boolean" },
-        "binding_proof_resolved": { "type": "boolean" },
-        "binding_proof_hash_matched": { "type": "boolean" },
-        "enforcement_history_verified": { "type": "boolean" },
-        "community_represented": { "type": "boolean" }
+        "grievance_exists": {
+          "type": "boolean"
+        },
+        "grievance_functional": {
+          "type": "boolean"
+        },
+        "binding_mechanism_exists": {
+          "type": "boolean"
+        },
+        "binding_mechanism_tested": {
+          "type": "boolean"
+        },
+        "binding_proof_resolved": {
+          "type": "boolean"
+        },
+        "binding_proof_hash_matched": {
+          "type": "boolean"
+        },
+        "enforcement_history_verified": {
+          "type": "boolean"
+        },
+        "community_represented": {
+          "type": "boolean"
+        }
       }
     },
     "active_deception": {
@@ -169,27 +344,67 @@
       "description": "Companion paper Active Deception (open-washing, safety-washing, audit theatre).",
       "additionalProperties": false,
       "properties": {
-        "open_washing_detected": { "type": "boolean" },
-        "safety_washing_detected": { "type": "boolean" },
-        "audit_theatre_detected": { "type": "boolean" },
-        "evidence_url": { "type": "string", "format": "uri" }
+        "open_washing_detected": {
+          "type": "boolean"
+        },
+        "safety_washing_detected": {
+          "type": "boolean"
+        },
+        "audit_theatre_detected": {
+          "type": "boolean"
+        },
+        "evidence_url": {
+          "type": "string",
+          "format": "uri"
+        }
       }
     },
-    "continuous_indicators": { "$ref": "urn:corrigibility:dpi/audit.json#/properties/continuous_indicators" },
+    "continuous_indicators": {
+      "$ref": "urn:corrigibility:dpi/audit.json#/properties/continuous_indicators"
+    },
     "findings": {
       "type": "array",
       "items": {
         "type": "object",
-        "required": ["test", "finding", "severity"],
+        "required": [
+          "test",
+          "finding",
+          "severity"
+        ],
         "additionalProperties": false,
         "properties": {
           "test": {
             "type": "string",
-            "enum": ["EXIT", "CODE", "AUDIT", "GOVERN", "FORK", "LWD_R", "DRIFT", "BOUNDARY", "TIER", "DECEPTION", "COMPUTE"]
+            "enum": [
+              "EXIT",
+              "CODE",
+              "AUDIT",
+              "GOVERN",
+              "FORK",
+              "LWD_R",
+              "DRIFT",
+              "BOUNDARY",
+              "TIER",
+              "DECEPTION",
+              "COMPUTE"
+            ]
           },
-          "finding": { "type": "string" },
-          "severity": { "type": "string", "enum": ["critical", "major", "minor", "observation"] },
-          "evidence_url": { "type": "string", "format": "uri" }
+          "finding": {
+            "type": "string"
+          },
+          "severity": {
+            "type": "string",
+            "enum": [
+              "critical",
+              "major",
+              "minor",
+              "observation"
+            ]
+          },
+          "evidence_url": {
+            "type": "string",
+            "format": "uri"
+          }
         }
       }
     },
@@ -197,46 +412,120 @@
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "observatory": { "type": "string" },
-        "component_id": { "type": "string" },
-        "certified_profile_hash": { "type": "string", "pattern": "^sha256:[a-f0-9]{64}$" },
-        "certification_date": { "type": "string", "format": "date" },
-        "certification_url": { "type": "string", "format": "uri" }
+        "observatory": {
+          "type": "string"
+        },
+        "component_id": {
+          "type": "string"
+        },
+        "certified_profile_hash": {
+          "type": "string",
+          "pattern": "^sha256:[a-f0-9]{64}$"
+        },
+        "certification_date": {
+          "type": "string",
+          "format": "date"
+        },
+        "certification_url": {
+          "type": "string",
+          "format": "uri"
+        }
       }
     },
     "contestation": {
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "contested": { "type": "boolean", "default": false },
-        "filed_at": { "type": "string", "format": "date-time" },
-        "status": { "type": "string", "enum": ["pending", "upheld", "overturned", "withdrawn"] },
-        "resolution_date": { "type": ["string", "null"], "format": "date-time" },
-        "resolution_summary": { "type": "string" }
+        "contested": {
+          "type": "boolean",
+          "default": false
+        },
+        "filed_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "pending",
+            "upheld",
+            "overturned",
+            "withdrawn"
+          ]
+        },
+        "resolution_date": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date-time"
+        },
+        "resolution_summary": {
+          "type": "string"
+        }
       }
     },
     "revocation": {
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "revoked": { "type": "boolean", "default": false },
-        "revoked_at": { "type": "string", "format": "date-time" },
-        "reason": { "type": "string" }
+        "revoked": {
+          "type": "boolean",
+          "default": false
+        },
+        "revoked_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "reason": {
+          "type": "string"
+        }
       }
     },
     "auditor": {
       "type": "object",
-      "required": ["entity", "identity_tier", "verification_method"],
+      "required": [
+        "entity",
+        "identity_tier",
+        "verification_method"
+      ],
       "additionalProperties": false,
       "properties": {
-        "entity": { "type": "string", "minLength": 1 },
-        "jurisdiction": { "type": "string" },
-        "accreditation": { "type": "string" },
-        "identity_tier": { "type": "integer", "enum": [1, 2, 3] },
-        "verification_method": { "$ref": "urn:corrigibility:dpi/infrastructure.json#/$defs/verification_method" }
+        "entity": {
+          "type": "string",
+          "minLength": 1
+        },
+        "jurisdiction": {
+          "type": "string"
+        },
+        "accreditation": {
+          "type": "string"
+        },
+        "identity_tier": {
+          "type": "integer",
+          "enum": [
+            1,
+            2,
+            3
+          ]
+        },
+        "verification_method": {
+          "$ref": "urn:corrigibility:dpi/infrastructure.json#/$defs/verification_method"
+        }
       }
     },
-    "auditor_signature": { "$ref": "urn:corrigibility:dpi/infrastructure.json#/$defs/signature" }
+    "auditor_signature": {
+      "$ref": "urn:corrigibility:dpi/infrastructure.json#/$defs/signature"
+    },
+    "fork_viability": {
+      "type": "string",
+      "enum": [
+        "artifact_reproducible",
+        "governance_reproducible",
+        "not_reproducible"
+      ],
+      "description": "FORK depth established by this audit. artifact_reproducible: artifacts available and third-party retrain within tolerance. governance_reproducible: additionally, evaluation suites, red-team scenarios, known-failure registries, sanitized incident logs, and harness documentation transfer, sufficient for an independent team to operate and assess the system. Required for high_stakes tier audits (EPI paper, Resource Barriers to Forkability)."
+    }
   },
   "additionalProperties": false
 }
