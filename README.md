@@ -68,8 +68,10 @@ answerability terminating at a sanctionable party, fresh grants, and,
 for auditors, checker independence in operator and in substrate.
 
 The schemas are the interface; the papers are the specification.
-Hand-written assessment rule files from the 3.0 era are preserved under
-[archive/skills-v3-era/](archive/skills-v3-era/).
+[docs/failure-modes.md](docs/failure-modes.md) indexes common operator
+evasion patterns against the tests they degrade and the fields that catch
+them. Hand-written assessment rule files from the 3.0 era are preserved
+under [archive/skills-v3-era/](archive/skills-v3-era/).
 
 ## Tiered Adoption (EPI)
 
