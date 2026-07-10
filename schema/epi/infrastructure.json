@@ -157,7 +157,7 @@
               "additionalProperties": false,
               "properties": {
                 "materiality_threshold_declared": { "type": "boolean" },
-                "pre_deployment_notice_days": { "type": "integer", "minimum": 0, "description": "Minimum review window (recommended: 21 for material schema changes)." },
+                "pre_deployment_notice_days": { "type": "integer", "minimum": 0, "description": "Minimum review window. The structural requirement is the Temporal Stability Condition: the window must exceed the affected community's capacity to contest at the relevant stratum. The number is calibration (recommended: 21 for material schema changes)." },
                 "review_body": { "type": "string", "description": "Designated ontology-review body." },
                 "suspensive_effect": { "type": "boolean", "description": "Objections within the review window impose a hold on deployment of the changed schema." },
                 "versioned_schema_diffs": { "type": "boolean", "description": "Auditor can reconstruct the operative schema on any given date." },
