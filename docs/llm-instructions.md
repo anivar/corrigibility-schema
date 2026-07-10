@@ -1,4 +1,4 @@
-# Corrigibility Schema Protocol 3.0
+# Corrigibility Schema Protocol 3.1
 
 ## LLM Operational Instructions
 
@@ -6,7 +6,7 @@
 
 ## 1. Scope
 
-You are evaluating or generating documents that conform to Corrigibility Schema Protocol 3.0.
+You are evaluating or generating documents that conform to Corrigibility Schema Protocol 3.x.
 
 The protocol defines two independent documents:
 
@@ -86,8 +86,24 @@ Audit becomes stale when:
 - Publish audit.json
 - Sign document
 
+**Species-free roles:** Either role may be operated by a human, an agent,
+or a hybrid. Three invariants bind regardless:
+- Origination is record-borne: `role_execution.operated_by` is a positive
+  marker; absence is never evidence of human operation.
+- Answerability terminates at a sanctionable party
+  (`role_execution.accountable_party`); an agent is not its own
+  accountable party.
+- Grants are fresh acts (`role_execution.authority_grant_url`); no
+  authority from persistence.
+
+An agent auditor must additionally declare `checker_independence`:
+checking functions are structurally independent of what they check, in
+operator and in substrate. A checker sharing model substrate with the
+audited system is correlated; its agreement is not validation.
+
 **LLM must not:**
 - Modify documents on behalf of both roles
+- Operate both roles for the same system
 - Merge operator and auditor declarations
 - Create synthetic co-signed records
 
@@ -109,11 +125,23 @@ tests.FORK   == true
 `determination.corrigible` MUST be the conjunction of the five `tests.*`
 booleans, with `determination.computed_from = "tests"` (paper §A.2 Claim 2).
 If a document carries a `determination` that disagrees with a recomputation
-from `tests`, treat the document as Invalid.
+from `tests`, treat the document as Invalid. The same recompute rule applies to
+`workflow_capture_assessment.wcc_score`, which MUST equal
+1 − HM(s1, s2, s3).
 
 **If any test is false → System is structurally incorrigible.**
 
 Do not compute weighted averages. Do not override boolean outcomes.
+
+**Gradient Quantifier:** pass/fail determination is taken at the
+least-resourced stratum of the affected population (recommended: p10),
+not the mean. An audit of a `high_stakes` system without a documented
+`evaluation_stratum` has assessed the median, not the loop.
+
+**EXIT discharge:** the test is binary with exactly two discharge paths
+(`exit_verification.discharge_path`): bounded-penalty literal exit, or
+verified Functional Exit Equivalence. Essential systems can only
+discharge via `verified_fee`.
 
 ---
 
@@ -127,6 +155,9 @@ For EPI systems, additional checks:
 | `compute_accessible == true` | FORK validity |
 | `action_boundary.enforced == true` | Safe deployment |
 | `drift_assessment.measured == true` | Production systems |
+| `subject_receipt_verification` | GOVERN validity (high_stakes) |
+| `origination_marking_verified == true` | Attribution validity (agentic) |
+| `fork_viability == "governance_reproducible"` | FORK depth (high_stakes) |
 
 Failure in any invalidates corresponding test.
 
@@ -140,7 +171,7 @@ EPI systems declare a `tier`:
 |------|--------------|
 | `trivial` | Closed APIs permitted via action boundaries |
 | `decision_support` | Open weights required, local data storage |
-| `high_stakes` | Full EPI compliance, human-in-loop, verified LWD-R |
+| `high_stakes` | Full verified LWD-R, accountable-authority checkpoint |
 
 Auditor verifies `tier_appropriate` based on actual compliance.
 
@@ -314,5 +345,5 @@ No narrative inference. Only structural conclusions.
 3. Use to generate automated verification reports
 4. Publish as normative operational specification
 
-**Protocol Version:** 3.0
+**Protocol Version:** 3.1
 **Schema Location:** https://github.com/anivar/corrigibility-schema

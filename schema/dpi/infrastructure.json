@@ -66,13 +66,14 @@
           "description": "Paper §E.2 Tiered Assurance Model. 1: Self-Attested via did:key (Informational); 2: Domain-Verified via did:web (Verified); 3: Institution-Verified anchored in transparency logs or institutional registries (Regulatory Standing)."
         },
         "verification_method": { "$ref": "#/$defs/verification_method" },
-        "contact_url": { "type": "string", "format": "uri" }
+        "contact_url": { "type": "string", "format": "uri" },
+        "role_execution": { "$ref": "#/$defs/role_execution" }
       }
     },
     "topology": {
       "type": "string",
       "enum": ["centralized_sovereign", "federated_protocol", "market_platform", "open_commons"],
-      "description": "Topology classification (paper §6.6 DPI Trilemma + Table 7). Centralized topology compresses governance variety (Proposition 1); federated/commons topologies preserve it."
+      "description": "Topology classification (paper DPI Trilemma). Centralized topology compresses governance variety (Proposition 1); federated/commons topologies preserve it."
     },
     "layers": {
       "type": "array",
@@ -87,7 +88,7 @@
           "layer_type": {
             "type": "string",
             "enum": ["protocol", "implementation", "operations", "data", "presentation"],
-            "description": "Vertical stratum (paper Table 6 + Layer Decomposition rule). Tests propagate by AND across all layers."
+            "description": "Vertical stratum (paper Layer Decomposition rule). Tests propagate by AND across all layers."
           },
           "domain": {
             "type": "string",
@@ -98,7 +99,7 @@
           "spec_open": { "type": "boolean" },
           "implementation_open": { "type": "boolean" },
           "source_repository_url": { "type": "string", "format": "uri" },
-          "build_reproducible": { "type": "boolean", "description": "Paper Table 9 CODE: deterministic build proof." },
+          "build_reproducible": { "type": "boolean", "description": "Deterministic build proof (paper determination criteria)." },
           "deprecated": { "type": "boolean", "default": false },
           "deprecated_at": { "type": ["string", "null"], "format": "date" }
         }
@@ -106,7 +107,7 @@
     },
     "code": {
       "type": "object",
-      "description": "CODE test (paper §4 Test 2; Tables 8/9: visibility v ≥ 0.95 AND build_repro=true).",
+      "description": "CODE test (paper §4 Test 2; determination criteria: visibility v ≥ 0.95 AND build_repro=true).",
       "required": ["source_available", "license_open", "build_reproducible"],
       "additionalProperties": false,
       "properties": {
@@ -114,35 +115,56 @@
         "source_repository_url": { "type": "string", "format": "uri" },
         "license_open": { "type": "boolean" },
         "license_id": { "type": "string", "description": "SPDX identifier (e.g. MIT, Apache-2.0, AGPL-3.0)." },
-        "build_reproducible": { "type": "boolean", "description": "Deterministic build (paper Table 9 binary)." },
+        "build_reproducible": { "type": "boolean", "description": "Deterministic build (paper determination criteria)." },
         "build_proof_url": { "type": "string", "format": "uri" },
         "public_loc_pct": {
           "type": "number",
           "minimum": 0,
           "maximum": 1,
-          "description": "Visibility v: public LOC / critical-path LOC (paper Table 9 continuous)."
+          "description": "Visibility v: public LOC / critical-path LOC (paper determination criteria)."
+        },
+        "decision_rule_legible": {
+          "type": "boolean",
+          "description": "Outward CODE exercise (paper, Dual Exercise of the Tests): the operative rule in a subject's case is identifiable and stated, not only the codebase published."
         }
+      }
+    },
+    "subject_receipts": {
+      "type": "object",
+      "description": "Outward AUDIT exercise (paper, Dual Exercise of the Tests): notice that a decision occurred, and a record the subject can verify against the lived event. Receipt structure per the companion paper's Subject Receipt Requirement.",
+      "additionalProperties": false,
+      "properties": {
+        "issued": { "type": "boolean" },
+        "inclusion_proof": { "type": "boolean", "description": "Independently verifiable proof that the receipt corresponds to an entry in the canonical audit log." },
+        "delivery_channel_independent": { "type": "boolean", "description": "Delivered through a channel independent of the operator's logging infrastructure." },
+        "machine_readable": { "type": "boolean" },
+        "format_spec_url": { "type": "string", "format": "uri" }
       }
     },
     "exit": {
       "type": "object",
-      "description": "EXIT test (paper §4 Test 1; Tables 8/9: penalty ratio p ≤ 1.2 AND legal_barrier=false). For essential systems, also satisfied via Functional Exit Equivalence (paper §6.7.2, B.7).",
+      "description": "EXIT test (paper §4 Test 1; determination criteria: penalty ratio p ≤ 1.2 AND legal_barrier=false). For essential systems, also satisfied via Functional Exit Equivalence (paper §6.7.2, B.7).",
       "required": ["legal_barrier", "alternative_exists", "penalty_free"],
       "additionalProperties": false,
       "properties": {
         "legal_barrier": {
           "type": "boolean",
-          "description": "Refusal of participation incurs criminal or coercive legal consequence (paper Table 9 binary)."
+          "description": "Refusal of participation incurs criminal or coercive legal consequence (paper determination criteria)."
         },
         "penalty_ratio": {
           "type": "number",
           "minimum": 0,
-          "description": "p = cost(non-digital alternative) / cost(digital). Paper Table 8 EXIT proxy; threshold p ≤ 1.2."
+          "description": "p = cost(non-digital alternative) / cost(digital). Paper proxy metric; threshold p ≤ 1.2."
         },
         "data_portability": { "type": "boolean" },
         "deletion_available": { "type": "boolean" },
         "alternative_exists": { "type": "boolean" },
         "penalty_free": { "type": "boolean" },
+        "discharge_path": {
+          "type": "string",
+          "enum": ["literal_exit", "verified_fee"],
+          "description": "Claimed EXIT discharge path (paper EXIT definition: bounded-penalty exit, or verified FEE, or failure). Essential systems (paper, Essentiality-Corrigibility Tension) can only claim verified_fee."
+        },
         "exit_procedure_url": { "type": "string", "format": "uri" },
         "switching_cost": {
           "type": "object",
@@ -162,12 +184,12 @@
           "description": "Functional Exit Equivalence (paper §6.7.2, B.7). For essential infrastructure where literal exit is impossible, FEE recreates the error-signal strength of market exit.",
           "additionalProperties": false,
           "properties": {
-            "applies": { "type": "boolean", "description": "Whether the system is essential (Proposition 2 trigger)." },
+            "applies": { "type": "boolean", "description": "Whether the system is essential (paper, Essentiality-Corrigibility Tension)." },
             "theta_E": {
               "type": "number",
               "minimum": 0.8,
               "maximum": 1.0,
-              "description": "Policy calibration constant (paper Table 10; recommended 0.8–1.0)."
+              "description": "Policy calibration constant (paper; recommended 0.8–1.0)."
             },
             "baseline_signal_strength": { "type": "number", "minimum": 0 },
             "alt_signal_strength": { "type": "number", "minimum": 0 },
@@ -193,7 +215,7 @@
     },
     "governance": {
       "type": "object",
-      "description": "GOVERN test (paper §4 Test 4; Tables 8/9: bindingness=true AND override_rate r=0). Per Rule A.9, any binding claim must be backed by a resolvable instrument with cryptographic hash and historical enforcement evidence; assertions relying on post-execution discretion (ombudsmen, feedback forms) DO NOT satisfy this rule.",
+      "description": "GOVERN test (paper §4 Test 4; determination criteria: bindingness=true AND override_rate r=0). Per Rule A.9, any binding claim must be backed by a resolvable instrument with cryptographic hash and historical enforcement evidence; assertions relying on post-execution discretion (ombudsmen, feedback forms) DO NOT satisfy this rule.",
       "required": ["grievance_channel", "binding_mechanism"],
       "additionalProperties": false,
       "properties": {
@@ -226,16 +248,26 @@
         },
         "representation_body": { "type": "string" },
         "representation_charter_url": { "type": "string", "format": "uri" },
+        "collective_standing": {
+          "type": "object",
+          "description": "Collective-Standing Precondition (paper, Ostrom Principle 7): the affected population's capacity to organize, aggregate claims, and fund representation is legally protected and historically exercised at the relevant stratum (Rule A.9 evidence standard).",
+          "additionalProperties": false,
+          "properties": {
+            "legally_protected": { "type": "boolean" },
+            "historically_exercised": { "type": "boolean", "description": "Documented exercise at the relevant stratum within the audit window." },
+            "instrument_url": { "type": "string", "format": "uri", "description": "Resolvable reference to the protecting instrument (association law, class-action vehicle, charter)." }
+          }
+        },
         "throughput_per_10k_per_day": {
           "type": "number",
           "minimum": 0,
-          "description": "Decisions per 10k users per day (paper Table 8 GOVERN proxy; threshold τ ≥ 1)."
+          "description": "Decisions per 10k users per day (paper proxy metric; threshold τ ≥ 1)."
         },
         "override_rate": {
           "type": "number",
           "minimum": 0,
           "maximum": 1,
-          "description": "Operator overrule rate (paper Table 9 GOVERN continuous; passes when r=0)."
+          "description": "Operator overrule rate (paper determination criteria; passes when r=0)."
         }
       },
       "allOf": [
@@ -274,7 +306,7 @@
     },
     "fork": {
       "type": "object",
-      "description": "FORK test (paper §4 Test 5; Tables 8/9: cost_ratio c ≤ 0.001 AND license_permissive=true; resource feasibility r ≤ 10⁻³). Distinguishes constructed barriers (legal/economic gates the framework can dismantle) from natural barriers (network effects, capital — informational only). EXIT (market choice) ≠ FORK (reproduction); paper §F v1.6.2.",
+      "description": "FORK test (paper §4 Test 5; determination criteria: cost_ratio c ≤ 0.001 AND license_permissive=true; resource feasibility r ≤ 10⁻³). Distinguishes constructed barriers (legal/economic gates the framework can dismantle) from natural barriers (network effects, capital — informational only). EXIT (market choice) ≠ FORK (reproduction); paper §F v1.6.2.",
       "required": ["legally_permitted", "license_permissive"],
       "additionalProperties": false,
       "properties": {
@@ -284,19 +316,19 @@
         },
         "license_permissive": {
           "type": "boolean",
-          "description": "Paper Table 9 FORK binary."
+          "description": "Paper determination criteria (FORK binary)."
         },
         "artifacts_available": { "type": "boolean" },
         "data_portable": { "type": "boolean" },
         "resource_feasibility_ratio": {
           "type": "number",
           "minimum": 0,
-          "description": "r = estimated FLOP to retrain/aggregate / community compute (paper Table 8 FORK proxy)."
+          "description": "r = estimated FLOP to retrain / aggregate community compute capacity (paper proxy-metrics table; threshold r ≤ 10⁻³)."
         },
         "cost_ratio": {
           "type": "number",
           "minimum": 0,
-          "description": "Fork cost / community resources (paper Table 9 FORK continuous)."
+          "description": "Fork cost / community resources (paper determination criteria)."
         },
         "constructed_barriers": {
           "type": "array",
@@ -311,7 +343,7 @@
         "successful_forks": {
           "type": "array",
           "items": { "type": "string" },
-          "description": "Existing demonstrated forks (paper Table 5 evidence column)."
+          "description": "Existing demonstrated forks (paper diagnosis evidence)."
         }
       }
     },
@@ -341,6 +373,42 @@
   },
   "additionalProperties": false,
   "$defs": {
+    "role_execution": {
+      "type": "object",
+      "description": "Species-free role execution, extending the papers' deployment-variable invariants to the protocol documents themselves (companion paper, Deployment Variables): origination is record-borne (absence of a marker is never evidence of human operation), answerability terminates at a sanctionable party, of which the human legal person is the current instance, and grants are fresh acts.",
+      "required": ["operated_by", "accountable_party"],
+      "additionalProperties": false,
+      "properties": {
+        "operated_by": {
+          "type": "string",
+          "enum": ["human", "agent", "hybrid"],
+          "description": "Positive origination marker for the actor that operated this role; hybrid denotes agent operation under contemporaneous human review."
+        },
+        "accountable_party": {
+          "type": "string",
+          "minLength": 1,
+          "description": "The sanctionable party at which answerability terminates."
+        },
+        "authority_grant_url": {
+          "type": "string",
+          "format": "uri",
+          "description": "The fresh grant under which an agent operates the role; a grant is an act, not an inference from persistence."
+        }
+      }
+    },
+    "checker_independence": {
+      "type": "object",
+      "description": "Checking functions are structurally independent of what they check, in operator and in substrate (companion paper, Deployment Variables). An agent auditor sharing model substrate with the audited system is a correlated checker (companion paper, Stochastic Redundancy Is Not Validation).",
+      "additionalProperties": false,
+      "properties": {
+        "independent_of_operator": { "type": "boolean" },
+        "substrate_independent": {
+          "type": "boolean",
+          "description": "The checking function does not run on the audited system's model substrate or a correlated one."
+        },
+        "substrate_disclosure": { "type": "string" }
+      }
+    },
     "verification_method": {
       "type": "object",
       "description": "W3C DID-anchored verification method (paper Rule A.10).",

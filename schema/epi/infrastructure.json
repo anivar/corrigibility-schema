@@ -48,7 +48,8 @@
           "description": "Paper §E.2 Tiered Assurance Model."
         },
         "verification_method": { "$ref": "urn:corrigibility:dpi/infrastructure.json#/$defs/verification_method" },
-        "contact_url": { "type": "string", "format": "uri" }
+        "contact_url": { "type": "string", "format": "uri" },
+        "role_execution": { "$ref": "urn:corrigibility:dpi/infrastructure.json#/$defs/role_execution" }
       }
     },
     "tier": {
@@ -96,7 +97,7 @@
             "inspectable": { "type": "boolean" },
             "deterministic_envelope": {
               "type": "boolean",
-              "description": "Logic layer wraps stochastic inference inside a deterministic Action Boundary (companion paper §6.7.3)."
+              "description": "Logic layer wraps stochastic inference inside a deterministic Action Boundary (companion paper, Action Boundary Protocol)."
             },
             "orchestration_url": { "type": "string", "format": "uri" }
           }
@@ -135,7 +136,34 @@
             "bias_assessed": { "type": "boolean" },
             "communities_consulted": { "type": "array", "items": { "type": "string" } },
             "assessment_url": { "type": "string", "format": "uri" },
-            "model_card_url": { "type": "string", "format": "uri", "description": "Mitchell et al. Model-Card reference." }
+            "model_card_url": { "type": "string", "format": "uri", "description": "Mitchell et al. Model-Card reference." },
+            "operative_r": {
+              "type": "object",
+              "description": "Operative Representation (companion paper): disclosure describes the schema that emerges under deployment conditions, not the trained artifact in isolation. If the deployment variables are not enumerated, the derivation chain breaks and the R requirement fails.",
+              "additionalProperties": false,
+              "properties": {
+                "quantization": { "type": "string", "description": "Deployed numeric format and method (e.g. bf16, int8-AWQ, none)." },
+                "routing": { "type": "string", "description": "MoE or ensemble routing configuration in deployment." },
+                "pruning": { "type": "string", "description": "Pruning applied in deployment (e.g. structured 2:4, none)." },
+                "output_filtering": { "type": "string", "description": "Filters and post-processing between model output and effect." },
+                "probe_set_url": { "type": "string", "format": "uri", "description": "Published probe set; provenance fixed in advance by deployment tier." },
+                "tolerance": { "type": "number", "minimum": 0, "description": "Declared statistical tolerance for third-party reproduction of the classification distribution (e.g., total-variation distance ε at sample size n)." },
+                "probe_sample_size": { "type": "integer", "minimum": 1, "description": "Sample size n fixed in advance alongside ε." }
+              }
+            },
+            "change_control": {
+              "type": "object",
+              "description": "R-Layer Change Control (companion paper): in high_stakes deployments, operative representation changes above a declared materiality threshold require pre-deployment notice with a review window, suspensive effect for objections from recognized affected-class representatives, and versioned schema diffs so drift is itself auditable. Emergency changes proceed with immediate disclosure and retroactive review; the burden to demonstrate emergency falls on the operator.",
+              "additionalProperties": false,
+              "properties": {
+                "materiality_threshold_declared": { "type": "boolean" },
+                "pre_deployment_notice_days": { "type": "integer", "minimum": 0, "description": "Minimum review window (recommended: 21 for material schema changes)." },
+                "review_body": { "type": "string", "description": "Designated ontology-review body." },
+                "suspensive_effect": { "type": "boolean", "description": "Objections within the review window impose a hold on deployment of the changed schema." },
+                "versioned_schema_diffs": { "type": "boolean", "description": "Auditor can reconstruct the operative schema on any given date." },
+                "diffs_url": { "type": "string", "format": "uri" }
+              }
+            }
           }
         }
       }
@@ -152,12 +180,16 @@
         "license_id": { "type": "string" },
         "build_reproducible": { "type": "boolean" },
         "build_proof_url": { "type": "string", "format": "uri" },
-        "public_loc_pct": { "type": "number", "minimum": 0, "maximum": 1 }
+        "public_loc_pct": { "type": "number", "minimum": 0, "maximum": 1 },
+        "decision_rule_legible": {
+          "type": "boolean",
+          "description": "Outward CODE exercise (paper, Dual Exercise of the Tests): the operative rule in a subject's case is identifiable and stated."
+        }
       }
     },
     "action_boundaries": {
       "type": "object",
-      "description": "Action Boundary Protocol (companion paper §6.7.3 + skills/assess/rules/action-boundary.md). Deterministic envelope wrapping stochastic inference. REQUIRED when tier ∈ {decision_support, high_stakes}; tier=trivial may omit.",
+      "description": "Action Boundary Protocol (companion paper): the deterministic envelope wrapping stochastic inference. The model proposes, the validator disposes. REQUIRED when tier ∈ {decision_support, high_stakes}; tier=trivial may omit.",
       "required": ["enforced", "mechanism"],
       "additionalProperties": false,
       "properties": {
@@ -177,7 +209,97 @@
         "permitted_actions": { "type": "array", "items": { "type": "string" } },
         "prohibited_actions": { "type": "array", "items": { "type": "string" } },
         "human_required_for": { "type": "array", "items": { "type": "string" } },
-        "boundary_spec_url": { "type": "string", "format": "uri" }
+        "boundary_spec_url": { "type": "string", "format": "uri" },
+        "enforcement_placement": {
+          "type": "string",
+          "enum": ["action_proposal", "effect_surface", "hybrid"],
+          "description": "Untyped Action Channels (companion paper): where the action channel is untyped, the boundary migrates to the effect surface. Placement-invariant: a deterministic, specification-checkable gate between inference and irreversible effect."
+        },
+        "specification_lifetime_days": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "The Normalized Boundary (companion paper): action specifications carry lifetimes; a specification authorized once does not execute indefinitely."
+        },
+        "renewal_requires_fresh_grant": {
+          "type": "boolean",
+          "description": "Renewal is an act of the accountable authority, not a default; every grant is a fresh act rather than an inference from persistence (companion paper, Deployment Variables)."
+        },
+        "accountable_authority_checkpoint": {
+          "type": "object",
+          "description": "Functional checkpoint (companion paper, The Normalized Boundary): an accountable authority whose grant is fresh, whose liability binds, and whose correction operates within the correction window, whether per decision, per class, or at the boundary itself.",
+          "additionalProperties": false,
+          "properties": {
+            "scope": { "type": "string", "enum": ["per_decision", "per_class", "boundary"] },
+            "grant_fresh": { "type": "boolean" },
+            "liability_binds": { "type": "boolean" },
+            "correction_within_window": { "type": "boolean" }
+          }
+        },
+        "scale_bounds": {
+          "type": "object",
+          "description": "Scale as a Governed Variable (companion paper): fan-out limits, action-rate limits, and blast-radius caps are first-class GOVERN instruments: environmental variety is bounded where governance variety cannot be raised to match.",
+          "additionalProperties": false,
+          "properties": {
+            "fan_out_limit": { "type": "integer", "minimum": 0, "description": "Maximum agents spawned per instruction." },
+            "action_rate_limit": { "type": "number", "minimum": 0, "description": "Declared action-rate limit; rate basis stated in boundary_spec_url." },
+            "blast_radius_cap": { "type": "string", "description": "Declared blast-radius cap." },
+            "enforced": { "type": "boolean" }
+          }
+        },
+        "explicit_exception_pathways": {
+          "type": "boolean",
+          "description": "Exception Handling at the Margin (companion paper): explicit exception pathways in the action specification, replacing the removed human discretion buffer."
+        },
+        "guaranteed_fallbacks": {
+          "type": "boolean",
+          "description": "Guaranteed fallbacks for cases that fail the literal specification; without them the failure mode concentrates on the least-resourced stratum (companion paper, Exception Handling at the Margin)."
+        },
+        "fallback_spec_url": { "type": "string", "format": "uri" },
+        "nested_delegation": {
+          "type": "object",
+          "description": "Nested Delegation (companion paper): corrigibility of a nested deployment is the minimum over its delegation depth. Inner authority is contained within its parent's (attenuation), audit records reconstruct across nesting levels, and EXIT propagates down the chain.",
+          "additionalProperties": false,
+          "properties": {
+            "max_delegation_depth": { "type": "integer", "minimum": 0 },
+            "authority_attenuation_enforced": { "type": "boolean" },
+            "audit_reconstructs_across_depth": { "type": "boolean" },
+            "exit_propagates_down_chain": { "type": "boolean" }
+          }
+        }
+      }
+    },
+    "machine_verifiable_legitimacy": {
+      "type": "object",
+      "description": "Machine-verifiable legitimacy (companion paper), items (a) through (d); item (e) is declared in origination_marking. Authority and attribution are record-borne acts rather than inferences from artifacts.",
+      "additionalProperties": false,
+      "properties": {
+        "authority_credentials_machine_interpretable": { "type": "boolean", "description": "(a) Authority encoding: delegation and scope expressed as machine-interpretable credentials." },
+        "revocation_propagation_observable": { "type": "boolean", "description": "(b) Revocation propagation: immediate, observable revocation states that downstream execution environments respect." },
+        "execution_traces_tamper_evident": { "type": "boolean", "description": "(c) Evidence standards: tamper-evident execution traces and evaluation artifacts meeting defined admissibility criteria." },
+        "incident_mitigation_automated": { "type": "boolean", "description": "(d) Incident-triggered mitigation: automated mitigation gating and mandatory rollback when thresholds breach." }
+      }
+    },
+    "origination_marking": {
+      "type": "object",
+      "description": "Origination marking (companion paper, machine-verifiable legitimacy): the record states whether a human or an agent operated the action. Authority and attribution are record-borne acts, not inferences from artifacts.",
+      "additionalProperties": false,
+      "properties": {
+        "records_operator_kind": { "type": "boolean", "description": "Every action record carries an origination marker." },
+        "positive_signed_marker_required": { "type": "boolean", "description": "Deployments relying on human operation require a positive, signed marker; absence of a marker is never evidence of human operation." },
+        "marker_narrows_authority_only": { "type": "boolean", "description": "Consulting a marker may only narrow authority, never enlarge it." }
+      }
+    },
+    "subject_receipts": {
+      "type": "object",
+      "description": "Subject Receipt Requirement (companion paper): for each rights-affecting determination the action boundary emits a signed record: action class, validator decision, timestamp, and an inclusion proof against the audit log (RFC 9162 style). Primary evidence for the class-action and juridical mechanism families.",
+      "additionalProperties": false,
+      "properties": {
+        "issued": { "type": "boolean" },
+        "inclusion_proof": { "type": "boolean", "description": "Independently verifiable proof that the receipt corresponds to an entry in the canonical audit log." },
+        "delivery_channel_independent": { "type": "boolean", "description": "Delivered through a channel independent of the operator's logging infrastructure." },
+        "offline_accessible": { "type": "boolean" },
+        "machine_readable": { "type": "boolean", "description": "Ingestible as evidence by class-action aggregators and juridical mechanisms." },
+        "format_spec_url": { "type": "string", "format": "uri" }
       }
     },
     "compute": {
@@ -212,7 +334,7 @@
     },
     "revalidation": {
       "type": "object",
-      "description": "Variety Drift monitoring (companion paper §Variety Drift; skills/assess/rules/variety-drift.md). Δ(t) = V_world(t) − V_model(θ); revalidation triggered when Δ > τ.",
+      "description": "Variety Drift monitoring (companion paper): Δ(t) = V_world(t) − V_model(θ); revalidation triggered when Δ > τ.",
       "additionalProperties": false,
       "properties": {
         "monitoring_enabled": { "type": "boolean" },
@@ -238,6 +360,15 @@
           "type": "boolean",
           "description": "Subjects can block inference on their data."
         },
+        "discharge_path": {
+          "type": "string",
+          "enum": ["literal_exit", "verified_fee"],
+          "description": "Claimed EXIT discharge path (paper EXIT definition: bounded-penalty exit, or verified FEE, or failure)."
+        },
+        "regeneration_resistant": {
+          "type": "boolean",
+          "description": "Memory/Workflow EXIT (companion paper): purge alone is not the test. Termination counts only if resumption requires a fresh grant and nothing about the ended authority, including regeneration from retained derivatives, is inferable from what persists."
+        },
         "deletion_procedure_url": { "type": "string", "format": "uri" },
         "deletion_sla_days": { "type": "integer", "minimum": 0 },
         "fee": { "$ref": "urn:corrigibility:dpi/infrastructure.json#/properties/exit/properties/fee" }
@@ -261,7 +392,30 @@
         "representation_body": { "type": "string" },
         "representation_charter_url": { "type": "string", "format": "uri" },
         "throughput_per_10k_per_day": { "type": "number", "minimum": 0 },
-        "override_rate": { "type": "number", "minimum": 0, "maximum": 1 }
+        "override_rate": { "type": "number", "minimum": 0, "maximum": 1 },
+        "collective_standing": {
+          "$ref": "urn:corrigibility:dpi/infrastructure.json#/properties/governance/properties/collective_standing"
+        },
+        "citizen_constraint_registry": {
+          "type": "object",
+          "description": "Citizen-constraint registry (companion paper, required for high_stakes tiers): recognized subject-class representatives lodge protective constraints the validator must evaluate before executing determinations in that class: structural standing at the boundary, not only recourse after the fact.",
+          "additionalProperties": false,
+          "properties": {
+            "exposed": { "type": "boolean" },
+            "registry_url": { "type": "string", "format": "uri" },
+            "evaluated_pre_execution": { "type": "boolean", "description": "Lodged constraints are evaluated by the validator before execution, not reviewed after." }
+          }
+        },
+        "injunction_hooks": {
+          "type": "object",
+          "description": "Injunction Hooks (companion paper, juridical mechanism family): APIs in the action boundary accepting rapid, cryptographically signed halt or rollback flags from recognized courts, executed without waiting for operator compliance.",
+          "additionalProperties": false,
+          "properties": {
+            "exposed": { "type": "boolean" },
+            "accepted_issuers": { "type": "array", "items": { "type": "string" }, "description": "Recognized courts and statutory tribunals whose flags execute." },
+            "spec_url": { "type": "string", "format": "uri" }
+          }
+        }
       },
       "allOf": [
         {
@@ -310,6 +464,19 @@
           "type": "string",
           "enum": ["none", "moderate", "captured"],
           "description": "Derived from compute.* fields and κ."
+        },
+        "governance_artifacts": {
+          "type": "object",
+          "description": "Governance-reproducible FORK (companion paper, Resource Barriers to Forkability): artifacts sufficient for an independent team to operate and assess the system, beyond retraining it. Declared here; depth established by the audit's fork_viability.",
+          "additionalProperties": false,
+          "properties": {
+            "eval_suites_available": { "type": "boolean" },
+            "red_team_scenarios_available": { "type": "boolean" },
+            "failure_registry_available": { "type": "boolean", "description": "Known-failure registries." },
+            "incident_logs_available": { "type": "boolean", "description": "Sanitized incident logs." },
+            "harness_docs_available": { "type": "boolean" },
+            "artifacts_url": { "type": "string", "format": "uri" }
+          }
         },
         "successful_forks": { "type": "array", "items": { "type": "string" } }
       }

@@ -4,17 +4,106 @@ All notable changes to the Corrigibility Schema Protocol.
 
 ## [3.1] - 2026-07
 
+Alignment with the July 2026 revision of both papers. All new fields are
+optional (MINOR); existing 3.0 documents remain valid.
+
 ### Added
-- `fork_viability` field in `schema/epi/audit.json` (artifact_reproducible /
+
+- **`fork_viability`** in `schema/epi/audit.json` (artifact_reproducible /
   governance_reproducible / not_reproducible), per the EPI paper's
   governance-reproducible FORK standard; required in practice for
   high_stakes tier audits.
+- **Gradient Quantifier**: `evaluation_stratum` on both audits — the
+  stratum at which minimum performance was measured, how it was
+  identified, and the quantile used (recommended p10). New `STRATUM`
+  finding class.
+- **EXIT discharge path**: `discharge_path` (literal_exit | verified_fee)
+  on both manifests' `exit` and both audits' `exit_verification`; EPI adds
+  `regeneration_resistant` / `regeneration_resistant_verified` (purge alone
+  is not the test).
+- **Collective-Standing Precondition** (Ostrom Principle 7):
+  `governance.collective_standing` on manifests;
+  `collective_standing_verified` + `collective_standing_constraint` on
+  audits.
+- **Rule A.11 Auditor Data Duties**: `auditor.data_access_declaration` —
+  data categories, purpose, privacy budget, retention/deletion.
+- **Species-free role execution**: shared `role_execution` $def
+  (operated_by human|agent|hybrid, accountable_party, authority_grant_url)
+  on operator and auditor; `checker_independence` $def on auditors
+  (independence in operator and in substrate).
+- **Subject Receipt Requirement**: `subject_receipts` block on the EPI
+  manifest; `subject_receipt_verification` on the EPI audit. New `RECEIPT`
+  finding class.
+- **Citizen-side GOVERN**: `citizen_constraint_registry` and
+  `injunction_hooks` on EPI governance, with audit-side
+  `citizen_constraint_registry_verified` and `injunction_hook_tested`.
+- **Origination marking**: `origination_marking` block on the EPI manifest
+  (positive signed markers; absence is never human; markers only narrow
+  authority) and `origination_marking_verified` on the EPI audit. New
+  `ORIGINATION` finding class.
+- **Machine-verifiable legitimacy (a)–(d)**:
+  `machine_verifiable_legitimacy` block on the EPI manifest (authority
+  credentials, revocation propagation, tamper-evident traces,
+  incident-triggered mitigation); audit-side
+  `legitimacy_requirements_verified`.
+- **Dual Exercise of the Tests**: outward-instrument fields —
+  `code.decision_rule_legible` on both manifests (the operative rule in a
+  subject's case is identifiable and stated), DPI-side `subject_receipts`
+  and `subject_receipt_verification` (decision notice, subject-verifiable
+  record), and `decision_rule_legibility_verified` on the DPI audit.
+- **Operative R**: `lwd_r.representation.operative_r` — deployment
+  variables enumerated (quantization, pruning, routing, output
+  filtering), published probe set, declared tolerance ε and sample size
+  n; audit-side `operative_r_reproduced`.
+- **R-Layer Change Control**: `lwd_r.representation.change_control`
+  (materiality threshold, notice window, suspensive effect, versioned
+  schema diffs); audit-side `r_change_control_verified`.
+- **Normalized Boundary**: `specification_lifetime_days`,
+  `renewal_requires_fresh_grant`, and `accountable_authority_checkpoint`
+  (scope per_decision|per_class|boundary; grant fresh, liability binds,
+  correction within window) on EPI action_boundaries, with audit-side
+  `specification_lifetime_verified` and `accountable_authority_verified`.
+- **Scale as a Governed Variable**: `scale_bounds` (fan-out, action-rate,
+  blast-radius) on EPI action_boundaries; `scale_bounds_verified` on the
+  audit. New `SCALE` finding class.
+- **Untyped Action Channels / Nested Delegation**: `enforcement_placement`
+  (action_proposal | effect_surface | hybrid) and `nested_delegation`
+  (max depth, attenuation, cross-depth audit reconstruction, EXIT
+  propagation) on EPI action_boundaries, with audit-side
+  `enforcement_placement_verified` and `nested_delegation_verified`.
+- **Exception Handling at the Margin**: `explicit_exception_pathways`,
+  `guaranteed_fallbacks`, `fallback_spec_url` on EPI action_boundaries;
+  `exception_pathways_verified` on the audit.
+- **WCC assessment**: `workflow_capture_assessment` on the EPI audit
+  (field names per the EPI paper appendix) — sovereignty scores s1
+  (workflow reproducibility), s2 (ontological substitutability), s3
+  (model portability) in (0,1], with derived `wcc_score = 1 − HM(s1,s2,s3)`
+  under the same mechanical-recompute rule as `determination`.
+- **Governance-reproducible FORK, manifest side**:
+  `fork.governance_artifacts` on the EPI manifest (eval suites, red-team
+  scenarios, failure registry, sanitized incident logs, harness docs) —
+  what the audit's `fork_viability` verifies against.
+- **EPI `layer_verification`**: per-layer audit results over the EPI
+  strata, closing the weakest-link gap (T_system = AND over layers);
+  nested delegation carries the depth axis.
+- **`AGENTS.md`**: instructions for agents operating either protocol role.
 
 ### Changed
+
 - Assessment rule files retired to `archive/skills-v3-era/`. Frontier
   evaluators no longer need hand-written rule prompts; the durable machine
   interface is the schema pair itself (the operator's affidavit and the
   auditor's finding). The papers and schemas are the specification.
+- `high_stakes` tier language updated from positional human-in-loop to the
+  functional accountable-authority checkpoint (papers, The Normalized
+  Boundary).
+- Stale `skills/…` pointers and numbered float/definition citations in
+  schema descriptions replaced with named paper anchors, which survive
+  renumbering across paper revisions.
+- Examples updated to 3.1: agent-operated manifest and hybrid-operated
+  audit with checker independence, stratum documentation, receipts,
+  injunction hooks, scale bounds, and a fully-open model exemplar
+  (OLMo 2) consistent with the papers' training-forkability finding.
 
 ## [3.0] - 2026-04
 

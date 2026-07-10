@@ -1,5 +1,5 @@
 {
-  "protocol_version": "3.0",
+  "protocol_version": "3.1",
   "system_id": "example-mandatory-id-system",
   "audit_id": "550e8400-e29b-41d4-a716-446655440000",
   "timestamp": "2026-02-15T10:30:00Z",
@@ -11,7 +11,7 @@
   "tests": {
     "EXIT": false,
     "CODE": false,
-    "AUDIT": true,
+    "AUDIT": false,
     "GOVERN": false,
     "FORK": false
   },
@@ -20,6 +20,12 @@
     "computed_from": "tests",
     "computed_at": "2026-02-15T10:30:00Z"
   },
+  "evaluation_stratum": {
+    "stratum_description": "Manual laborers with worn fingerprints in districts with intermittent connectivity; no local enrollment correction center",
+    "identification_method": "Exclusion-error reporting rates by district crossed with operator biometric-failure statistics; lowest-decile stratum selected",
+    "quantile": "p10",
+    "distributions_reported": true
+  },
   "continuous_indicators": {
     "exit_penalty_ratio": 4.8,
     "exit_legal_barrier": true,
@@ -27,7 +33,7 @@
     "code_build_repro": false,
     "audit_observability": 0.95,
     "audit_third_party_access": true,
-    "audit_mttd_hours": 18,
+    "audit_mttd_hours": 26,
     "govern_override_rate": 0.41,
     "govern_charter_irrevocable": false,
     "govern_throughput": 0.04,
@@ -47,7 +53,13 @@
     "source_repo_accessed": false,
     "license_validated": false,
     "build_reproduced": false,
-    "public_loc_verified_pct": 0.32
+    "public_loc_verified_pct": 0.32,
+    "decision_rule_legibility_verified": false
+  },
+  "subject_receipt_verification": {
+    "issued_verified": false,
+    "inclusion_proof_verified": false,
+    "independent_channel_verified": false
   },
   "exit_verification": {
     "penalty_ratio_measured": 4.8,
@@ -63,7 +75,9 @@
     "binding_proof_resolved": false,
     "binding_proof_hash_matched": false,
     "enforcement_history_verified": false,
-    "community_represented": false
+    "community_represented": false,
+    "collective_standing_verified": false,
+    "collective_standing_constraint": "Class-action aggregation unavailable for administrative exclusion claims; civil-society auditors face administrative harassment documented in the audit window"
   },
   "fork_verification": {
     "legally_permitted": false,
@@ -110,10 +124,19 @@
       "test": "DECEPTION",
       "finding": "Public 'open standards' messaging contradicts proprietary implementation (open-washing).",
       "severity": "major"
+    },
+    {
+      "test": "STRATUM",
+      "finding": "AUDIT passes at the median stratum (MTTD 18h) but exclusion-error MTTD is 26h at the p10 stratum; determination taken at p10 per the Gradient Quantifier, so AUDIT fails.",
+      "severity": "critical"
     }
   ],
-  "contestation": { "contested": false },
-  "revocation": { "revoked": false },
+  "contestation": {
+    "contested": false
+  },
+  "revocation": {
+    "revoked": false
+  },
   "auditor": {
     "entity": "Independent Digital Rights Auditors",
     "jurisdiction": "XX",
@@ -124,6 +147,25 @@
       "controller": "did:web:auditor.example.org",
       "key_id": "#audit-signer",
       "public_key_multibase": "z6MkpTHR8VNsBxYAAWHut2Geadd9jSwuBV8xRoAnwWsdvktH"
+    },
+    "data_access_declaration": {
+      "data_categories": [
+        "population-level exclusion aggregates",
+        "stratified biometric-failure rates",
+        "sampled pseudonymized enrollment logs"
+      ],
+      "purpose": "Five-test verification at the least-resourced stratum",
+      "individual_level_records": true,
+      "privacy_budget": "epsilon=1.0 differential privacy on sampled logs",
+      "retention_and_deletion": "Individual-level records deleted within 30 days of audit signature; aggregates retained"
+    },
+    "role_execution": {
+      "operated_by": "human",
+      "accountable_party": "Independent Digital Rights Auditors, accredited legal entity"
+    },
+    "checker_independence": {
+      "independent_of_operator": true,
+      "substrate_independent": true
     }
   },
   "auditor_signature": {

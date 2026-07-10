@@ -1,7 +1,7 @@
 # Corrigibility Schema Protocol
 
 [![Release](https://img.shields.io/github/v/release/anivar/corrigibility-schema)](https://github.com/anivar/corrigibility-schema/releases/latest)
-[![Protocol](https://img.shields.io/badge/Protocol-3.0-blue.svg)](PROTOCOL.md)
+[![Protocol](https://img.shields.io/badge/Protocol-3.1-blue.svg)](PROTOCOL.md)
 [![License: CC0](https://img.shields.io/badge/License-CC0_1.0-lightgrey.svg)](https://creativecommons.org/publicdomain/zero/1.0/)
 [![ORCID](https://img.shields.io/badge/ORCID-0009--0009--8995--0005-green.svg)](https://orcid.org/0009-0009-8995-0005)
 
@@ -15,7 +15,6 @@ Machine-readable standards for evaluating whether public digital infrastructure 
 | [dpi-audit.json](https://github.com/anivar/corrigibility-schema/releases/latest/download/dpi-audit.json) | DPI assessment |
 | [epi-infrastructure.json](https://github.com/anivar/corrigibility-schema/releases/latest/download/epi-infrastructure.json) | EPI LWD-R manifest |
 | [epi-audit.json](https://github.com/anivar/corrigibility-schema/releases/latest/download/epi-audit.json) | EPI assessment |
-| [skills-assess-v3.0.zip](https://github.com/anivar/corrigibility-schema/releases/latest/download/skills-assess-v3.0.zip) | Assessment skills |
 
 ## Overview
 
@@ -61,27 +60,16 @@ Failure of ANY test = **Structurally Incorrigible**
 
 See [docs/llm-instructions.md](docs/llm-instructions.md) for machine reasoning protocol.
 
-## Assessment Skills
+## For Agents
 
-Skills for LLM-based evaluation following the [Agentic Skills](https://agenticskills.io) specification.
+Both protocol roles may be operated by agents. [AGENTS.md](AGENTS.md)
+states the invariants: record-borne origination (`role_execution`),
+answerability terminating at a sanctionable party, fresh grants, and,
+for auditors, checker independence in operator and in substrate.
 
-| Skill | Purpose |
-|-------|---------|
-| [assess/SKILL.md](archive/skills-v3-era/assess/SKILL.md) | Evaluate infrastructure against five tests |
-| [assess/rules/](archive/skills-v3-era/assess/rules/) | Test definitions: EXIT, CODE, AUDIT, GOVERN, FORK |
-
-### Rules
-
-| Rule | Description |
-|------|-------------|
-| `test-exit.md` | Reversibility of participation |
-| `test-code.md` | Transmission clarity (LWD-R for EPI) |
-| `test-audit.md` | Independent verification |
-| `test-govern.md` | Constitutive constraint |
-| `test-fork.md` | Independent reproduction |
-| `layer-decomposition.md` | Multi-layer test application |
-| `variety-drift.md` | Persistence condition monitoring |
-| `action-boundary.md` | Deterministic envelope for agentic systems |
+The schemas are the interface; the papers are the specification.
+Hand-written assessment rule files from the 3.0 era are preserved under
+[archive/skills-v3-era/](archive/skills-v3-era/).
 
 ## Tiered Adoption (EPI)
 
@@ -89,7 +77,7 @@ Skills for LLM-based evaluation following the [Agentic Skills](https://agenticsk
 |------|----------|--------------|
 | **trivial** | Translation, summarization | Action boundaries, closed APIs permitted |
 | **decision_support** | Search, RAG over govt data | Open weights, local data storage |
-| **high_stakes** | Policing, welfare, courts | Full EPI compliance, human-in-loop |
+| **high_stakes** | Policing, welfare, courts | Full verified LWD-R, accountable-authority checkpoint |
 
 ## Tools
 
@@ -109,7 +97,7 @@ python tools/canonicalize.py path/to/infrastructure.json
 
 ## Protocol Version
 
-Current: **3.0** (paper-faithful rewrite — see [CHANGELOG.md](CHANGELOG.md) for breaking changes and migration steps).
+Current: **3.1** (July 2026 paper alignment — see [CHANGELOG.md](CHANGELOG.md); 3.0 documents remain valid).
 
 Schemas anchor every field to a specific paper section. Canonicalisation is
 **RFC 8785 (JCS)**, signatures are **Ed25519** over a W3C DID-resolved key,
@@ -122,7 +110,7 @@ See [PROTOCOL.md](PROTOCOL.md) for versioning rules.
 
 | Resource | Link |
 |----------|------|
-| Papers | [corrigibility-framework v2.0](https://github.com/anivar/corrigibility-framework/releases/tag/v2.0) |
+| Papers | [corrigibility-framework](https://github.com/anivar/corrigibility-framework/releases/latest) |
 | Website | [anivar.net/corrigibility](https://anivar.net/corrigibility) |
 
 ## License

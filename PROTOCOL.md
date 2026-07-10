@@ -41,12 +41,13 @@ MAJOR.MINOR
 | New optional field | MINOR bump | New optional `findings` array |
 | Documentation only | No bump | README update |
 
-### Current Version: 3.0
+### Current Version: 3.1
 
 ### Version History
 
 | Version | Date | Changes |
 |---------|------|---------|
+| 3.1 | 2026-07 | July 2026 paper alignment, all fields optional. Gradient Quantifier `evaluation_stratum`. EXIT `discharge_path`. Collective-Standing Precondition. Rule A.11 `data_access_declaration`. Species-free `role_execution` + `checker_independence`. Subject receipts, citizen-constraint registry, Injunction Hooks. Origination marking. Operative R + R-Layer Change Control. Normalized-Boundary lifetimes + accountable-authority checkpoint. Scale bounds, nested delegation, effect-surface placement. WCC assessment. `fork_viability`. Assessment rule files retired to archive. |
 | 3.0 | 2026-04 | Paper-faithful rewrite. RFC 8785 canonicalization. Ed25519 + W3C DID. Rule A.9 binding-mechanism enforcement. Tiered Assurance Model (paper §E.2). `tests` (replacing `results`) + derived `determination` field. Continuous indicators. Active Deception detection. FEE block with θ_E. Required action_boundaries for non-trivial EPI tiers. Vertical-strata `layer_type` enum + separate `domain` field. |
 | 2.0 | 2025-02 | Initial public protocol. LWD-R structure. Tiered adoption. |
 | 1.x | Internal | Pre-publication iterations |
@@ -290,9 +291,13 @@ Local audit still required for:
 
 ---
 
-## 11. Human Escalation Triggers
+## 11. Escalation Triggers
 
-Technical thresholds MUST link to institutional mechanisms:
+Technical thresholds MUST link to institutional mechanisms. Escalation
+terminates at an accountable authority — a sanctionable party whose grant
+is fresh and whose liability binds; the human legal person is the current
+instance. The requirement is functional, not positional (papers, The
+Normalized Boundary):
 
 ```json
 "escalation": {
@@ -357,27 +362,30 @@ DPI and EPI systems evolve. The corrigibility framework must evolve with them:
 ### Enhancement Cycle
 
 ```
-Research Papers → Schema Updates → Skill Updates → Validation
-      ↑                                              │
-      └──────────── Community Feedback ←─────────────┘
+Research Papers → Schema Updates → Validation
+      ↑                              │
+      └────── Community Feedback ←───┘
 ```
 
-### Paper-Schema-Skill Alignment
+### Paper-Schema Alignment
 
 | Layer | Purpose | Update Trigger |
 |-------|---------|----------------|
 | Research Papers | Theoretical foundation | New threats, architectures |
 | Schemas | Structural contracts | Paper concepts need encoding |
-| Skills | Assessment rules | Schema changes need rules |
-| Validation | Verification tools | Schema/skill changes |
+| Validation | Verification tools | Schema changes |
+
+The papers and schemas are the specification. Hand-written assessment
+rule files were retired to `archive/skills-v3-era/` in 3.1; evaluators
+consume the schema pair directly (see `AGENTS.md` and
+`docs/llm-instructions.md`).
 
 ### Enhancement Process
 
 1. **Paper Update**: New concepts introduced in research papers
 2. **Schema Proposal**: Issue opened proposing schema additions
-3. **Skill Update**: Rules created for new schema fields
-4. **Validation**: Tools updated to verify new fields
-5. **Release**: Coordinated release of schema + skill
+3. **Validation**: Tools and examples updated to verify new fields
+4. **Release**: Coordinated release
 
 ### Backward Compatibility
 
