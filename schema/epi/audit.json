@@ -646,6 +646,18 @@
         "checker_independence": {
           "$ref": "urn:corrigibility:dpi/infrastructure.json#/$defs/checker_independence"
         }
+      },
+      "if": {
+        "properties": {
+          "role_execution": {
+            "properties": { "operated_by": { "enum": ["agent", "hybrid"] } },
+            "required": ["operated_by"]
+          }
+        },
+        "required": ["role_execution"]
+      },
+      "then": {
+        "required": ["checker_independence"]
       }
     },
     "auditor_signature": {

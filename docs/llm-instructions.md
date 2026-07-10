@@ -96,10 +96,12 @@ or a hybrid. Three invariants bind regardless:
 - Grants are fresh acts (`role_execution.authority_grant_url`); no
   authority from persistence.
 
-An agent auditor must additionally declare `checker_independence`:
+Checker independence binds every auditor, whatever operates it:
 checking functions are structurally independent of what they check, in
-operator and in substrate. A checker sharing model substrate with the
-audited system is correlated; its agreement is not validation.
+operator and in substrate. An agent-operated or hybrid-operated auditor
+must additionally declare `checker_independence` (schema-enforced). A
+checker sharing model substrate with the audited system is correlated;
+its agreement is not validation.
 
 **LLM must not:**
 - Modify documents on behalf of both roles

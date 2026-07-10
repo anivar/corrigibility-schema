@@ -104,6 +104,15 @@ optional (MINOR); existing 3.0 documents remain valid.
   audit with checker independence, stratum documentation, receipts,
   injunction hooks, scale bounds, and a fully-open model exemplar
   (OLMo 2) consistent with the papers' training-forkability finding.
+- Positional invariants enforced structurally (same day as the fields
+  they tighten, before any external documents exist): agent- or
+  hybrid-operated roles require `authority_grant_url` (a grant is an act,
+  not an inference from persistence); agent- or hybrid-operated auditors
+  require `checker_independence`, whose two axes (operator, substrate)
+  are required within the block. Papers state checker independence
+  universally; the schema enforces the declaration structurally where
+  operation is agentic, and docs/llm-instructions.md states the universal
+  duty for all auditors.
 
 ## [3.0] - 2026-04
 

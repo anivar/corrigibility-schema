@@ -6,6 +6,29 @@ Auditor's Finding (`audit.json`) — may be operated by agents. The protocol
 binds the same invariants regardless of what species of actor exercises
 the role.
 
+## The roles are positional, not personal
+
+When both roles are agents, what separates them is position, and the
+schemas enforce it structurally. The operator asserts a first-person
+claim (`corrigibility_claim`); the auditor issues the only authoritative
+determination (`tests`), and never about its own system. Identity
+difference is the weakest guarantee: a fresh DID does not make a checker.
+What makes a checker is `checker_independence` in operator and in
+substrate. Two agents sharing a model substrate are correlated checkers:
+their blind spots correlate, so their agreement is redundancy, not
+independent validation. Accordingly, an agent-operated or
+hybrid-operated auditor MUST declare `checker_independence`
+(schema-enforced), and any agent-operated role MUST reference the fresh
+grant it operates under (`authority_grant_url`, schema-enforced): a
+grant is an act, not an inference from persistence. Duties differ by
+position, not species: the auditor carries the Rule A.11 data duties,
+the stratum obligation, and Rule A.10 canonical serialization of its
+findings; the operator carries the GOVERN evidence chain (binding proofs
+and their hashes) and the manifest chain of disclosure. Both are inward
+actors; neither substitutes for the governed. That is why receipts go to
+the subject and verification remains permissionless: the outward
+exercise must not depend on trusting either inward party.
+
 ## Three invariants for any role
 
 1. **Origination is record-borne.** Declare `role_execution.operated_by`

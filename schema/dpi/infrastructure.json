@@ -394,11 +394,19 @@
           "format": "uri",
           "description": "The fresh grant under which an agent operates the role; a grant is an act, not an inference from persistence."
         }
+      },
+      "if": {
+        "properties": { "operated_by": { "enum": ["agent", "hybrid"] } },
+        "required": ["operated_by"]
+      },
+      "then": {
+        "required": ["operated_by", "accountable_party", "authority_grant_url"]
       }
     },
     "checker_independence": {
       "type": "object",
       "description": "Checking functions are structurally independent of what they check, in operator and in substrate (companion paper, Deployment Variables). An agent auditor sharing model substrate with the audited system is a correlated checker (companion paper, Stochastic Redundancy Is Not Validation).",
+      "required": ["independent_of_operator", "substrate_independent"],
       "additionalProperties": false,
       "properties": {
         "independent_of_operator": { "type": "boolean" },
