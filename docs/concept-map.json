@@ -1,0 +1,791 @@
+{
+  "$comment": "Concept-to-home inventory. Every normative concept in the papers that the protocol claims to carry is listed here with its HOME: a schema field path, a docs entry, or a derivation rule. tools/check-concepts.py verifies each home exists; the build fails when a refactor orphans a concept. A concept's home does not have to be a field — that assumption is what grew the 3.x surface. Paths are slash-joined keys under 'properties' of the named schema file; [] marks array items.",
+  "version": 1,
+  "concepts": [
+    {
+      "concept": "EXIT — reversibility of participation",
+      "paper": "dpi",
+      "anchor": "Definition (EXIT), §4",
+      "homes": [
+        {
+          "type": "field",
+          "schema": "dpi/infrastructure",
+          "path": "corrigibility_claim/EXIT"
+        },
+        {
+          "type": "field",
+          "schema": "dpi/infrastructure",
+          "path": "exit"
+        },
+        {
+          "type": "field",
+          "schema": "dpi/audit",
+          "path": "tests/EXIT"
+        },
+        {
+          "type": "field",
+          "schema": "epi/infrastructure",
+          "path": "exit"
+        },
+        {
+          "type": "field",
+          "schema": "dpi/audit",
+          "path": "exit_verification"
+        },
+        {
+          "type": "field",
+          "schema": "epi/audit",
+          "path": "exit_verification"
+        }
+      ]
+    },
+    {
+      "concept": "CODE — inspectability of logic",
+      "paper": "dpi",
+      "anchor": "Definition (CODE), §4",
+      "homes": [
+        {
+          "type": "field",
+          "schema": "dpi/infrastructure",
+          "path": "code"
+        },
+        {
+          "type": "field",
+          "schema": "dpi/audit",
+          "path": "tests/CODE"
+        },
+        {
+          "type": "field",
+          "schema": "epi/infrastructure",
+          "path": "code"
+        },
+        {
+          "type": "field",
+          "schema": "dpi/audit",
+          "path": "code_verification"
+        },
+        {
+          "type": "field",
+          "schema": "epi/audit",
+          "path": "tests/CODE"
+        }
+      ]
+    },
+    {
+      "concept": "AUDIT — independent verification",
+      "paper": "dpi",
+      "anchor": "Definition (AUDIT), §4",
+      "homes": [
+        {
+          "type": "field",
+          "schema": "dpi/audit",
+          "path": "tests/AUDIT"
+        },
+        {
+          "type": "gap",
+          "note": "No inward manifest evidence surface (log access, third-party test rights) exists in 3.x; planned for 4.0. Recorded so the gap is tracked, not forgotten."
+        }
+      ]
+    },
+    {
+      "concept": "GOVERN — constitutive constraint; post-execution discretion does not satisfy",
+      "paper": "dpi",
+      "anchor": "Definition (GOVERN) §4; Rule A.9",
+      "homes": [
+        {
+          "type": "field",
+          "schema": "dpi/infrastructure",
+          "path": "governance/binding_mechanism"
+        },
+        {
+          "type": "field",
+          "schema": "epi/infrastructure",
+          "path": "governance/binding_mechanism"
+        },
+        {
+          "type": "field",
+          "schema": "dpi/audit",
+          "path": "governance_verification"
+        },
+        {
+          "type": "field",
+          "schema": "epi/audit",
+          "path": "governance_verification"
+        },
+        {
+          "type": "docs",
+          "file": "docs/failure-modes.md",
+          "match": "grievance"
+        }
+      ]
+    },
+    {
+      "concept": "FORK — independent reproduction",
+      "paper": "dpi",
+      "anchor": "Definition (FORK), §4",
+      "homes": [
+        {
+          "type": "field",
+          "schema": "dpi/infrastructure",
+          "path": "fork"
+        },
+        {
+          "type": "field",
+          "schema": "dpi/audit",
+          "path": "tests/FORK"
+        },
+        {
+          "type": "field",
+          "schema": "epi/infrastructure",
+          "path": "fork"
+        },
+        {
+          "type": "field",
+          "schema": "dpi/audit",
+          "path": "fork_verification"
+        },
+        {
+          "type": "field",
+          "schema": "epi/audit",
+          "path": "fork_verification"
+        }
+      ]
+    },
+    {
+      "concept": "Rule A.9 — binding-mechanism evidence (instrument, hash, enforcement history)",
+      "paper": "dpi",
+      "anchor": "Appendix Rule A.9",
+      "homes": [
+        {
+          "type": "field",
+          "schema": "dpi/infrastructure",
+          "path": "governance/binding_proof_url"
+        },
+        {
+          "type": "field",
+          "schema": "dpi/audit",
+          "path": "governance_verification/enforcement_history_verified"
+        }
+      ]
+    },
+    {
+      "concept": "Rule A.10 — RFC 8785 canonicalization + Ed25519 signatures",
+      "paper": "dpi",
+      "anchor": "Appendix Rule A.10",
+      "homes": [
+        {
+          "type": "field",
+          "schema": "dpi/infrastructure",
+          "path": "operator_signature"
+        },
+        {
+          "type": "field",
+          "schema": "dpi/audit",
+          "path": "auditor_signature"
+        },
+        {
+          "type": "tool",
+          "file": "tools/canonicalize.py"
+        }
+      ]
+    },
+    {
+      "concept": "Rule A.11 — auditor data duties",
+      "paper": "dpi",
+      "anchor": "Appendix Rule A.11",
+      "homes": [
+        {
+          "type": "field",
+          "schema": "dpi/audit",
+          "path": "auditor/data_access_declaration"
+        },
+        {
+          "type": "field",
+          "schema": "epi/audit",
+          "path": "auditor/data_access_declaration"
+        }
+      ]
+    },
+    {
+      "concept": "Verification tiers — presence / behaviour / proof",
+      "paper": "dpi",
+      "anchor": "§1.1 Verification Tiers",
+      "homes": [
+        {
+          "type": "field",
+          "schema": "dpi/audit",
+          "path": "verification_depth"
+        },
+        {
+          "type": "field",
+          "schema": "epi/audit",
+          "path": "verification_depth"
+        }
+      ]
+    },
+    {
+      "concept": "Weakest-link determination — corrigibility is the minimum across tests and layers",
+      "paper": "dpi",
+      "anchor": "Eq. full-corrigibility; layer propagation",
+      "homes": [
+        {
+          "type": "field",
+          "schema": "dpi/audit",
+          "path": "determination"
+        },
+        {
+          "type": "field",
+          "schema": "epi/audit",
+          "path": "determination"
+        },
+        {
+          "type": "field",
+          "schema": "dpi/audit",
+          "path": "layer_verification"
+        },
+        {
+          "type": "field",
+          "schema": "epi/audit",
+          "path": "layer_verification"
+        },
+        {
+          "type": "docs",
+          "file": "docs/llm-instructions.md",
+          "match": "ALL five tests"
+        }
+      ]
+    },
+    {
+      "concept": "Gradient Quantifier — assessment at the least-resourced stratum (p10)",
+      "paper": "dpi",
+      "anchor": "Remark rem:argmin",
+      "homes": [
+        {
+          "type": "field",
+          "schema": "dpi/audit",
+          "path": "evaluation_stratum"
+        },
+        {
+          "type": "field",
+          "schema": "epi/audit",
+          "path": "evaluation_stratum"
+        }
+      ]
+    },
+    {
+      "concept": "Functional Exit Equivalence — second EXIT discharge path",
+      "paper": "dpi",
+      "anchor": "Principle (FEE) §subsubsec:fee",
+      "homes": [
+        {
+          "type": "field",
+          "schema": "dpi/infrastructure",
+          "path": "exit/discharge_path"
+        },
+        {
+          "type": "field",
+          "schema": "dpi/audit",
+          "path": "exit_verification/discharge_path"
+        }
+      ]
+    },
+    {
+      "concept": "Temporal Stability Condition — correction velocity lower AND upper bound",
+      "paper": "dpi",
+      "anchor": "Principle 6.1; Condition Strict Dynamic Stability",
+      "homes": [
+        {
+          "type": "field",
+          "schema": "epi/infrastructure",
+          "path": "action_boundaries/accountable_authority_checkpoint/correction_within_window"
+        },
+        {
+          "type": "field",
+          "schema": "epi/infrastructure",
+          "path": "action_boundaries/accountable_authority_checkpoint/correction_upper_bound_enforced"
+        }
+      ]
+    },
+    {
+      "concept": "Collective-Standing Precondition (Ostrom Principle 7), exercised within the audit window",
+      "paper": "dpi",
+      "anchor": "§ collective standing; Bole Clause",
+      "homes": [
+        {
+          "type": "field",
+          "schema": "dpi/infrastructure",
+          "path": "governance/collective_standing"
+        },
+        {
+          "type": "field",
+          "schema": "dpi/audit",
+          "path": "governance_verification/collective_standing_verified"
+        }
+      ]
+    },
+    {
+      "concept": "Constructed vs natural barrier taxonomy (FORK)",
+      "paper": "dpi",
+      "anchor": "§ FORK verification",
+      "homes": [
+        {
+          "type": "field",
+          "schema": "dpi/infrastructure",
+          "path": "fork/constructed_barriers"
+        }
+      ]
+    },
+    {
+      "concept": "Topology / source distribution — centralized_sovereign … open_commons",
+      "paper": "dpi",
+      "anchor": "Proposition (Topology-Dependent Tension); EPI Principle (Source Distribution)",
+      "homes": [
+        {
+          "type": "field",
+          "schema": "dpi/infrastructure",
+          "path": "topology"
+        },
+        {
+          "type": "field",
+          "schema": "epi/infrastructure",
+          "path": "topology"
+        }
+      ]
+    },
+    {
+      "concept": "Essentiality–corrigibility tension",
+      "paper": "dpi",
+      "anchor": "Proposition (Essentiality-Corrigibility Tension)",
+      "homes": [
+        {
+          "type": "field",
+          "schema": "dpi/infrastructure",
+          "path": "exit/fee/applies"
+        },
+        {
+          "type": "docs",
+          "file": "docs/failure-modes.md",
+          "match": "FEE"
+        }
+      ]
+    },
+    {
+      "concept": "Layer decomposition — layered claims prevent interface-layer washing",
+      "paper": "dpi",
+      "anchor": "§ layer decomposition; Table identity_layers",
+      "homes": [
+        {
+          "type": "field",
+          "schema": "dpi/infrastructure",
+          "path": "layers"
+        },
+        {
+          "type": "field",
+          "schema": "dpi/audit",
+          "path": "layer_verification"
+        },
+        {
+          "type": "field",
+          "schema": "epi/infrastructure",
+          "path": "layers"
+        }
+      ]
+    },
+    {
+      "concept": "EPI definition + risk tiers (trivial / decision_support / high_stakes)",
+      "paper": "epi",
+      "anchor": "Definition (EPI) §1; tier table",
+      "homes": [
+        {
+          "type": "field",
+          "schema": "epi/infrastructure",
+          "path": "tier"
+        },
+        {
+          "type": "field",
+          "schema": "epi/audit",
+          "path": "tier_appropriate"
+        }
+      ]
+    },
+    {
+      "concept": "LWD-R — logic, weights, data, representation",
+      "paper": "epi",
+      "anchor": "Definition (LWD-R) §3",
+      "homes": [
+        {
+          "type": "field",
+          "schema": "epi/infrastructure",
+          "path": "lwd_r"
+        },
+        {
+          "type": "field",
+          "schema": "epi/audit",
+          "path": "lwd_r_verification"
+        }
+      ]
+    },
+    {
+      "concept": "Operative-R falsifiability — behavioural reproduction with declared tolerance",
+      "paper": "epi",
+      "anchor": "Proposition (Operative-R Falsifiability)",
+      "homes": [
+        {
+          "type": "field",
+          "schema": "epi/infrastructure",
+          "path": "lwd_r/representation/operative_r"
+        },
+        {
+          "type": "field",
+          "schema": "epi/audit",
+          "path": "lwd_r_verification/operative_r_reproduced"
+        }
+      ]
+    },
+    {
+      "concept": "R-layer change control — notice, review window, suspensive effect, versioned diffs",
+      "paper": "epi",
+      "anchor": "§ R-Layer Change Control",
+      "homes": [
+        {
+          "type": "field",
+          "schema": "epi/infrastructure",
+          "path": "lwd_r/representation/change_control"
+        }
+      ]
+    },
+    {
+      "concept": "Strict Interpretability Firewall — high-stakes adoption bar at CODE",
+      "paper": "epi",
+      "anchor": "Principle prin:firewall",
+      "homes": [
+        {
+          "type": "derivation",
+          "rule": "tier == high_stakes AND NOT operative_r reproduction ⇒ CODE fails; derivable from tier + lwd_r fields",
+          "inputs": [
+            "epi/infrastructure:tier",
+            "epi/audit:lwd_r_verification/operative_r_reproduced"
+          ]
+        }
+      ]
+    },
+    {
+      "concept": "Variety Drift + revalidation triggers",
+      "paper": "epi",
+      "anchor": "Definition (Variety Drift) §4",
+      "homes": [
+        {
+          "type": "field",
+          "schema": "epi/infrastructure",
+          "path": "revalidation"
+        },
+        {
+          "type": "field",
+          "schema": "epi/audit",
+          "path": "drift_assessment"
+        }
+      ]
+    },
+    {
+      "concept": "Compute Capture — C_train > κ · C_accessible",
+      "paper": "epi",
+      "anchor": "Definition (Compute Capture) §5",
+      "homes": [
+        {
+          "type": "field",
+          "schema": "epi/infrastructure",
+          "path": "compute"
+        },
+        {
+          "type": "field",
+          "schema": "epi/audit",
+          "path": "compute_verification"
+        }
+      ]
+    },
+    {
+      "concept": "Data Capture — D_required > κ_D · D_accessible; §5.2 upstream-dependency taxonomy",
+      "paper": "epi",
+      "anchor": "Definition 5.2 (Data Capture)",
+      "homes": [
+        {
+          "type": "field",
+          "schema": "epi/infrastructure",
+          "path": "data"
+        },
+        {
+          "type": "field",
+          "schema": "epi/infrastructure",
+          "path": "data/upstream_dependencies"
+        },
+        {
+          "type": "field",
+          "schema": "epi/audit",
+          "path": "data_verification"
+        }
+      ]
+    },
+    {
+      "concept": "Joint Forkability Condition — both captures evaded",
+      "paper": "epi",
+      "anchor": "Proposition (Joint Forkability)",
+      "homes": [
+        {
+          "type": "derivation",
+          "rule": "FORK_training = NOT compute-captured AND NOT data-captured",
+          "inputs": [
+            "epi/infrastructure:compute",
+            "epi/infrastructure:data"
+          ]
+        },
+        {
+          "type": "field",
+          "schema": "epi/infrastructure",
+          "path": "fork/data_capture_status"
+        }
+      ]
+    },
+    {
+      "concept": "fork_viability — artifact vs governance reproducibility",
+      "paper": "epi",
+      "anchor": "§ governance-reproducible FORK standard",
+      "homes": [
+        {
+          "type": "field",
+          "schema": "epi/audit",
+          "path": "fork_viability"
+        }
+      ]
+    },
+    {
+      "concept": "Action Boundary Protocol — deterministic envelope around stochastic inference",
+      "paper": "epi",
+      "anchor": "Principle (ABP) §6",
+      "homes": [
+        {
+          "type": "field",
+          "schema": "epi/infrastructure",
+          "path": "action_boundaries"
+        },
+        {
+          "type": "field",
+          "schema": "epi/audit",
+          "path": "action_boundary_verification"
+        }
+      ]
+    },
+    {
+      "concept": "GDoS — governance denial of service; scale bounds",
+      "paper": "epi",
+      "anchor": "§ GDoS; scale bounds",
+      "homes": [
+        {
+          "type": "field",
+          "schema": "epi/infrastructure",
+          "path": "action_boundaries/scale_bounds"
+        }
+      ]
+    },
+    {
+      "concept": "Accountable-authority checkpoint",
+      "paper": "epi",
+      "anchor": "§ accountable authority",
+      "homes": [
+        {
+          "type": "field",
+          "schema": "epi/infrastructure",
+          "path": "action_boundaries/accountable_authority_checkpoint"
+        }
+      ]
+    },
+    {
+      "concept": "Machine-verifiable legitimacy — credentials, revocation propagation, tamper-evident traces, automated mitigation",
+      "paper": "epi",
+      "anchor": "§ machine-verifiable legitimacy",
+      "homes": [
+        {
+          "type": "field",
+          "schema": "epi/infrastructure",
+          "path": "machine_verifiable_legitimacy"
+        }
+      ]
+    },
+    {
+      "concept": "Subject receipts — outward AUDIT instrument",
+      "paper": "epi",
+      "anchor": "§ subject receipts (high-stakes conjunction)",
+      "homes": [
+        {
+          "type": "field",
+          "schema": "epi/infrastructure",
+          "path": "subject_receipts"
+        },
+        {
+          "type": "field",
+          "schema": "dpi/infrastructure",
+          "path": "subject_receipts"
+        },
+        {
+          "type": "field",
+          "schema": "dpi/audit",
+          "path": "subject_receipt_verification"
+        },
+        {
+          "type": "field",
+          "schema": "epi/audit",
+          "path": "subject_receipt_verification"
+        }
+      ]
+    },
+    {
+      "concept": "Citizen-constraint registry (high stakes)",
+      "paper": "epi",
+      "anchor": "§ citizen constraint registry",
+      "homes": [
+        {
+          "type": "field",
+          "schema": "epi/infrastructure",
+          "path": "governance/citizen_constraint_registry"
+        },
+        {
+          "type": "field",
+          "schema": "epi/audit",
+          "path": "governance_verification/citizen_constraint_registry_verified"
+        }
+      ]
+    },
+    {
+      "concept": "Injunction hooks — juridical mechanism family",
+      "paper": "epi",
+      "anchor": "§ injunction hooks",
+      "homes": [
+        {
+          "type": "field",
+          "schema": "epi/infrastructure",
+          "path": "governance/injunction_hooks"
+        },
+        {
+          "type": "field",
+          "schema": "epi/audit",
+          "path": "governance_verification/injunction_hook_tested"
+        }
+      ]
+    },
+    {
+      "concept": "Origination marking",
+      "paper": "epi",
+      "anchor": "§ origination",
+      "homes": [
+        {
+          "type": "field",
+          "schema": "epi/infrastructure",
+          "path": "origination_marking"
+        }
+      ]
+    },
+    {
+      "concept": "Active deception disclosure",
+      "paper": "epi",
+      "anchor": "§ deception",
+      "homes": [
+        {
+          "type": "field",
+          "schema": "dpi/audit",
+          "path": "active_deception"
+        },
+        {
+          "type": "field",
+          "schema": "epi/audit",
+          "path": "active_deception"
+        }
+      ]
+    },
+    {
+      "concept": "Checker independence — stochastic redundancy is not validation",
+      "paper": "epi",
+      "anchor": "§ checker independence",
+      "homes": [
+        {
+          "type": "field",
+          "schema": "epi/audit",
+          "path": "auditor/checker_independence"
+        }
+      ]
+    },
+    {
+      "concept": "Species-free role execution — agent-operated systems name their authority grant",
+      "paper": "epi",
+      "anchor": "§ role execution",
+      "homes": [
+        {
+          "type": "field",
+          "schema": "dpi/infrastructure",
+          "path": "operator/role_execution"
+        },
+        {
+          "type": "field",
+          "schema": "epi/infrastructure",
+          "path": "operator/role_execution"
+        },
+        {
+          "type": "field",
+          "schema": "epi/audit",
+          "path": "auditor/role_execution"
+        }
+      ]
+    },
+    {
+      "concept": "Workflow capture — sovereignty scores and WCC",
+      "paper": "epi",
+      "anchor": "§ workflow capture",
+      "homes": [
+        {
+          "type": "field",
+          "schema": "epi/audit",
+          "path": "workflow_capture_assessment"
+        }
+      ]
+    },
+    {
+      "concept": "EXIT for learned systems — RAG opt-out, deletion SLA, regeneration resistance",
+      "paper": "epi",
+      "anchor": "§ EXIT (EPI); regeneration",
+      "homes": [
+        {
+          "type": "field",
+          "schema": "epi/infrastructure",
+          "path": "exit/regeneration_resistant"
+        }
+      ]
+    },
+    {
+      "concept": "Findings ledger with per-test classes",
+      "paper": "both",
+      "anchor": "audit protocol",
+      "homes": [
+        {
+          "type": "field",
+          "schema": "dpi/audit",
+          "path": "findings"
+        },
+        {
+          "type": "field",
+          "schema": "epi/audit",
+          "path": "findings"
+        }
+      ]
+    },
+    {
+      "concept": "Failure-mode evasion patterns indexed to fields",
+      "paper": "both",
+      "anchor": "audit theatre / open-washing taxonomy",
+      "homes": [
+        {
+          "type": "docs",
+          "file": "docs/failure-modes.md",
+          "match": "open-washing"
+        }
+      ]
+    }
+  ]
+}
