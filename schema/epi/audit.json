@@ -324,10 +324,51 @@
         }
       }
     },
+    "data_verification": {
+      "type": "object",
+      "description": "Companion paper Data Capture (Definition 5.2): D_required > \u03ba_D \u00d7 D_accessible breaks FORK. Assessed independently of compute; Joint Forkability requires both evaded.",
+      "additionalProperties": false,
+      "properties": {
+        "training_corpus_reproducible": {
+          "type": "boolean"
+        },
+        "kappa_d_used": {
+          "type": "number",
+          "minimum": 1
+        },
+        "required_to_accessible_ratio": {
+          "type": "number",
+          "minimum": 0
+        },
+        "substitute_equivalence_verified": {
+          "type": "boolean",
+          "description": "Where a public substitute corpus is claimed, its equivalence was independently verified."
+        },
+        "upstream_dependencies_checked": {
+          "type": "boolean",
+          "description": "The \u00a75.2 dependency taxonomy (synthetic data, distilled outputs, evaluation sets, RLHF traces, reward models, tokenizer/filter rules) was walked."
+        },
+        "data_capture_assessed": {
+          "type": "boolean"
+        },
+        "data_capture_result": {
+          "type": "string",
+          "enum": [
+            "none",
+            "moderate",
+            "captured"
+          ]
+        }
+      }
+    },
     "workflow_capture_assessment": {
       "type": "object",
-      "description": "Workflow Capture Coefficient (companion paper): WCC = 1 − HM(s1, s2, s3) over the per-dimension sovereignty scores. The harmonic mean lets a single weak dimension dominate; WCC near 1 is near-total capture.",
-      "required": ["s1_workflow_reproducibility", "s2_ontological_substitutability", "s3_model_portability"],
+      "description": "Workflow Capture Coefficient (companion paper): WCC = 1 \u2212 HM(s1, s2, s3) over the per-dimension sovereignty scores. The harmonic mean lets a single weak dimension dominate; WCC near 1 is near-total capture.",
+      "required": [
+        "s1_workflow_reproducibility",
+        "s2_ontological_substitutability",
+        "s3_model_portability"
+      ],
       "additionalProperties": false,
       "properties": {
         "s1_workflow_reproducibility": {
@@ -350,7 +391,7 @@
           "type": "number",
           "minimum": 0,
           "maximum": 1,
-          "description": "Derived; MUST be mechanically recomputed as 1 − HM(s1, s2, s3)."
+          "description": "Derived; MUST be mechanically recomputed as 1 \u2212 HM(s1, s2, s3)."
         }
       }
     },
@@ -405,7 +446,10 @@
         },
         "discharge_path": {
           "type": "string",
-          "enum": ["literal_exit", "verified_fee"],
+          "enum": [
+            "literal_exit",
+            "verified_fee"
+          ],
           "description": "Verified EXIT discharge path (paper EXIT definition). Omit when tests.EXIT is false."
         },
         "regeneration_resistant_verified": {
@@ -508,6 +552,7 @@
               "TIER",
               "DECEPTION",
               "COMPUTE",
+              "DATA",
               "STRATUM",
               "RECEIPT",
               "ORIGINATION",
@@ -650,14 +695,27 @@
       "if": {
         "properties": {
           "role_execution": {
-            "properties": { "operated_by": { "enum": ["agent", "hybrid"] } },
-            "required": ["operated_by"]
+            "properties": {
+              "operated_by": {
+                "enum": [
+                  "agent",
+                  "hybrid"
+                ]
+              }
+            },
+            "required": [
+              "operated_by"
+            ]
           }
         },
-        "required": ["role_execution"]
+        "required": [
+          "role_execution"
+        ]
       },
       "then": {
-        "required": ["checker_independence"]
+        "required": [
+          "checker_independence"
+        ]
       }
     },
     "auditor_signature": {

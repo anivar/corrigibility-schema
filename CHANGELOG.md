@@ -2,6 +2,34 @@
 
 All notable changes to the Corrigibility Schema Protocol.
 
+## [3.2] - 2026-07
+
+The two holes the July papers left in 3.1, found by a systematic audit of
+every Definition/Principle/Condition/Proposition in both papers against the
+schema fields. All new fields are optional (MINOR); 3.0 and 3.1 documents
+remain valid. This closes the 3.x line's paper alignment; structural repair
+of the accumulated surface is planned as 4.0 and will not be additive.
+
+### Added
+
+- **Data Capture** (companion paper Definition 5.2, D_required > κ_D ·
+  D_accessible): `data` block on `schema/epi/infrastructure.json` — corpus
+  reproducibility, κ_D, required-to-accessible ratio, auditable-substitute
+  flag, and the §5.2 upstream-dependency taxonomy (synthetic data from
+  proprietary models, distilled closed-API outputs, proprietary evaluation
+  sets, undisclosed RLHF traces/preference data, unavailable reward models,
+  undisclosed tokenizer/filter rules). `fork.data_capture_status` mirrors
+  the compute axis; the Joint Forkability Condition requires evading both.
+- **`data_verification`** on `schema/epi/audit.json`, mirroring
+  `compute_verification`, plus `DATA` in the findings test enum. A FORK
+  assessment can now record the failure axis the paper says compute-only
+  analyses miss.
+- **Temporal Stability upper bound** (paper Principle 6.1): the
+  accountable-authority checkpoint's `correction_within_window` (lower
+  bound, harm accumulation) gains `correction_upper_bound_enforced` (upper
+  bound, manipulation prevention), so the condition is representable as the
+  two-sided inequality the paper states rather than one boolean.
+
 ## [3.1] - 2026-07
 
 Alignment with the July 2026 revision of both papers. All new fields are
