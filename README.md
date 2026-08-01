@@ -114,6 +114,7 @@ See [PROTOCOL.md](PROTOCOL.md) for versioning rules.
 |----------|------|
 | Papers | [corrigibility-framework](https://github.com/anivar/corrigibility-framework/releases/latest) |
 | Website | [anivar.net/corrigibility](https://anivar.net/corrigibility) |
+| Papers (read online) | [the framework](https://anivar.net/papers/dpi/) · [the extension](https://anivar.net/papers/epi/) |
 
 ## License
 
