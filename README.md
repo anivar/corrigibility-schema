@@ -1,7 +1,7 @@
 # Corrigibility Schema Protocol
 
 [![Release](https://img.shields.io/github/v/release/anivar/corrigibility-schema)](https://github.com/anivar/corrigibility-schema/releases/latest)
-[![Protocol](https://img.shields.io/badge/Protocol-3.1-blue.svg)](PROTOCOL.md)
+[![Protocol](https://img.shields.io/badge/Protocol-4.0-blue.svg)](PROTOCOL.md)
 [![License: CC0](https://img.shields.io/badge/License-CC0_1.0-lightgrey.svg)](https://creativecommons.org/publicdomain/zero/1.0/)
 [![ORCID](https://img.shields.io/badge/ORCID-0009--0009--8995--0005-green.svg)](https://orcid.org/0009-0009-8995-0005)
 
@@ -99,7 +99,7 @@ python tools/canonicalize.py path/to/infrastructure.json
 
 ## Protocol Version
 
-Current: **3.1** (July 2026 paper alignment — see [CHANGELOG.md](CHANGELOG.md); 3.0 documents remain valid).
+Current: **4.0** (structural repair, breaking; the 3.x line is archived under `archive/v3/` and remains validatable — see [CHANGELOG.md](CHANGELOG.md)).
 
 Schemas anchor every field to a specific paper section. Canonicalisation is
 **RFC 8785 (JCS)**, signatures are **Ed25519** over a W3C DID-resolved key,

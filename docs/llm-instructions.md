@@ -1,4 +1,4 @@
-# Corrigibility Schema Protocol 3.1
+# Corrigibility Schema Protocol 4.0
 
 ## LLM Operational Instructions
 
@@ -6,7 +6,7 @@
 
 ## 1. Scope
 
-You are evaluating or generating documents that conform to Corrigibility Schema Protocol 3.x.
+You are evaluating or generating documents that conform to Corrigibility Schema Protocol 4.x.
 
 The protocol defines two independent documents:
 
@@ -30,7 +30,8 @@ These documents are cryptographically linked but independently authored. Do not 
 **Critical rules:**
 - Absence of audit ≠ approval
 - Incomplete data → no compliance inference
-- All five tests must pass for corrigibility (conjunctive)
+- All five tests must be `pass` for corrigibility (conjunctive, three-valued:
+  `pass` / `fail` / `not_established`)
 
 ---
 
@@ -48,9 +49,10 @@ For audit.json to be valid:
 
 **Hash mismatch → audit invalid.**
 
-If manifest references `current_audit_hash`:
-- Must match hash of existing audit.json
-- If null → system is unaudited
+Hashes point one way only: the audit anchors the manifest
+(`audited_manifest_hash`). Manifests carry no audit pointer — a document
+claiming `current_audit_hash` is not a 4.x manifest. A system is unaudited
+when no valid audit anchors its current manifest.
 
 ---
 
@@ -68,7 +70,7 @@ Audit becomes stale when:
 | Aligned | Hash matches, versions match |
 | Stale Audit | Manifest newer than audit |
 | Unanchored Audit | Audit references unknown manifest |
-| Unaudited | Manifest has no audit reference |
+| Unaudited | No known audit anchors the current manifest |
 
 ---
 
@@ -113,25 +115,23 @@ its agreement is not validation.
 
 ## 6. Evaluation Logic
 
-Corrigibility requires ALL five tests to pass (paper §A.2). The booleans
-live under `tests`; the verdict is a derived `determination` block.
+Corrigibility requires ALL five tests to `pass` (paper §A.2). Verdicts are
+three-valued and live under `tests`; the carried verdict is `determination`.
 
 ```
-tests.EXIT   == true AND
-tests.CODE   == true AND
-tests.AUDIT  == true AND
-tests.GOVERN == true AND
-tests.FORK   == true
+determination.result == "corrigible"       iff all five == "pass"
+determination.result == "not_corrigible"   iff any test  == "fail"
+determination.result == "not_established"  otherwise
 ```
 
-`determination.corrigible` MUST be the conjunction of the five `tests.*`
-booleans, with `determination.computed_from = "tests"` (paper §A.2 Claim 2).
-If a document carries a `determination` that disagrees with a recomputation
-from `tests`, treat the document as Invalid. The same recompute rule applies to
-`workflow_capture_assessment.wcc_score`, which MUST equal
-1 − HM(s1, s2, s3).
+The schema enforces determination–tests agreement; recompute anyway (paper
+§A.2 Claim 2) and treat disagreement in any document as Invalid. A `pass`
+without its evidence block is schema-invalid by construction. WCC is not
+carried: compute 1 − HM(s1, s2, s3) from `workflow_capture_assessment`
+yourself, against the methodology it links.
 
-**If any test is false → System is structurally incorrigible.**
+**Any test `fail` → structurally incorrigible. Any `not_established` with
+no `fail` → not established, never "partially corrigible".**
 
 Do not compute weighted averages. Do not override boolean outcomes.
 
@@ -153,15 +153,19 @@ For EPI systems, additional checks:
 
 | Check | Required For |
 |-------|-------------|
-| `lwd_r_complete == true` | CODE validity |
-| `compute_accessible == true` | FORK validity |
-| `action_boundary.enforced == true` | Safe deployment |
-| `drift_assessment.measured == true` | Production systems |
+| all four `lwd_r_verification.*_verified == true` | CODE `pass` (schema-enforced) |
+| an `unattested` LWD-R pillar | fails that pillar — nothing to verify |
+| `compute_verification.compute_captured == false` AND `data_verification.data_captured == false` | training FORK (Joint Forkability) |
+| `action_boundaries.enforced == true` | safe deployment — `false` is honest disclosure and a failing state |
+| `drift_assessment.measured == true` | production systems |
 | `subject_receipt_verification` | GOVERN validity (high_stakes) |
-| `origination_marking_verified == true` | Attribution validity (agentic) |
+| `origination_marking_verified == true` | attribution validity (agentic) |
 | `fork_viability == "governance_reproducible"` | FORK depth (high_stakes) |
+| `escapes_found > 0` without documented remediation | fails GOVERN |
 
-Failure in any invalidates corresponding test.
+Capture inequalities are judged under the document's cited
+`calibration_profile` (docs/calibration-profiles.json), never ad-hoc
+constants.
 
 ---
 
@@ -171,9 +175,9 @@ EPI systems declare a `tier`:
 
 | Tier | Requirements |
 |------|--------------|
-| `trivial` | Closed APIs permitted via action boundaries |
-| `decision_support` | Open weights required, local data storage |
-| `high_stakes` | Full verified LWD-R, accountable-authority checkpoint |
+| `trivial` | Action boundaries still required (every tier) |
+| `decision_support` | Boundaries + LWD-R attestation honesty |
+| `high_stakes` | Full conjunction, schema-enforced: receipts, citizen-constraint registry, injunction hooks, legitimacy + origination blocks, operative-R with change control, two-sided accountable-authority checkpoint, scale bounds |
 
 Auditor verifies `tier_appropriate` based on actual compliance.
 
@@ -195,8 +199,7 @@ Audit referencing old manifest remains historically valid but not current.
 ## 10. Conflict Detection
 
 Conflict occurs if:
-- Manifest claims `CODE == true` but audit `CODE == false`
-- Manifest references audit hash that does not exist
+- Manifest claims `CODE == true` but audit finds `CODE == "fail"`
 - Multiple audits reference same manifest with contradictory results
 
 Report:
@@ -227,8 +230,8 @@ LLM must never:
 Classify system into exactly one:
 
 1. **Corrigible** — Aligned and all tests true
-2. **Structurally Incorrigible** — Any test false
-3. **Unverified** — No valid audit
+2. **Structurally Incorrigible** — Any test `fail`
+3. **Unverified** — No valid audit, or determination `not_established`
 4. **Stale** — Audit does not match latest manifest
 5. **Conflicted** — Multiple contradictory audits
 6. **Invalid** — Schema or hash violation
@@ -239,7 +242,9 @@ Classification must be explicit.
 
 ## 13. Signature Verification
 
-Signatures are **Ed25519** only. The signing identity is a W3C DID
+Signatures are **Ed25519** only — a protocol constant (PROTOCOL.md §6),
+not a per-document field; `signature.value` is exactly 86 base64url
+characters. The signing identity is a W3C DID
 (`did:key`, `did:web`, `did:plc`, `did:ion`, `did:tdw`) referenced via the
 `verification_method.controller` and `verification_method.key_id` fields.
 Public keys are multibase-encoded (`z` + base58btc). Identity tier
@@ -347,5 +352,5 @@ No narrative inference. Only structural conclusions.
 3. Use to generate automated verification reports
 4. Publish as normative operational specification
 
-**Protocol Version:** 3.1
+**Protocol Version:** 4.0
 **Schema Location:** https://github.com/anivar/corrigibility-schema

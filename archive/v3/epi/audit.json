@@ -1,0 +1,735 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:corrigibility:epi/audit.json",
+  "title": "Corrigibility EPI Audit",
+  "description": "Auditor's Finding for Epistemic Public Infrastructure (companion paper \u00a7A.1). Adds LWD-R verification, Action Boundary verification, Drift Assessment, and Compute Capture verification on top of the DPI audit shape. `tests` is authoritative; `determination` is derived (paper \u00a7A.2).",
+  "type": "object",
+  "required": [
+    "protocol_version",
+    "system_id",
+    "audit_id",
+    "timestamp",
+    "valid_until",
+    "audited_manifest_version",
+    "audited_manifest_hash",
+    "verification_depth",
+    "tests",
+    "lwd_r_verification",
+    "auditor",
+    "auditor_signature"
+  ],
+  "properties": {
+    "protocol_version": {
+      "type": "string",
+      "pattern": "^3\\.[0-9]+$"
+    },
+    "system_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "audit_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "valid_until": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "previous_audit_hash": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^sha256:[a-f0-9]{64}$"
+    },
+    "audited_manifest_version": {
+      "type": "string"
+    },
+    "audited_manifest_hash": {
+      "type": "string",
+      "pattern": "^sha256:[a-f0-9]{64}$"
+    },
+    "verification_depth": {
+      "type": "string",
+      "enum": [
+        "presence",
+        "behavior",
+        "proof"
+      ]
+    },
+    "tests": {
+      "type": "object",
+      "required": [
+        "EXIT",
+        "CODE",
+        "AUDIT",
+        "GOVERN",
+        "FORK"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "EXIT": {
+          "type": "boolean"
+        },
+        "CODE": {
+          "type": "boolean"
+        },
+        "AUDIT": {
+          "type": "boolean"
+        },
+        "GOVERN": {
+          "type": "boolean"
+        },
+        "FORK": {
+          "type": "boolean"
+        }
+      }
+    },
+    "determination": {
+      "type": "object",
+      "description": "Derived; paper \u00a7A.2 Claim 2.",
+      "required": [
+        "corrigible",
+        "computed_from",
+        "computed_at"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "corrigible": {
+          "type": "boolean"
+        },
+        "computed_from": {
+          "type": "string",
+          "const": "tests"
+        },
+        "computed_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "tier_appropriate": {
+      "type": "boolean",
+      "description": "System meets requirements for its declared tier (companion paper EPI tiers)."
+    },
+    "evaluation_stratum": {
+      "$ref": "urn:corrigibility:dpi/audit.json#/properties/evaluation_stratum",
+      "description": "Gradient Quantifier in Tier Audits (companion paper): indicators reported as distributions across strata (literacy, language, connectivity, administrative precarity); pass/fail taken at the lower decile."
+    },
+    "layer_verification": {
+      "$ref": "urn:corrigibility:dpi/audit.json#/properties/layer_verification",
+      "description": "Per-layer verification over the EPI strata (inference, orchestration, retrieval, training, evaluation, action, presentation). T_system = AND over T(L_i); nested delegation adds the depth axis (companion paper, Nested Delegation)."
+    },
+    "lwd_r_verification": {
+      "type": "object",
+      "description": "Companion paper LWD-R: all four pillars must verify for CODE=true on EPI systems.",
+      "required": [
+        "logic_verified",
+        "weights_verified",
+        "data_verified",
+        "representation_verified"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "logic_verified": {
+          "type": "boolean"
+        },
+        "weights_verified": {
+          "type": "boolean"
+        },
+        "data_verified": {
+          "type": "boolean"
+        },
+        "representation_verified": {
+          "type": "boolean"
+        },
+        "lwd_r_complete": {
+          "type": "boolean",
+          "description": "Conjunction of all four (companion paper)."
+        },
+        "operative_r_reproduced": {
+          "type": "boolean",
+          "description": "Operative R (companion paper): given the disclosed LWD-R artifact set, the disclosed schema, and the enumerated deployment variables, the auditor reproduced the deployed system's classification distribution on the published probe set within the declared tolerance."
+        },
+        "r_change_control_verified": {
+          "type": "boolean",
+          "description": "R-Layer Change Control (companion paper): notice windows honored, suspensive effect operative, versioned schema diffs reconstruct the operative schema for any date."
+        }
+      }
+    },
+    "action_boundary_verification": {
+      "type": "object",
+      "description": "Action Boundary Protocol verification (companion paper).",
+      "additionalProperties": false,
+      "properties": {
+        "enforced": {
+          "type": "boolean"
+        },
+        "mechanism_verified": {
+          "type": "string",
+          "enum": [
+            "hard_coded",
+            "policy_engine",
+            "human_approval",
+            "hybrid",
+            "none"
+          ]
+        },
+        "executed_outside_llm_context_verified": {
+          "type": "boolean"
+        },
+        "prompt_injection_tested": {
+          "type": "boolean"
+        },
+        "escapes_found": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "escapes_documented": {
+          "type": "boolean"
+        },
+        "gdos_mitigation_verified": {
+          "type": "boolean",
+          "description": "Rate limiting, queue management, termination criteria verified (companion paper GDoS)."
+        },
+        "enforcement_placement_verified": {
+          "type": "boolean",
+          "description": "A deterministic, specification-checkable gate stands between inference and irreversible effect, at the proposal layer or the effect surface (companion paper, Untyped Action Channels)."
+        },
+        "specification_lifetime_verified": {
+          "type": "boolean",
+          "description": "Action specifications expire and renewal is a fresh act of the accountable authority (companion paper, The Normalized Boundary)."
+        },
+        "accountable_authority_verified": {
+          "type": "boolean",
+          "description": "An accountable authority exists whose grant is fresh, whose liability binds, and whose correction operates within the correction window (companion paper, The Normalized Boundary)."
+        },
+        "scale_bounds_verified": {
+          "type": "boolean",
+          "description": "Declared fan-out, action-rate, and blast-radius bounds enforced at the boundary (companion paper, Scale as a Governed Variable)."
+        },
+        "exception_pathways_verified": {
+          "type": "boolean",
+          "description": "Exception pathways and fallbacks operative at the least-resourced stratum (companion paper, Exception Handling at the Margin)."
+        },
+        "origination_marking_verified": {
+          "type": "boolean",
+          "description": "Action records carry positive origination markers; absence of a marker is never treated as evidence of human operation (companion paper, machine-verifiable legitimacy)."
+        },
+        "legitimacy_requirements_verified": {
+          "type": "boolean",
+          "description": "Machine-verifiable legitimacy items (a) through (d) verified: authority credentials, revocation propagation, tamper-evident traces, incident-triggered mitigation (companion paper)."
+        },
+        "nested_delegation_verified": {
+          "type": "boolean",
+          "description": "Authority attenuation, cross-depth audit reconstruction, and EXIT propagation verified over the delegation chain (companion paper, Nested Delegation)."
+        }
+      }
+    },
+    "subject_receipt_verification": {
+      "type": "object",
+      "description": "Subject Receipt Requirement verification (companion paper).",
+      "additionalProperties": false,
+      "properties": {
+        "issued_verified": {
+          "type": "boolean"
+        },
+        "inclusion_proof_verified": {
+          "type": "boolean",
+          "description": "Receipts correspond to entries in the canonical audit log."
+        },
+        "independent_channel_verified": {
+          "type": "boolean",
+          "description": "Delivery channel independent of the operator's logging infrastructure."
+        }
+      }
+    },
+    "drift_assessment": {
+      "type": "object",
+      "description": "Companion paper Variety Drift. \u0394(t) > \u03c4 triggers revalidation.",
+      "additionalProperties": false,
+      "properties": {
+        "measured": {
+          "type": "boolean"
+        },
+        "methodology": {
+          "type": "string"
+        },
+        "baseline_date": {
+          "type": "string",
+          "format": "date"
+        },
+        "current_drift_score": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "\u0394(t)"
+        },
+        "retraining_trigger": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "\u03c4"
+        },
+        "trend": {
+          "type": "string",
+          "enum": [
+            "stable",
+            "increasing",
+            "decreasing"
+          ]
+        }
+      }
+    },
+    "compute_verification": {
+      "type": "object",
+      "description": "Companion paper Compute Capture: training_cost > \u03ba \u00d7 community_compute breaks FORK.",
+      "additionalProperties": false,
+      "properties": {
+        "inference_accessible": {
+          "type": "boolean"
+        },
+        "training_accessible": {
+          "type": "boolean"
+        },
+        "swap_tested": {
+          "type": "boolean"
+        },
+        "swap_time_actual_minutes": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "kappa_used": {
+          "type": "number",
+          "minimum": 0
+        },
+        "training_cost_to_community_ratio": {
+          "type": "number",
+          "minimum": 0
+        },
+        "compute_capture_assessed": {
+          "type": "boolean"
+        },
+        "compute_capture_result": {
+          "type": "string",
+          "enum": [
+            "none",
+            "moderate",
+            "captured"
+          ]
+        }
+      }
+    },
+    "data_verification": {
+      "type": "object",
+      "description": "Companion paper Data Capture (Definition 5.2): D_required > \u03ba_D \u00d7 D_accessible breaks FORK. Assessed independently of compute; Joint Forkability requires both evaded.",
+      "additionalProperties": false,
+      "properties": {
+        "training_corpus_reproducible": {
+          "type": "boolean"
+        },
+        "kappa_d_used": {
+          "type": "number",
+          "minimum": 1
+        },
+        "required_to_accessible_ratio": {
+          "type": "number",
+          "minimum": 0
+        },
+        "substitute_equivalence_verified": {
+          "type": "boolean",
+          "description": "Where a public substitute corpus is claimed, its equivalence was independently verified."
+        },
+        "upstream_dependencies_checked": {
+          "type": "boolean",
+          "description": "The \u00a75.2 dependency taxonomy (synthetic data, distilled outputs, evaluation sets, RLHF traces, reward models, tokenizer/filter rules) was walked."
+        },
+        "data_capture_assessed": {
+          "type": "boolean"
+        },
+        "data_capture_result": {
+          "type": "string",
+          "enum": [
+            "none",
+            "moderate",
+            "captured"
+          ]
+        }
+      }
+    },
+    "workflow_capture_assessment": {
+      "type": "object",
+      "description": "Workflow Capture Coefficient (companion paper): WCC = 1 \u2212 HM(s1, s2, s3) over the per-dimension sovereignty scores. The harmonic mean lets a single weak dimension dominate; WCC near 1 is near-total capture.",
+      "required": [
+        "s1_workflow_reproducibility",
+        "s2_ontological_substitutability",
+        "s3_model_portability"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "s1_workflow_reproducibility": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "maximum": 1,
+          "description": "Sovereignty score inverting workflow reproduction cost."
+        },
+        "s2_ontological_substitutability": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "maximum": 1
+        },
+        "s3_model_portability": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "maximum": 1
+        },
+        "wcc_score": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Derived; MUST be mechanically recomputed as 1 \u2212 HM(s1, s2, s3)."
+        }
+      }
+    },
+    "fork_verification": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "inference_forkable": {
+          "type": "boolean"
+        },
+        "training_forkable": {
+          "type": "boolean"
+        },
+        "training_code_verified": {
+          "type": "boolean"
+        },
+        "data_manifest_verified": {
+          "type": "boolean"
+        },
+        "reproduction_attempted": {
+          "type": "boolean"
+        },
+        "reproduction_successful": {
+          "type": "boolean"
+        },
+        "swapability_tested": {
+          "type": "boolean"
+        },
+        "swapability_passed": {
+          "type": "boolean"
+        }
+      }
+    },
+    "exit_verification": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "rag_opt_out_tested": {
+          "type": "boolean"
+        },
+        "rag_opt_out_honored": {
+          "type": "boolean"
+        },
+        "inference_blocking_tested": {
+          "type": "boolean"
+        },
+        "inference_blocking_honored": {
+          "type": "boolean"
+        },
+        "fee_satisfied": {
+          "type": "boolean"
+        },
+        "discharge_path": {
+          "type": "string",
+          "enum": [
+            "literal_exit",
+            "verified_fee"
+          ],
+          "description": "Verified EXIT discharge path (paper EXIT definition). Omit when tests.EXIT is false."
+        },
+        "regeneration_resistant_verified": {
+          "type": "boolean",
+          "description": "Memory/Workflow EXIT (companion paper): purge verified such that nothing about the ended authority is inferable or regenerable from what persists."
+        }
+      }
+    },
+    "governance_verification": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "grievance_exists": {
+          "type": "boolean"
+        },
+        "grievance_functional": {
+          "type": "boolean"
+        },
+        "binding_mechanism_exists": {
+          "type": "boolean"
+        },
+        "binding_mechanism_tested": {
+          "type": "boolean"
+        },
+        "binding_proof_resolved": {
+          "type": "boolean"
+        },
+        "binding_proof_hash_matched": {
+          "type": "boolean"
+        },
+        "enforcement_history_verified": {
+          "type": "boolean"
+        },
+        "community_represented": {
+          "type": "boolean"
+        },
+        "collective_standing_verified": {
+          "type": "boolean",
+          "description": "Collective-Standing Precondition (paper, Ostrom Principle 7) verified at the evaluated stratum; where it fails, GOVERN MUST be recorded as failing at that stratum."
+        },
+        "collective_standing_constraint": {
+          "type": "string",
+          "description": "The associational constraint documented as cause when collective_standing_verified is false."
+        },
+        "citizen_constraint_registry_verified": {
+          "type": "boolean",
+          "description": "Registry exposed and lodged constraints evaluated pre-execution (companion paper)."
+        },
+        "injunction_hook_tested": {
+          "type": "boolean",
+          "description": "Signed halt/rollback flags from recognized issuers execute without operator compliance (companion paper, Injunction Hooks)."
+        }
+      }
+    },
+    "active_deception": {
+      "type": "object",
+      "description": "Companion paper Active Deception (open-washing, safety-washing, audit theatre).",
+      "additionalProperties": false,
+      "properties": {
+        "open_washing_detected": {
+          "type": "boolean"
+        },
+        "safety_washing_detected": {
+          "type": "boolean"
+        },
+        "audit_theatre_detected": {
+          "type": "boolean"
+        },
+        "evidence_url": {
+          "type": "string",
+          "format": "uri"
+        }
+      }
+    },
+    "continuous_indicators": {
+      "$ref": "urn:corrigibility:dpi/audit.json#/properties/continuous_indicators"
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "test",
+          "finding",
+          "severity"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "test": {
+            "type": "string",
+            "enum": [
+              "EXIT",
+              "CODE",
+              "AUDIT",
+              "GOVERN",
+              "FORK",
+              "LWD_R",
+              "DRIFT",
+              "BOUNDARY",
+              "TIER",
+              "DECEPTION",
+              "COMPUTE",
+              "DATA",
+              "STRATUM",
+              "RECEIPT",
+              "ORIGINATION",
+              "SCALE"
+            ]
+          },
+          "finding": {
+            "type": "string"
+          },
+          "severity": {
+            "type": "string",
+            "enum": [
+              "critical",
+              "major",
+              "minor",
+              "observation"
+            ]
+          },
+          "evidence_url": {
+            "type": "string",
+            "format": "uri"
+          }
+        }
+      }
+    },
+    "delegated_verification": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "observatory": {
+          "type": "string"
+        },
+        "component_id": {
+          "type": "string"
+        },
+        "certified_profile_hash": {
+          "type": "string",
+          "pattern": "^sha256:[a-f0-9]{64}$"
+        },
+        "certification_date": {
+          "type": "string",
+          "format": "date"
+        },
+        "certification_url": {
+          "type": "string",
+          "format": "uri"
+        }
+      }
+    },
+    "contestation": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "contested": {
+          "type": "boolean",
+          "default": false
+        },
+        "filed_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "pending",
+            "upheld",
+            "overturned",
+            "withdrawn"
+          ]
+        },
+        "resolution_date": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date-time"
+        },
+        "resolution_summary": {
+          "type": "string"
+        }
+      }
+    },
+    "revocation": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "revoked": {
+          "type": "boolean",
+          "default": false
+        },
+        "revoked_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "reason": {
+          "type": "string"
+        }
+      }
+    },
+    "auditor": {
+      "type": "object",
+      "required": [
+        "entity",
+        "identity_tier",
+        "verification_method"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "entity": {
+          "type": "string",
+          "minLength": 1
+        },
+        "jurisdiction": {
+          "type": "string"
+        },
+        "accreditation": {
+          "type": "string"
+        },
+        "identity_tier": {
+          "type": "integer",
+          "enum": [
+            1,
+            2,
+            3
+          ]
+        },
+        "verification_method": {
+          "$ref": "urn:corrigibility:dpi/infrastructure.json#/$defs/verification_method"
+        },
+        "data_access_declaration": {
+          "$ref": "urn:corrigibility:dpi/audit.json#/properties/auditor/properties/data_access_declaration"
+        },
+        "role_execution": {
+          "$ref": "urn:corrigibility:dpi/infrastructure.json#/$defs/role_execution"
+        },
+        "checker_independence": {
+          "$ref": "urn:corrigibility:dpi/infrastructure.json#/$defs/checker_independence"
+        }
+      },
+      "if": {
+        "properties": {
+          "role_execution": {
+            "properties": {
+              "operated_by": {
+                "enum": [
+                  "agent",
+                  "hybrid"
+                ]
+              }
+            },
+            "required": [
+              "operated_by"
+            ]
+          }
+        },
+        "required": [
+          "role_execution"
+        ]
+      },
+      "then": {
+        "required": [
+          "checker_independence"
+        ]
+      }
+    },
+    "auditor_signature": {
+      "$ref": "urn:corrigibility:dpi/infrastructure.json#/$defs/signature"
+    },
+    "fork_viability": {
+      "type": "string",
+      "enum": [
+        "artifact_reproducible",
+        "governance_reproducible",
+        "not_reproducible"
+      ],
+      "description": "FORK depth established by this audit. artifact_reproducible: artifacts available and third-party retrain within tolerance. governance_reproducible: additionally, evaluation suites, red-team scenarios, known-failure registries, sanitized incident logs, and harness documentation transfer, sufficient for an independent team to operate and assess the system. Required for high_stakes tier audits (EPI paper, Resource Barriers to Forkability)."
+    }
+  },
+  "additionalProperties": false
+}

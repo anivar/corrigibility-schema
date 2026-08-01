@@ -14,6 +14,7 @@ from referencing import Registry, Resource
 from referencing.jsonschema import DRAFT202012
 
 ROOT = Path(__file__).resolve().parent.parent
+COMMON = "schema/common.json"
 PAIRS = [
     ("examples/dpi/infrastructure.example.json", "schema/dpi/infrastructure.json"),
     ("examples/dpi/audit.example.json", "schema/dpi/audit.json"),
@@ -24,7 +25,7 @@ PAIRS = [
 
 def main() -> int:
     schemas = {}
-    for _, sc in PAIRS:
+    for sc in [COMMON] + [sc for _, sc in PAIRS]:
         s = json.loads((ROOT / sc).read_text())
         Draft202012Validator.check_schema(s)
         schemas[sc] = s

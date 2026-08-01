@@ -1,146 +1,96 @@
 {
-  "protocol_version": "3.1",
-  "system_id": "example-federated-identity",
-  "manifest_version": "1.1.0",
+  "protocol_version": "4.0",
+  "system_id": "exemplar-civic-registry",
+  "manifest_version": "1.0.0",
   "previous_manifest_hash": null,
-  "current_audit_hash": null,
-  "timestamp": "2026-07-01T00:00:00Z",
+  "timestamp": "2026-08-01T00:00:00Z",
   "operator": {
-    "entity": "Example Digital Authority",
-    "jurisdiction": "XX",
+    "entity": "Exemplar Registry Cooperative (fictional)",
+    "jurisdiction": "IN",
     "identity_tier": 2,
     "verification_method": {
-      "type": "Ed25519VerificationKey2020",
-      "controller": "did:web:authority.example.gov",
-      "key_id": "#manifest-signer",
-      "public_key_multibase": "z6MkhaXgBZDvotDkL5257faiztiGiC2QtKLGpbnnEGta2doK"
+      "controller": "did:web:registry.example.org",
+      "public_key_multibase": "z6MkswP7kW2TCNnLRNLD7Rjv4TcKrAhbch9NFRfuqHMLjaNS"
     },
-    "contact_url": "https://authority.example.gov/contact",
-    "role_execution": {
-      "operated_by": "human",
-      "accountable_party": "Example Digital Authority, a statutory body"
-    }
+    "contact_url": "https://registry.example.org/contact"
   },
-  "topology": "federated_protocol",
+  "topology": "open_commons",
   "layers": [
     {
-      "layer_id": "did-resolver",
+      "layer_id": "protocol",
       "layer_type": "protocol",
-      "domain": "identity",
-      "introduced_at": "2025-01-01",
+      "domain": "registry",
+      "introduced_at": "2021-03-01",
       "spec_open": true,
-      "implementation_open": true,
-      "source_repository_url": "https://github.com/example-gov/did-resolver",
-      "build_reproducible": true,
-      "deprecated": false
+      "implementation_open": true
     },
     {
-      "layer_id": "credential-issuer",
+      "layer_id": "service",
       "layer_type": "implementation",
-      "domain": "credentials",
-      "introduced_at": "2025-03-15",
+      "domain": "registry",
+      "introduced_at": "2021-06-01",
       "spec_open": true,
-      "implementation_open": true,
-      "source_repository_url": "https://github.com/example-gov/credential-issuer",
-      "build_reproducible": true,
-      "deprecated": false
-    },
-    {
-      "layer_id": "consent-store",
-      "layer_type": "data",
-      "domain": "consent",
-      "introduced_at": "2025-06-01",
-      "spec_open": true,
-      "implementation_open": true,
-      "deprecated": false
+      "implementation_open": true
     }
   ],
   "code": {
     "source_available": true,
-    "source_repository_url": "https://github.com/example-gov/identity-stack",
+    "source_repository_url": "https://git.example.org/registry",
     "license_open": true,
-    "license_id": "Apache-2.0",
+    "license_id": "AGPL-3.0-only",
     "build_reproducible": true,
-    "build_proof_url": "https://reproducible-builds.example.gov/identity-stack",
-    "public_loc_pct": 0.97,
+    "build_proof_url": "https://git.example.org/registry/releases/1.0.0/repro.txt",
     "decision_rule_legible": true
+  },
+  "audit_surface": {
+    "production_probeable": true,
+    "logs_accessible": true,
+    "third_party_testing_permitted": true,
+    "error_rates_publishable": true,
+    "test_rights_url": "https://registry.example.org/audit-rights"
   },
   "subject_receipts": {
     "issued": true,
     "inclusion_proof": true,
     "delivery_channel_independent": true,
     "machine_readable": true,
-    "format_spec_url": "https://authority.example.gov/receipts/spec"
+    "format_spec_url": "https://registry.example.org/receipts"
   },
   "exit": {
     "legal_barrier": false,
+    "alternative_exists": true,
     "penalty_ratio": 1.0,
     "data_portability": true,
     "deletion_available": true,
-    "alternative_exists": true,
-    "penalty_free": true,
     "discharge_path": "literal_exit",
-    "exit_procedure_url": "https://authority.example.gov/exit",
-    "fee": {
-      "applies": true,
-      "theta_E": 0.9,
-      "baseline_signal_strength": 1.0,
-      "alt_signal_strength": 0.92,
-      "mechanisms": [
-        "multi_issuer_mandate",
-        "credential_acceptance_diversity",
-        "protected_alternatives"
-      ]
-    }
+    "exit_procedure_url": "https://registry.example.org/leave"
   },
   "governance": {
     "grievance_channel": true,
     "binding_mechanism": true,
-    "binding_proof_url": "https://laws.example.gov/digital-identity-act-2025",
-    "binding_proof_hash": "sha256:7f83b1657ff1fc53b92dc18148a1d65dfc2d4b1fa3d677284addd200126d9069",
-    "binding_proof_type": "statute",
-    "enforcement_history_url": "https://authority.example.gov/enforcement-log",
-    "representation_body": "Independent Digital Rights Council",
-    "representation_charter_url": "https://drc.example.gov/charter",
+    "binding_proof_url": "https://registry.example.org/charter-v3.pdf",
+    "binding_proof_hash": "sha256:b2cf7f1f983e384887033a51b4d14f13a63a21f74051d0f65ce391ee267cf46e",
+    "binding_proof_type": "charter",
+    "enforcement_history_url": "https://registry.example.org/governance/rulings",
+    "representation_body": "Member Assembly",
+    "representation_charter_url": "https://registry.example.org/charter-v3.pdf",
     "collective_standing": {
       "legally_protected": true,
       "historically_exercised": true,
-      "instrument_url": "https://laws.example.gov/associations-act"
-    },
-    "throughput_per_10k_per_day": 4.2,
-    "override_rate": 0.0
-  },
-  "escalation": {
-    "oversight_body": "Digital Rights Ombudsman",
-    "oversight_url": "https://drc.example.gov/ombudsman",
-    "triggers": [
-      {
-        "condition": "any_test_false",
-        "action": "mandatory_review"
-      },
-      {
-        "condition": "data_breach",
-        "action": "freeze"
-      },
-      {
-        "condition": "mass_exclusion",
-        "action": "judicial_review"
-      }
-    ],
-    "liability_url": "https://laws.example.gov/digital-identity-liability"
+      "instrument_url": "https://registry.example.org/coop-statute"
+    }
   },
   "fork": {
     "legally_permitted": true,
     "license_permissive": true,
     "artifacts_available": true,
-    "data_portable": true,
-    "resource_feasibility_ratio": 0.0005,
-    "cost_ratio": 0.0008,
     "constructed_barriers": [],
     "natural_barriers": [
-      "initial credential issuer trust bootstrapping"
+      "member network effects"
     ],
-    "successful_forks": []
+    "successful_forks": [
+      "regional-registry-fork-2024"
+    ]
   },
   "corrigibility_claim": {
     "EXIT": true,
@@ -149,11 +99,11 @@
     "GOVERN": true,
     "FORK": true
   },
+  "calibration_profile": {
+    "id": "default-2026"
+  },
   "operator_signature": {
-    "algorithm": "Ed25519",
-    "canonicalization": "RFC8785",
-    "value": "MEUCIQDxAvyEXAMPLE_SIG_PLACEHOLDER_DO_NOT_DEPLOY_AS_ISmoCIBaseRcExampleNotARealSignaturejustForSchemaValidation==",
-    "signed_at": "2026-07-01T00:00:00Z",
-    "key_id": "did:web:authority.example.gov#manifest-signer"
+    "value": "lYOQpwZ1jxfofmdNvyuu4XrcuMC64wFJYKKJtiigM3HEFjL7X6zZBM9FVv3qhri3mUTJo6wVO6KjgfdyfWj4Bw",
+    "signed_at": "2026-08-01T00:00:00Z"
   }
 }

@@ -2,6 +2,93 @@
 
 All notable changes to the Corrigibility Schema Protocol.
 
+## [4.0] - 2026-08
+
+Structural repair of four generations of accretion (48 → 273 → 433 → 576 →
+603 properties), executed against two independent adversarial reviews — a
+practitioner field-walk of every decision field and a refactor-skeptic pass
+against both papers. Breaking by design, in the pre-adoption window: no
+external documents existed, so nothing outside this repository breaks. The
+3.x line is archived under `archive/v3/` and remains validatable. Signed
+3.x documents cannot be migrated by script — signatures are fresh acts —
+and none exist.
+
+### The disease this treats
+
+An afternoon of bare booleans validated and classified Corrigible while
+honest completion cost months; the same fact lived in two or three homes
+with no equality constraint; derived verdicts were stored as free opinions
+(the shipped examples derived "none" and "moderate" from identical
+numbers); the one enforced value forced operators to lie
+(`action_boundaries.enforced: const true`); the manifest↔audit hash cycle
+made every audited system permanently stale; and PROTOCOL.md §15's
+"schemas MUST encode all paper concepts" made the schema the papers'
+index. That rule is retired; `docs/concept-map.json` + CI now guarantee
+no paper concept loses its home in either direction.
+
+### Added
+
+- **`schema/common.json`** — shared $defs (actor, signature, verification
+  method, governance core, receipts, escalation, contestation, revocation,
+  role execution, checker independence, verdict, notes, and more), composed
+  via `allOf` + `unevaluatedProperties`.
+- **Three-valued verdicts** (`pass` / `fail` / `not_established`) with a
+  carried `determination.result` schema-checked against them.
+- **Pass-requires-evidence** conditionals: every passing test requires its
+  verification block; the bare-boolean audit is schema-invalid.
+- **Claim-binds-criteria** conditionals on manifests: claiming a test with
+  evidence that contradicts it is schema-invalid; honest failure is always
+  representable.
+- **AUDIT evidence surfaces**: `audit_surface` on manifests (the test had
+  no inward home in 3.x), `audit_verification` on audits.
+- **Per-pillar LWD-R attestors** (`operator` / `model_vendor` /
+  `unattested`): the API-deployer pattern can finally file honestly.
+- **Calibration profiles** (`docs/calibration-profiles.json`): κ, κ_D,
+  θ_E, α* cited by versioned profile id, never typed per document.
+- **Bounded `notes`** on claim blocks — the qualification surface.
+- **`legitimacy_verification`** per-item block replacing a one-bit
+  compression; `escapes_found` requires injection testing.
+- Action boundaries required at **every** tier (the paper requires them at
+  `trivial` too; 3.x wrongly exempted it); the high_stakes conjunction is
+  schema-enforced in full.
+- Examples regenerated with **real Ed25519 signatures** over RFC 8785
+  bytes (deterministic labeled test keys; `tools/gen-examples.py`), and
+  the EPI pair now demonstrates honest mixed disclosure instead of a
+  perfect score.
+
+### Removed (paper-anchored rationale in each case)
+
+- `continuous_indicators` — every measurement duplicated a per-test block.
+- Stored derivations: `determination.computed_from`, `wcc_score`,
+  `sigma_total`, capture statuses on manifests, `lwd_r_complete`,
+  `next_revalidation_due`.
+- The `"moderate"` capture value — both Definitions are binary
+  inequalities; findings are `compute_captured` / `data_captured` with
+  carried ratios.
+- Conclusion-duplicating booleans: `penalty_free`, `data_portable`,
+  `fork_rights_permissive`, swapability twins, `grant_fresh` duplicates.
+- Invented metrics with no measurement procedure: switching-cost quintet,
+  FEE signal strengths, `public_loc_pct`, `resource_feasibility_ratio`,
+  `cost_ratio`, `override_rate`, `throughput_per_10k_per_day`,
+  `current_drift_score` as a normed scalar, `alpha_critical_mass` as an
+  audit observation.
+- Meta-booleans attesting work without findings: `*_assessed`,
+  `upstream_dependencies_checked`, `gap_identified`.
+- Single-value enums (`Ed25519`, `RFC8785`, `Ed25519VerificationKey2020`,
+  `computed_from: "tests"`) — protocol constants live in PROTOCOL.md.
+- `current_audit_hash` — the hash cycle; audits anchor manifests, never
+  the reverse.
+- `exit.inference_blocking` — unimplementable as stated for LLM systems.
+
+### Changed
+
+- `layer_verification` is an array keyed by the manifest's `layer_id`,
+  carrying per-test verdicts per layer.
+- `signature.value` is exactly 86 base64url characters (a real Ed25519
+  signature); DER-shaped strings no longer validate.
+- Verifier-visible net effect: authored-once definitions 593 → 520 while
+  adding the evidence surfaces above; DPI instruments roughly halved.
+
 ## [3.2] - 2026-07
 
 The two holes the July papers left in 3.1, found by a systematic audit of

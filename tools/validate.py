@@ -33,12 +33,15 @@ SCHEMA_DIR = Path(__file__).parent.parent / "schema"
 
 def load_registry() -> Registry:
     resources = []
-    for sub in ("dpi", "epi"):
-        for kind in ("infrastructure", "audit"):
-            path = SCHEMA_DIR / sub / f"{kind}.json"
-            with open(path, "r", encoding="utf-8") as f:
-                schema = json.load(f)
-            resources.append((schema["$id"], Resource(contents=schema, specification=DRAFT202012)))
+    paths = [SCHEMA_DIR / "common.json"] + [
+        SCHEMA_DIR / sub / f"{kind}.json"
+        for sub in ("dpi", "epi")
+        for kind in ("infrastructure", "audit")
+    ]
+    for path in paths:
+        with open(path, "r", encoding="utf-8") as f:
+            schema = json.load(f)
+        resources.append((schema["$id"], Resource(contents=schema, specification=DRAFT202012)))
     return Registry().with_resources(resources)
 
 

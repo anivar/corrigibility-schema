@@ -1,0 +1,391 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:corrigibility:common.json",
+  "title": "Corrigibility Protocol — shared definitions",
+  "description": "Definitions shared by the DPI and EPI document families. Protocol constants (Ed25519, RFC 8785, the derivation rule for determinations) live in PROTOCOL.md, not in per-document fields.",
+  "$defs": {
+    "verdict": {
+      "type": "string",
+      "enum": ["pass", "fail", "not_established"],
+      "description": "Three-valued finding. not_established: the evidence available at this verification depth does not decide the test (young system, delegated component, presence-only audit)."
+    },
+    "notes": {
+      "type": "string",
+      "maxLength": 500,
+      "description": "Bounded qualification. The place to say 'true, but…' instead of laundering nuance into a bare boolean."
+    },
+    "hash": {
+      "type": "string",
+      "pattern": "^sha256:[a-f0-9]{64}$"
+    },
+    "verification_method": {
+      "type": "object",
+      "description": "DID-anchored Ed25519 key (Rule A.10; key encoding in PROTOCOL.md §6).",
+      "required": ["controller", "public_key_multibase"],
+      "additionalProperties": false,
+      "properties": {
+        "controller": {
+          "type": "string",
+          "pattern": "^did:(key|web|plc|ion|tdw):[A-Za-z0-9._:%-]+$"
+        },
+        "key_id": { "type": "string" },
+        "public_key_multibase": {
+          "type": "string",
+          "pattern": "^z[1-9A-HJ-NP-Za-km-z]{46,49}$",
+          "description": "Multibase base58btc of the multicodec-prefixed Ed25519 public key (0xed01 + 32 bytes)."
+        }
+      }
+    },
+    "signature": {
+      "type": "object",
+      "description": "Detached Ed25519 signature over the RFC 8785 canonical JSON of the document with this field removed (Rule A.10).",
+      "required": ["value", "signed_at"],
+      "additionalProperties": false,
+      "properties": {
+        "value": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]{86}$",
+          "description": "Base64url, unpadded, exactly the 64 signature bytes."
+        },
+        "signed_at": { "type": "string", "format": "date-time" },
+        "key_id": { "type": "string" }
+      }
+    },
+    "actor": {
+      "type": "object",
+      "description": "A signing party — operator or auditor.",
+      "required": ["entity", "identity_tier", "verification_method"],
+      "properties": {
+        "entity": { "type": "string", "minLength": 1 },
+        "jurisdiction": { "type": "string" },
+        "accreditation": { "type": "string" },
+        "contact_url": { "type": "string", "format": "uri" },
+        "identity_tier": {
+          "type": "integer",
+          "enum": [1, 2, 3],
+          "description": "Tiered Assurance (paper §E.2): 1 self-attested, 2 domain-verified, 3 institution-verified."
+        },
+        "verification_method": { "$ref": "#/$defs/verification_method" },
+        "role_execution": { "$ref": "#/$defs/role_execution" }
+      }
+    },
+    "role_execution": {
+      "type": "object",
+      "description": "Species-free role execution (companion paper, Deployment Variables): origination is record-borne, answerability terminates at a sanctionable party, grants are fresh acts.",
+      "required": ["operated_by", "accountable_party"],
+      "additionalProperties": false,
+      "properties": {
+        "operated_by": {
+          "type": "string",
+          "enum": ["human", "agent", "hybrid"]
+        },
+        "accountable_party": { "type": "string", "minLength": 1 },
+        "authority_grant_url": { "type": "string", "format": "uri" }
+      },
+      "if": {
+        "properties": { "operated_by": { "enum": ["agent", "hybrid"] } },
+        "required": ["operated_by"]
+      },
+      "then": { "required": ["operated_by", "accountable_party", "authority_grant_url"] }
+    },
+    "checker_independence": {
+      "type": "object",
+      "description": "Checking functions are independent of what they check, in operator and substrate (companion paper, Stochastic Redundancy Is Not Validation).",
+      "required": ["independent_of_operator", "substrate_independent"],
+      "additionalProperties": false,
+      "properties": {
+        "independent_of_operator": { "type": "boolean" },
+        "substrate_independent": { "type": "boolean" },
+        "substrate_disclosure": { "type": "string" }
+      }
+    },
+    "data_access_declaration": {
+      "type": "object",
+      "description": "Rule A.11 auditor data duties: purpose-bound access, retention and deletion declared.",
+      "required": ["data_categories", "purpose", "retention_and_deletion"],
+      "additionalProperties": false,
+      "properties": {
+        "data_categories": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+        "purpose": { "type": "string", "minLength": 1 },
+        "individual_level_records": { "type": "boolean" },
+        "privacy_budget": { "type": "string" },
+        "retention_and_deletion": { "type": "string", "minLength": 1 }
+      }
+    },
+    "calibration_profile": {
+      "type": "object",
+      "description": "Named policy-constant set (κ, κ_D, θ_E, α*) from docs/calibration-profiles.json. Constants are deliberative calibration (paper, Political Economy of κ) — cited by profile, not typed per document, so assessments stay comparable.",
+      "required": ["id"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "source_url": { "type": "string", "format": "uri" },
+        "overrides": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "kappa": { "type": "number", "exclusiveMinimum": 0 },
+            "kappa_d": { "type": "number", "minimum": 1 },
+            "theta_E": { "type": "number", "minimum": 0.8, "maximum": 1.0 },
+            "alpha_critical_mass": { "type": "number", "minimum": 0, "maximum": 1 }
+          }
+        },
+        "override_justification": { "type": "string", "minLength": 1 }
+      },
+      "if": { "required": ["overrides"] },
+      "then": { "required": ["override_justification"] }
+    },
+    "audit_surface": {
+      "type": "object",
+      "description": "The AUDIT test's inward evidence: what the operator makes checkable without permission.",
+      "required": ["production_probeable", "third_party_testing_permitted", "error_rates_publishable"],
+      "additionalProperties": false,
+      "properties": {
+        "production_probeable": { "type": "boolean", "description": "Production endpoints can be probed by parties the operator does not select." },
+        "logs_accessible": { "type": "boolean", "description": "Relevant logs are accessible to external verification." },
+        "third_party_testing_permitted": { "type": "boolean" },
+        "error_rates_publishable": { "type": "boolean", "description": "Third parties may measure and publish error rates without authorization." },
+        "test_rights_url": { "type": "string", "format": "uri" },
+        "notes": { "$ref": "#/$defs/notes" }
+      }
+    },
+    "subject_receipts": {
+      "type": "object",
+      "description": "Outward AUDIT: signed decision records the subject can verify against the lived event (companion paper, Subject Receipt Requirement).",
+      "additionalProperties": false,
+      "properties": {
+        "issued": { "type": "boolean" },
+        "inclusion_proof": { "type": "boolean" },
+        "delivery_channel_independent": { "type": "boolean" },
+        "offline_accessible": { "type": "boolean" },
+        "machine_readable": { "type": "boolean" },
+        "format_spec_url": { "type": "string", "format": "uri" },
+        "notes": { "$ref": "#/$defs/notes" }
+      }
+    },
+    "subject_receipt_verification": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "issued_verified": { "type": "boolean" },
+        "inclusion_proof_verified": { "type": "boolean" },
+        "independent_channel_verified": { "type": "boolean" },
+        "notes": { "$ref": "#/$defs/notes" }
+      }
+    },
+    "governance": {
+      "type": "object",
+      "description": "GOVERN: binding constraint, not consultation. Post-execution discretion (ombudsmen, feedback forms) does NOT satisfy Rule A.9.",
+      "required": ["grievance_channel", "binding_mechanism"],
+      "properties": {
+        "grievance_channel": { "type": "boolean" },
+        "binding_mechanism": { "type": "boolean" },
+        "binding_proof_url": { "type": "string", "format": "uri", "description": "Rule A.9 (i)." },
+        "binding_proof_hash": { "$ref": "#/$defs/hash", "description": "Rule A.9 (ii): hash of the exact instrument bytes named at binding_proof_url." },
+        "binding_proof_type": {
+          "type": "string",
+          "enum": ["statute", "constitution", "charter", "treaty", "regulation", "judicial_precedent"]
+        },
+        "enforcement_history_url": { "type": "string", "format": "uri", "description": "Rule A.9 (iii)." },
+        "representation_body": { "type": "string" },
+        "representation_charter_url": { "type": "string", "format": "uri" },
+        "collective_standing": { "$ref": "#/$defs/collective_standing" },
+        "notes": { "$ref": "#/$defs/notes" }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "binding_mechanism": { "const": true } }, "required": ["binding_mechanism"] },
+          "then": { "required": ["binding_proof_url", "binding_proof_hash", "binding_proof_type", "enforcement_history_url"] }
+        }
+      ]
+    },
+    "collective_standing": {
+      "type": "object",
+      "description": "Ostrom Principle 7: capacity to organize and fund representation, legally protected and exercised within the audit window.",
+      "additionalProperties": false,
+      "properties": {
+        "legally_protected": { "type": "boolean" },
+        "historically_exercised": { "type": "boolean", "description": "Documented exercise at the relevant stratum within the audit window." },
+        "instrument_url": { "type": "string", "format": "uri" }
+      }
+    },
+    "governance_verification": {
+      "type": "object",
+      "properties": {
+        "grievance_exists": { "type": "boolean" },
+        "grievance_functional": { "type": "boolean" },
+        "binding_mechanism_tested": { "type": "boolean" },
+        "binding_proof_resolved": { "type": "boolean", "description": "Rule A.9 (i): URL resolves to the claimed instrument." },
+        "binding_proof_hash_matched": { "type": "boolean", "description": "Rule A.9 (ii): retrieved bytes hash to the declared value." },
+        "enforcement_history_verified": { "type": "boolean", "description": "Rule A.9 (iii)." },
+        "collective_standing_verified": { "type": "boolean" },
+        "collective_standing_constraint": { "type": "string", "description": "The associational constraint documented when collective standing fails." },
+        "notes": { "$ref": "#/$defs/notes" }
+      }
+    },
+    "exit_fee": {
+      "type": "object",
+      "description": "Functional Exit Equivalence for essential systems (paper §6.7.2, B.7). Signal-strength calibration (θ_E) comes from the cited calibration profile.",
+      "additionalProperties": false,
+      "properties": {
+        "applies": { "type": "boolean", "description": "The system is essential (Essentiality–Corrigibility Tension)." },
+        "mechanisms": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "enum": [
+              "protected_alternatives",
+              "multi_issuer_mandate",
+              "credential_acceptance_diversity",
+              "binding_multi_stakeholder_charter",
+              "funded_fallback_operations",
+              "federated_implementation"
+            ]
+          }
+        },
+        "procedure_url": { "type": "string", "format": "uri" },
+        "notes": { "$ref": "#/$defs/notes" }
+      }
+    },
+    "escalation": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "oversight_body": { "type": "string" },
+        "oversight_url": { "type": "string", "format": "uri" },
+        "triggers": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["condition", "action"],
+            "additionalProperties": false,
+            "properties": {
+              "condition": { "type": "string" },
+              "action": {
+                "type": "string",
+                "enum": ["notify", "mandatory_review", "citizen_jury", "judicial_review", "suspension", "freeze", "rollback", "compensation"]
+              }
+            }
+          }
+        },
+        "liability_url": { "type": "string", "format": "uri" }
+      }
+    },
+    "delegated_verification": {
+      "type": "object",
+      "description": "Observatory-delegated component certification (PROTOCOL.md §10): covers the component only, never the deployment context. Tests resting on it are not_established, not pass.",
+      "additionalProperties": false,
+      "properties": {
+        "observatory": { "type": "string" },
+        "component_id": { "type": "string" },
+        "certified_profile_hash": { "$ref": "#/$defs/hash" },
+        "certification_date": { "type": "string", "format": "date" },
+        "certification_url": { "type": "string", "format": "uri" }
+      }
+    },
+    "contestation": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "contested": { "type": "boolean", "default": false },
+        "filed_at": { "type": "string", "format": "date-time" },
+        "status": { "type": "string", "enum": ["pending", "upheld", "overturned", "withdrawn"] },
+        "resolution_date": { "type": ["string", "null"], "format": "date-time" },
+        "resolution_summary": { "type": "string" }
+      }
+    },
+    "revocation": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "withdrawn": { "type": "boolean", "default": false },
+        "withdrawn_at": { "type": "string", "format": "date-time" },
+        "reason": { "type": "string" }
+      }
+    },
+    "active_deception": {
+      "type": "object",
+      "description": "Sensor attacks (open-washing, safety-washing, audit theatre). Detection corrupts the whole evidence surface.",
+      "additionalProperties": false,
+      "properties": {
+        "open_washing_detected": { "type": "boolean" },
+        "safety_washing_detected": { "type": "boolean" },
+        "audit_theatre_detected": { "type": "boolean" },
+        "evidence_url": { "type": "string", "format": "uri" }
+      }
+    },
+    "audit_verification": {
+      "type": "object",
+      "description": "The AUDIT test's audit-side evidence: what the auditor actually exercised without operator permission.",
+      "properties": {
+        "endpoints_probed": { "type": "boolean" },
+        "logs_accessed": { "type": "boolean" },
+        "third_party_publication_unrestricted": { "type": "boolean", "description": "Nothing contractual or technical prevented publishing measured error rates." },
+        "permission_required_encountered": { "type": "boolean", "description": "true when any check required operator authorization — the AUDIT failure condition." },
+        "notes": { "$ref": "#/$defs/notes" }
+      }
+    },
+    "evaluation_stratum": {
+      "type": "object",
+      "description": "Gradient Quantifier: determination taken at a lower quantile of the affected population (recommended p10), not the mean.",
+      "required": ["stratum_description", "identification_method"],
+      "additionalProperties": false,
+      "properties": {
+        "stratum_description": { "type": "string", "minLength": 1 },
+        "identification_method": { "type": "string", "minLength": 1 },
+        "quantile": { "type": "string" },
+        "distributions_reported": { "type": "boolean" }
+      }
+    },
+    "layer_verification_item": {
+      "type": "object",
+      "description": "Per-layer findings keyed to the manifest's declared layer_id. T_system is the AND over layers.",
+      "required": ["layer_id"],
+      "additionalProperties": false,
+      "properties": {
+        "layer_id": { "type": "string", "minLength": 1 },
+        "tests": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "EXIT": { "$ref": "#/$defs/verdict" },
+            "CODE": { "$ref": "#/$defs/verdict" },
+            "AUDIT": { "$ref": "#/$defs/verdict" },
+            "GOVERN": { "$ref": "#/$defs/verdict" },
+            "FORK": { "$ref": "#/$defs/verdict" }
+          }
+        },
+        "gap_description": { "type": "string" },
+        "notes": { "$ref": "#/$defs/notes" }
+      }
+    },
+    "tests": {
+      "type": "object",
+      "description": "Authoritative per-test verdicts. A pass requires the matching evidence block in this document; any fail makes the system structurally incorrigible.",
+      "required": ["EXIT", "CODE", "AUDIT", "GOVERN", "FORK"],
+      "additionalProperties": false,
+      "properties": {
+        "EXIT": { "$ref": "#/$defs/verdict" },
+        "CODE": { "$ref": "#/$defs/verdict" },
+        "AUDIT": { "$ref": "#/$defs/verdict" },
+        "GOVERN": { "$ref": "#/$defs/verdict" },
+        "FORK": { "$ref": "#/$defs/verdict" }
+      }
+    },
+    "determination": {
+      "type": "object",
+      "description": "Carried verdict, recomputable by any reader (paper §A.2 Claim 2): corrigible iff all five tests pass; not_corrigible iff any test fails; otherwise not_established.",
+      "required": ["result", "computed_at"],
+      "additionalProperties": false,
+      "properties": {
+        "result": { "type": "string", "enum": ["corrigible", "not_corrigible", "not_established"] },
+        "computed_at": { "type": "string", "format": "date-time" }
+      }
+    },
+    "finding_severity": {
+      "type": "string",
+      "enum": ["critical", "major", "minor", "observation"]
+    }
+  }
+}

@@ -41,12 +41,14 @@ MAJOR.MINOR
 | New optional field | MINOR bump | New optional `findings` array |
 | Documentation only | No bump | README update |
 
-### Current Version: 3.1
+### Current Version: 4.0
 
 ### Version History
 
 | Version | Date | Changes |
 |---------|------|---------|
+| 4.0 | 2026-08 | Structural repair, breaking by design (pre-adoption; no external documents existed). Shared `schema/common.json` $defs. Three-valued test verdicts (`pass`/`fail`/`not_established`). Claim-binds-criteria and pass-requires-evidence conditionals throughout (Rule A.9 pattern generalized). Manifest↔audit hash cycle broken: audits point at manifests, never the reverse. AUDIT gains its evidence surfaces (`audit_surface`, `audit_verification`). Per-pillar LWD-R attestors for supply-chain honesty. Policy constants (κ, κ_D, θ_E, α*) moved to versioned calibration profiles. Deleted: `continuous_indicators`, stored derivations, duplicate booleans, invented metrics, single-value enums, the "moderate" capture value. Bounded `notes` on claim blocks. Action boundaries required at every tier; `enforced: false` is representable. Signed examples with real Ed25519 keys; concept-inventory CI gate. |
+| 3.2 | 2026-07 | Data Capture axis (EPI Definition 5.2) + Temporal Stability upper bound. Closes 3.x paper alignment. |
 | 3.1 | 2026-07 | July 2026 paper alignment, all fields optional. Gradient Quantifier `evaluation_stratum`. EXIT `discharge_path`. Collective-Standing Precondition. Rule A.11 `data_access_declaration`. Species-free `role_execution` + `checker_independence`. Subject receipts, citizen-constraint registry, Injunction Hooks. Origination marking. Operative R + R-Layer Change Control. Normalized-Boundary lifetimes + accountable-authority checkpoint. Scale bounds, nested delegation, effect-surface placement. WCC assessment. `fork_viability`. Assessment rule files retired to archive. |
 | 3.0 | 2026-04 | Paper-faithful rewrite. RFC 8785 canonicalization. Ed25519 + W3C DID. Rule A.9 binding-mechanism enforcement. Tiered Assurance Model (paper §E.2). `tests` (replacing `results`) + derived `determination` field. Continuous indicators. Active Deception detection. FEE block with θ_E. Required action_boundaries for non-trivial EPI tiers. Vertical-strata `layer_type` enum + separate `domain` field. |
 | 2.0 | 2025-02 | Initial public protocol. LWD-R structure. Tiered adoption. |
@@ -65,8 +67,9 @@ MAJOR.MINOR
 ### Removing Fields
 
 1. Fields cannot be removed without MAJOR version bump
-2. Deprecated fields MUST remain for 2 MAJOR versions
-3. Deprecation MUST be announced in CHANGELOG
+2. Removals MUST be announced in CHANGELOG with their paper-anchored rationale
+3. The concept-inventory gate (`tools/check-concepts.py`) MUST stay green
+   through the change — a removal may relocate a concept's home, never orphan it
 
 ### Changing Field Types
 
@@ -78,13 +81,20 @@ MAJOR.MINOR
 
 ## 4. Contribution Process
 
+The protocol is in a **pre-adoption, single-maintainer phase**: no external
+documents or adopters exist yet, and the process below is sized to that
+reality rather than performing a community it does not have. When adoption
+happens, this section is renegotiated first.
+
 ### For Schema Changes
 
 1. Open issue describing change rationale
 2. Draft PR with schema modification
 3. Include example documents showing change
-4. Update validation tools if needed
-5. Two maintainer approvals required for MAJOR changes
+4. CI gates (schema validity, examples, concept inventory) must pass
+5. Maintainer approval; MAJOR changes additionally document their
+   review process in the CHANGELOG (4.0's was two independent
+   adversarial reviews against the papers)
 
 ### For Documentation
 
@@ -166,15 +176,15 @@ PEM-wrapped keys are NOT permitted.
 
 ### Signature Format
 
-Signatures are **base64url** (RFC 4648 §5, no padding) over the SHA-256
-digest of the RFC 8785 canonical bytes of the document with the
-`operator_signature` / `auditor_signature` block removed.
+Signatures are **base64url** (RFC 4648 §5, no padding, exactly 86
+characters — the 64 signature bytes) over the RFC 8785 canonical bytes of
+the document with the `operator_signature` / `auditor_signature` block
+removed. Algorithm and canonicalization are protocol constants — they are
+this section, not per-document fields.
 
 ```json
 {
-  "algorithm": "Ed25519",
-  "canonicalization": "RFC8785",
-  "value": "<base64url(64 bytes)>",
+  "value": "<base64url, 86 chars>",
   "signed_at": "2026-02-01T00:00:00Z",
   "key_id": "did:web:authority.example.gov#manifest-signer"
 }
@@ -248,7 +258,7 @@ If operator disputes audit results:
   "contested": true,
   "filed_at": "2025-03-01T00:00:00Z",
   "status": "pending",
-  "resolution": null
+  "resolution_date": null
 }
 ```
 
@@ -274,7 +284,7 @@ Centralized bodies (UN, DPG Alliance, regional consortia) may:
 ```json
 "delegated_verification": {
   "observatory": "DPG Alliance EPI Observatory",
-  "component": "meta-llama/Llama-3-70B",
+  "component_id": "meta-llama/Llama-3-70B",
   "certified_profile_hash": "sha256:...",
   "certification_date": "2025-01-15",
   "certification_url": "https://..."
@@ -284,7 +294,8 @@ Centralized bodies (UN, DPG Alliance, regional consortia) may:
 ### Scope Limits
 
 Delegated verification covers component only, not deployment context.
-Local audit still required for:
+A test verdict resting on delegated certification alone is
+`not_established`, never `pass`. Local audit still required for:
 - Data handling
 - Action boundaries
 - Governance structures
@@ -305,19 +316,19 @@ Normalized Boundary):
   "oversight_url": "https://...",
   "triggers": [
     {
-      "condition": "any_test_false",
+      "condition": "any_test_fail",
       "action": "mandatory_review"
     },
     {
-      "condition": "drift_score > 0.3",
-      "action": "citizen_jury_notification"
+      "condition": "drift trend increasing past manifest threshold",
+      "action": "citizen_jury"
     },
     {
       "condition": "high_stakes_tier",
-      "action": "judicial_review_available"
+      "action": "judicial_review"
     }
   ],
-  "liability_framework_url": "https://..."
+  "liability_url": "https://..."
 }
 ```
 
@@ -327,24 +338,28 @@ Normalized Boundary):
 
 Before any MAJOR version:
 
-- [ ] 6-month deprecation notice
-- [ ] Migration guide published
+- [ ] Concept-inventory gate green before and after (no paper concept orphaned)
+- [ ] Adversarial review recorded (who attacked the design, what changed)
 - [ ] Validation tools updated
-- [ ] Example documents updated
+- [ ] Example documents regenerated with real signatures
 - [ ] LLM instructions updated
-- [ ] Downstream users notified
+- [ ] Adopters notified — in the pre-adoption phase this is vacuously true
+      and says so in the CHANGELOG; signed documents cannot be migrated by
+      script (signatures are fresh acts by the key holders)
 
 ---
 
 ## 13. Maintainers
 
 Protocol maintained by:
-- [To be determined by community]
+- Anivar A Aravind (sole maintainer, pre-adoption phase)
 
 ### Decision Process
 
-- MINOR changes: Maintainer consensus
-- MAJOR changes: Public comment period (30 days) + maintainer consensus
+- MINOR changes: maintainer decision, CHANGELOG-documented
+- MAJOR changes: adversarial review against the papers + CHANGELOG-documented
+  rationale. A public comment period becomes binding once external adopters
+  exist; adopting this protocol includes standing to demand it.
 
 ---
 
@@ -420,43 +435,22 @@ Periodic assessment required when:
 
 ### Compliance Requirements
 
-Schemas MUST encode all paper concepts:
+The schemas carry the papers' **normative concepts**, not their prose. The
+authoritative mapping is `docs/concept-map.json`: every concept names its
+home — a schema field path, a docs entry, a derivation rule, or a tracked
+gap — and `tools/check-concepts.py` fails CI when a change orphans one.
+A concept's home does not have to be a field; the 3.x rule that "schemas
+MUST encode all paper concepts" is retired as the root cause of the 48 → 603
+property drift, and the gate exists so its replacement cannot silently lose
+content in the other direction.
 
-| Paper Concept | Schema Location | Verification |
-|---------------|-----------------|--------------|
-| Five tests | `tests.*` (audit) / `corrigibility_claim.*` (manifest) | Boolean fields |
-| Derived determination | `determination` (audit) | `computed_from: "tests"` (paper §A.2) |
-| Layer decomposition | `layers[]` + `layer_verification.*` | Vertical-strata `layer_type` + `domain` |
-| LWD-R | `lwd_r.*` (manifest) / `lwd_r_verification.*` (audit) | Required for EPI |
-| Topology | `topology` enum | `centralized_sovereign` / `federated_protocol` / `market_platform` / `open_commons` |
-| Verification depth | `verification_depth` | `presence` / `behavior` / `proof` |
-| Variety drift Δ(t) > τ | `drift_assessment` | EPI audit |
-| Action boundaries | `action_boundaries` | Required for EPI tiers ≥ decision_support |
-| Compute capture (κ) | `compute.kappa`, `compute.community_compute_estimate_usd` | EPI infrastructure |
-| Tiered adoption | `tier` | EPI infrastructure |
-| Identity tier (paper §E.2) | `operator.identity_tier` / `auditor.identity_tier` | DID method × assurance |
-| FEE θ_E | `exit.fee` | DPI + EPI infrastructure |
-| Switching cost σ | `exit_verification.switching_cost_sigma` | DPI audit |
-| Rule A.9 (binding authority) | `governance.binding_proof_url`, `binding_proof_hash`, `enforcement_history_url` | Required when `binding_mechanism=true` |
-| Active Deception | `active_deception.*` (audit) | Open-washing / safety-washing / audit theatre |
-| Continuous indicators (Tables 8/9) | `continuous_indicators.*` | Audit |
-| RFC 8785 canonicalisation | Signature block `canonicalization: "RFC8785"` | Tools |
-| Ed25519 + W3C DID | `verification_method` ($defs) | Tools |
+The same gate reports top-level blocks no concept claims: fields the papers
+never asked for are deletion candidates, not things to preserve.
 
-### Skills MUST Cover
-
-Each paper concept requires corresponding skill rule:
-
-| Rule File | Paper Section |
-|-----------|---------------|
-| test-exit.md | EXIT test |
-| test-code.md | CODE test, LWD-R |
-| test-audit.md | AUDIT test |
-| test-govern.md | GOVERN test |
-| test-fork.md | FORK test, compute capture |
-| layer-decomposition.md | Layer analysis |
-| variety-drift.md | Temporal drift |
-| action-boundary.md | Agentic systems |
+Derived quantities (weakest-link determination, WCC, capture inequalities
+under a cited calibration profile) are recomputed by tooling from carried
+inputs; carried verdicts state provenance and are schema-checked against
+their inputs where JSON Schema can express it.
 
 ---
 

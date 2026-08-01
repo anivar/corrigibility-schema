@@ -28,25 +28,74 @@ SCHEMAS = {
 }
 
 
-def resolve(schema: dict, path: str) -> bool:
-    """Walk slash-joined property keys through nested 'properties' maps,
-    descending into array 'items' where present."""
-    node = schema
-    for key in path.split("/"):
-        props = node.get("properties", {})
-        if key in props:
+def _deref(node: dict, all_schemas: dict) -> dict:
+    """Follow a $ref to its target (urn cross-file or #/$defs local-in-common)."""
+    ref = node.get("$ref")
+    if not ref:
+        return node
+    if ref.startswith("urn:"):
+        base, _, frag = ref.partition("#")
+        target = next((s for s in all_schemas.values() if s.get("$id") == base), None)
+        if target is None:
+            return node
+    else:
+        _, _, frag = ref.partition("#")
+        target = node.get("$_root", {})
+    for part in [p for p in frag.split("/") if p]:
+        target = target.get(part, {})
+    return target
+
+
+def visible_properties(node: dict, all_schemas: dict, root: dict) -> dict:
+    """Properties visible at a node: its own, its $ref target's, and its
+    allOf branches' — the composition surface the 4.0 schemas use."""
+    node = dict(node)
+    node.setdefault("$_root", root)
+    out: dict = {}
+    target = _deref(node, all_schemas)
+    if target is not node:
+        t = dict(target)
+        t["$_root"] = next((s for s in all_schemas.values() if target in _walk_containers(s)), root)
+        out.update(visible_properties(t, all_schemas, t.get("$_root", root)))
+    for branch in node.get("allOf", []):
+        b = dict(branch)
+        b["$_root"] = root
+        out.update(visible_properties(b, all_schemas, root))
+    out.update(node.get("properties", {}))
+    if "items" in node:
+        out.update(node["items"].get("properties", {}))
+    return out
+
+
+def _walk_containers(schema):
+    stack = [schema]
+    while stack:
+        cur = stack.pop()
+        yield cur
+        if isinstance(cur, dict):
+            stack.extend(v for v in cur.values() if isinstance(v, (dict, list)))
+        elif isinstance(cur, list):
+            stack.extend(v for v in cur if isinstance(v, (dict, list)))
+
+
+def make_resolver(all_schemas: dict):
+    def resolve(schema: dict, path: str) -> bool:
+        node = schema
+        for key in path.split("/"):
+            props = visible_properties(node, all_schemas, schema)
+            if key not in props:
+                return False
             node = props[key]
-        elif "items" in node and key in node["items"].get("properties", {}):
-            node = node["items"]["properties"][key]
-        else:
-            return False
-    return True
+        return True
+    return resolve
 
 
 def main() -> int:
     strict = "--strict-coverage" in sys.argv
     cmap = json.loads((ROOT / "docs/concept-map.json").read_text())
     schemas = {k: json.loads(p.read_text()) for k, p in SCHEMAS.items()}
+    schemas["common"] = json.loads((ROOT / "schema/common.json").read_text())
+    resolve = make_resolver(schemas)
 
     failures: list[str] = []
     claimed: dict[str, set[str]] = {k: set() for k in SCHEMAS}
@@ -86,6 +135,8 @@ def main() -> int:
     unclaimed_total = 0
     print("— unclaimed top-level properties (candidates for deletion, not preservation):")
     for sid, schema in schemas.items():
+        if sid == "common":
+            continue
         top = set(schema.get("properties", {}))
         envelope = {
             "protocol_version", "system_id", "manifest_version", "audit_id",

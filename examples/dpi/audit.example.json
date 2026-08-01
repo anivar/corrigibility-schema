@@ -1,178 +1,117 @@
 {
-  "protocol_version": "3.1",
-  "system_id": "example-mandatory-id-system",
-  "audit_id": "550e8400-e29b-41d4-a716-446655440000",
-  "timestamp": "2026-02-15T10:30:00Z",
-  "valid_until": "2027-02-15T10:30:00Z",
+  "protocol_version": "4.0",
+  "system_id": "exemplar-civic-registry",
+  "audit_id": "3e9a9c1e-1111-4222-8333-444455556666",
+  "timestamp": "2026-08-02T00:00:00Z",
+  "valid_until": "2027-08-01T00:00:00Z",
   "previous_audit_hash": null,
   "audited_manifest_version": "1.0.0",
-  "audited_manifest_hash": "sha256:a1b2c3d4e5f67890abcdef0123456789abcdef0123456789abcdef0123456789",
+  "audited_manifest_hash": "sha256:60a130699b4858f2b7d709dc8f2ad4fe13af795d87e07c9b92ec2bbaca9f1a3d",
   "verification_depth": "behavior",
   "tests": {
-    "EXIT": false,
-    "CODE": false,
-    "AUDIT": false,
-    "GOVERN": false,
-    "FORK": false
+    "EXIT": "pass",
+    "CODE": "pass",
+    "AUDIT": "pass",
+    "GOVERN": "pass",
+    "FORK": "pass"
   },
   "determination": {
-    "corrigible": false,
-    "computed_from": "tests",
-    "computed_at": "2026-02-15T10:30:00Z"
+    "result": "corrigible",
+    "computed_at": "2026-08-02T00:00:00Z"
   },
   "evaluation_stratum": {
-    "stratum_description": "Manual laborers with worn fingerprints in districts with intermittent connectivity; no local enrollment correction center",
-    "identification_method": "Exclusion-error reporting rates by district crossed with operator biometric-failure statistics; lowest-decile stratum selected",
+    "stratum_description": "Rural members with intermittent connectivity and no smartphone",
+    "identification_method": "Member survey p10 by connectivity and device access",
     "quantile": "p10",
     "distributions_reported": true
   },
-  "continuous_indicators": {
-    "exit_penalty_ratio": 4.8,
-    "exit_legal_barrier": true,
-    "code_visibility": 0.32,
-    "code_build_repro": false,
-    "audit_observability": 0.95,
-    "audit_third_party_access": true,
-    "audit_mttd_hours": 26,
-    "govern_override_rate": 0.41,
-    "govern_charter_irrevocable": false,
-    "govern_throughput": 0.04,
-    "fork_cost_ratio": 1.2,
-    "fork_rights_permissive": false,
-    "fork_resource_feasibility": 0.92
-  },
-  "layer_verification": {
-    "identity-core": {
-      "spec_verified": true,
-      "implementation_verified": false,
-      "gap_identified": true,
-      "gap_description": "Spec is open; implementation matcher is proprietary."
+  "layer_verification": [
+    {
+      "layer_id": "protocol",
+      "tests": {
+        "CODE": "pass",
+        "FORK": "pass"
+      }
+    },
+    {
+      "layer_id": "service",
+      "tests": {
+        "CODE": "pass",
+        "AUDIT": "pass"
+      }
     }
+  ],
+  "exit_verification": {
+    "penalty_ratio_measured": 1.05,
+    "alternative_tested": true,
+    "discharge_path": "literal_exit"
   },
   "code_verification": {
-    "source_repo_accessed": false,
-    "license_validated": false,
-    "build_reproduced": false,
-    "public_loc_verified_pct": 0.32,
-    "decision_rule_legibility_verified": false
+    "source_repo_accessed": true,
+    "license_validated": true,
+    "build_reproduced": true,
+    "build_proof_hash": "sha256:a530600052f79af9a2e506cbbeb90b3f71b82f431aef6577485a9a1afdcdf430",
+    "decision_rule_legibility_verified": true
+  },
+  "audit_verification": {
+    "endpoints_probed": true,
+    "logs_accessed": true,
+    "third_party_publication_unrestricted": true,
+    "permission_required_encountered": false
   },
   "subject_receipt_verification": {
-    "issued_verified": false,
-    "inclusion_proof_verified": false,
-    "independent_channel_verified": false
-  },
-  "exit_verification": {
-    "penalty_ratio_measured": 4.8,
-    "alternative_tested": false,
-    "fee_satisfied": false,
-    "switching_cost_sigma": 4.6
+    "issued_verified": true,
+    "inclusion_proof_verified": true,
+    "independent_channel_verified": true
   },
   "governance_verification": {
     "grievance_exists": true,
     "grievance_functional": true,
-    "binding_mechanism_exists": false,
-    "binding_mechanism_tested": false,
-    "binding_proof_resolved": false,
-    "binding_proof_hash_matched": false,
-    "enforcement_history_verified": false,
-    "community_represented": false,
-    "collective_standing_verified": false,
-    "collective_standing_constraint": "Class-action aggregation unavailable for administrative exclusion claims; civil-society auditors face administrative harassment documented in the audit window"
+    "binding_mechanism_tested": true,
+    "binding_proof_resolved": true,
+    "binding_proof_hash_matched": true,
+    "enforcement_history_verified": true,
+    "collective_standing_verified": true
   },
   "fork_verification": {
-    "legally_permitted": false,
-    "license_permissive": false,
-    "artifacts_verified": false,
+    "legally_permitted": true,
+    "license_permissive": true,
+    "artifacts_verified": true,
     "data_portability_tested": true,
-    "constructed_barriers_identified": [
-      "exclusive_government_license",
-      "regulatory_monopoly"
-    ],
-    "reproduction_attempted": false,
-    "reproduction_successful": false,
-    "alpha_critical_mass": 0.4
-  },
-  "active_deception": {
-    "open_washing_detected": true,
-    "safety_washing_detected": false,
-    "audit_theatre_detected": true,
-    "evidence_url": "https://auditor.example.org/findings/550e8400/deception-evidence"
+    "constructed_barriers_identified": [],
+    "reproduction_attempted": true,
+    "reproduction_successful": true
   },
   "findings": [
     {
       "test": "EXIT",
-      "finding": "Refusal blocks access to food rations and banking; penalty ratio 4.8 violates p ≤ 1.2 threshold.",
-      "severity": "critical",
-      "evidence_url": "https://auditor.example.org/findings/550e8400/exit"
-    },
-    {
-      "test": "CODE",
-      "finding": "Core matcher proprietary; visibility 0.32 below v ≥ 0.95 threshold.",
-      "severity": "critical"
-    },
-    {
-      "test": "GOVERN",
-      "finding": "Operator self-regulates; advisory committee has no binding authority. Rule A.9 (i)(ii)(iii) all unmet.",
-      "severity": "critical"
-    },
-    {
-      "test": "FORK",
-      "finding": "Hub-and-spoke architecture and exclusive license preclude reproduction; cost ratio 1.2 vs threshold 0.001.",
-      "severity": "critical"
-    },
-    {
-      "test": "DECEPTION",
-      "finding": "Public 'open standards' messaging contradicts proprietary implementation (open-washing).",
-      "severity": "major"
-    },
-    {
-      "test": "STRATUM",
-      "finding": "AUDIT passes at the median stratum (MTTD 18h) but exclusion-error MTTD is 26h at the p10 stratum; determination taken at p10 per the Gradient Quantifier, so AUDIT fails.",
-      "severity": "critical"
+      "finding": "Exit procedure requires a paper form at two rural offices; measured penalty ratio 1.05 stays within profile threshold but the p10 stratum bears the travel cost.",
+      "severity": "minor"
     }
   ],
-  "contestation": {
-    "contested": false
-  },
-  "revocation": {
-    "revoked": false
-  },
   "auditor": {
-    "entity": "Independent Digital Rights Auditors",
-    "jurisdiction": "XX",
-    "accreditation": "ISO-27001-LEAD",
-    "identity_tier": 3,
+    "entity": "Independent Assessments Collective (fictional)",
+    "jurisdiction": "BR",
+    "identity_tier": 2,
     "verification_method": {
-      "type": "Ed25519VerificationKey2020",
-      "controller": "did:web:auditor.example.org",
-      "key_id": "#audit-signer",
-      "public_key_multibase": "z6MkpTHR8VNsBxYAAWHut2Geadd9jSwuBV8xRoAnwWsdvktH"
+      "controller": "did:web:audits.example.net",
+      "public_key_multibase": "z6MkfFw5z5LJLHtZVt2XkcGVuGEejbGW6zVx9P7HrQH1Wz61"
     },
     "data_access_declaration": {
       "data_categories": [
-        "population-level exclusion aggregates",
-        "stratified biometric-failure rates",
-        "sampled pseudonymized enrollment logs"
+        "published artifacts",
+        "public endpoints"
       ],
-      "purpose": "Five-test verification at the least-resourced stratum",
-      "individual_level_records": true,
-      "privacy_budget": "epsilon=1.0 differential privacy on sampled logs",
-      "retention_and_deletion": "Individual-level records deleted within 30 days of audit signature; aggregates retained"
-    },
-    "role_execution": {
-      "operated_by": "human",
-      "accountable_party": "Independent Digital Rights Auditors, accredited legal entity"
-    },
-    "checker_independence": {
-      "independent_of_operator": true,
-      "substrate_independent": true
+      "purpose": "Corrigibility assessment against Protocol 4.0",
+      "individual_level_records": false,
+      "retention_and_deletion": "No individual-level records obtained; working notes deleted at publication."
     }
   },
+  "calibration_profile": {
+    "id": "default-2026"
+  },
   "auditor_signature": {
-    "algorithm": "Ed25519",
-    "canonicalization": "RFC8785",
-    "value": "MEUCIQDxAvyEXAMPLE_AUDIT_SIG_PLACEHOLDER_DO_NOT_DEPLOY_AS_ISmoCIBaseRcExampleNotARealSignaturejustForSchemaValidat==",
-    "signed_at": "2026-02-15T10:30:00Z",
-    "key_id": "did:web:auditor.example.org#audit-signer"
+    "value": "yXEfX32zeegwMMVdbqlZmD-IWnWMY5Smm3JBZUWp7jQxN5nxefQ6CN0gnTTQYF5PPKACRb0brtYdft1dIMHVCA",
+    "signed_at": "2026-08-02T00:00:00Z"
   }
 }

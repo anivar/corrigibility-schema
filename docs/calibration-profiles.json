@@ -1,0 +1,14 @@
+{
+  "$comment": "Versioned policy-constant sets cited by calibration_profile.id. Calibration is deliberative (paper, Political Economy of κ): revising a constant is a new profile, never an edit, so every assessment stays interpretable against the profile it named.",
+  "profiles": {
+    "default-2026": {
+      "kappa": 0.05,
+      "kappa_d": 1.0,
+      "theta_E": 0.8,
+      "alpha_critical_mass": 0.4,
+      "exit_penalty_ratio_max": 1.2,
+      "r_change_notice_days_min": 21,
+      "notes": "Initial defaults carried over from the constants the 3.x line embedded per-document and the papers' recommended ranges."
+    }
+  }
+}

@@ -78,12 +78,28 @@
       "homes": [
         {
           "type": "field",
-          "schema": "dpi/audit",
-          "path": "tests/AUDIT"
+          "schema": "dpi/infrastructure",
+          "path": "audit_surface"
         },
         {
-          "type": "gap",
-          "note": "No inward manifest evidence surface (log access, third-party test rights) exists in 3.x; planned for 4.0. Recorded so the gap is tracked, not forgotten."
+          "type": "field",
+          "schema": "epi/infrastructure",
+          "path": "audit_surface"
+        },
+        {
+          "type": "field",
+          "schema": "dpi/audit",
+          "path": "audit_verification"
+        },
+        {
+          "type": "field",
+          "schema": "epi/audit",
+          "path": "audit_verification"
+        },
+        {
+          "type": "field",
+          "schema": "dpi/audit",
+          "path": "tests/AUDIT"
         }
       ]
     },
@@ -540,8 +556,13 @@
         },
         {
           "type": "field",
-          "schema": "epi/infrastructure",
-          "path": "fork/data_capture_status"
+          "schema": "epi/audit",
+          "path": "compute_verification/compute_captured"
+        },
+        {
+          "type": "field",
+          "schema": "epi/audit",
+          "path": "data_verification/data_captured"
         }
       ]
     },
@@ -607,6 +628,11 @@
           "type": "field",
           "schema": "epi/infrastructure",
           "path": "machine_verifiable_legitimacy"
+        },
+        {
+          "type": "field",
+          "schema": "epi/audit",
+          "path": "legitimacy_verification"
         }
       ]
     },
@@ -784,6 +810,38 @@
           "type": "docs",
           "file": "docs/failure-modes.md",
           "match": "open-washing"
+        }
+      ]
+    },
+    {
+      "concept": "Policy calibration constants (κ, κ_D, θ_E, α*) — deliberative, versioned, cited not typed",
+      "paper": "both",
+      "anchor": "Political Economy of κ; FEE θ_E; §B.5 α*",
+      "homes": [
+        {
+          "type": "field",
+          "schema": "dpi/infrastructure",
+          "path": "calibration_profile"
+        },
+        {
+          "type": "field",
+          "schema": "dpi/audit",
+          "path": "calibration_profile"
+        },
+        {
+          "type": "field",
+          "schema": "epi/infrastructure",
+          "path": "calibration_profile"
+        },
+        {
+          "type": "field",
+          "schema": "epi/audit",
+          "path": "calibration_profile"
+        },
+        {
+          "type": "docs",
+          "file": "docs/calibration-profiles.json",
+          "match": "default-2026"
         }
       ]
     }
