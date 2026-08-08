@@ -1,0 +1,61 @@
+cff-version: 1.2.0
+title: "Corrigibility Protocol: an assessment instrument for digital public infrastructure"
+message: "If you use this protocol or its schemas, please cite it as below."
+type: software
+authors:
+  - family-names: "Aravind"
+    given-names: "Anivar A"
+    orcid: "https://orcid.org/0009-0009-8995-0005"
+    email: "ping@anivar.net"
+    website: "https://anivar.net"
+version: "4.0.0"
+date-released: "2026-08-01"
+repository-code: "https://github.com/anivar/corrigibility-schema"
+url: "https://anivar.net/corrigibility"
+# Schemas are CC0; documentation is CC BY-SA 4.0. See LICENSE.
+license: CC0-1.0
+keywords:
+  - corrigibility
+  - digital public infrastructure
+  - assessment protocol
+  - audit
+  - AI governance
+  - JSON Schema
+abstract: >-
+  A machine-readable protocol and JSON schemas for assessing whether an
+  infrastructure system is corrigible: whether the people it affects can detect
+  error, signal harm, and trigger correction without incurring material loss.
+  It operationalises the five tests — EXIT, CODE, AUDIT, GOVERN, FORK — into an
+  instrument an auditor can complete against a real deployment, rather than a
+  framework that has to be reinterpreted for each assessment.
+references:
+  - type: article
+    title: "Corrigibility as a Structural Precondition for Digital Public Infrastructure: A Cybernetic Framework"
+    authors:
+      - family-names: "Aravind"
+        given-names: "Anivar A"
+        orcid: "https://orcid.org/0009-0009-8995-0005"
+    year: 2026
+    identifiers:
+      - type: doi
+        value: "10.5281/zenodo.18213694"
+        description: "Zenodo concept DOI, all versions"
+      - type: doi
+        value: "10.2139/ssrn.6059075"
+        description: "SSRN"
+    notes: "Paper I. Derives the five tests this protocol implements."
+  - type: article
+    title: "Epistemic Capture and the Action Boundary: Corrigibility for Learned and Agentic Public Infrastructure"
+    authors:
+      - family-names: "Aravind"
+        given-names: "Anivar A"
+        orcid: "https://orcid.org/0009-0009-8995-0005"
+    year: 2026
+    identifiers:
+      - type: doi
+        value: "10.5281/zenodo.19863649"
+        description: "Zenodo concept DOI, all versions"
+      - type: doi
+        value: "10.2139/ssrn.6669318"
+        description: "SSRN"
+    notes: "Paper II. Extends the tests to learned and agentic systems."
