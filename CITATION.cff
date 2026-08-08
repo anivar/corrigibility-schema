@@ -8,8 +8,8 @@ authors:
     orcid: "https://orcid.org/0009-0009-8995-0005"
     email: "ping@anivar.net"
     website: "https://anivar.net"
-version: "4.0.0"
-date-released: "2026-08-01"
+version: "4.0.1"
+date-released: "2026-08-08"
 repository-code: "https://github.com/anivar/corrigibility-schema"
 url: "https://anivar.net/corrigibility"
 # Schemas are CC0; documentation is CC BY-SA 4.0. See LICENSE.

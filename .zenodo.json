@@ -1,0 +1,48 @@
+{
+  "title": "Corrigibility Protocol: an assessment instrument for digital public infrastructure",
+  "description": "<p>A machine-readable protocol and JSON schemas for assessing whether an infrastructure system is <em>corrigible</em>: whether the people it affects can detect error, signal harm, and trigger correction without incurring material loss.</p><p>It operationalises five tests &mdash; EXIT, CODE, AUDIT, GOVERN, FORK &mdash; into an instrument an auditor can complete against a real deployment, rather than a framework that must be reinterpreted for each assessment. Protocol 4.0 is a breaking revision with no backward compatibility with 3.x.</p><p>The reasoning behind the tests is in two companion papers, linked below. This repository is the instrument; the papers are the argument.</p><p>Schemas are CC0. Documentation is CC BY-SA 4.0. See LICENSE.</p>",
+  "upload_type": "software",
+  "license": "CC0-1.0",
+  "access_right": "open",
+  "creators": [
+    {
+      "name": "Aravind, Anivar A",
+      "orcid": "0009-0009-8995-0005"
+    }
+  ],
+  "keywords": [
+    "corrigibility",
+    "digital public infrastructure",
+    "assessment protocol",
+    "audit",
+    "AI governance",
+    "JSON Schema",
+    "public interest technology"
+  ],
+  "related_identifiers": [
+    {
+      "identifier": "10.5281/zenodo.18213694",
+      "relation": "isSupplementTo",
+      "resource_type": "publication-article",
+      "scheme": "doi"
+    },
+    {
+      "identifier": "10.5281/zenodo.19863649",
+      "relation": "isSupplementTo",
+      "resource_type": "publication-article",
+      "scheme": "doi"
+    },
+    {
+      "identifier": "10.2139/ssrn.6059075",
+      "relation": "isSupplementTo",
+      "resource_type": "publication-article",
+      "scheme": "doi"
+    },
+    {
+      "identifier": "10.2139/ssrn.6669318",
+      "relation": "isSupplementTo",
+      "resource_type": "publication-article",
+      "scheme": "doi"
+    }
+  ]
+}
